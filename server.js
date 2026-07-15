@@ -1,11 +1,11 @@
 // server.js
+require('dotenv').config(); // MUST BE LINE 1
+
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-const db = require('./config/db'); // Grouped neatly with imports
-require('dotenv').config();
-
+const db = require('./config/db');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
