@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const token = localStorage.getItem('zellr_session_token');
+            if (!token) {
+                // Using .replace instead of .href ensures the user cannot use 
+                // the browser's "Back" button to return to the protected dashboard area.
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    <title>Zellr | Messages</title>
+    <!-- Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Premium Font Suite Import -->
+    <link rel="icon" type="image/png" href="assets/zellr-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Premium Flawless Icon Font Suite -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    
+    <style>
+        .font-sans-premium { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif-logo { font-family: 'Playfair Display', serif; letter-spacing: -0.01em; }
+        .font-sans-subtitle { font-family: 'Montserrat', sans-serif; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
+
+    <!-- Premium Mobile Sandbox Container -->
+    <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
+        
+        <!-- Standard Integrated Top Floating Header Node Anchor -->
+        <div id="app-header" class="z-30"></div>
+
+        <!-- MAIN VIEW PORT A: SCROLLABLE INBOX LIST STREAMS -->
+        <div id="inboxListViewContainer" class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-4 pt-24 px-4">
+            <div class="px-1 pt-1 flex items-center justify-between">
+                <div class="space-y-0.5 text-left flex flex-col gap-0.5">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-neutral-950 text-xl font-bold tracking-tight">Messages</h2>
+                        <!-- Global Unread Badge Indicator -->
+                        <span id="globalUnreadBadgeIndicator" class="hidden bg-red-500 text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                    </div>
+                    <!-- Relocated dynamic item counter badge node description -->
+                    <p class="text-[9px] font-bold text-neutral-400 uppercase tracking-wider font-sans-subtitle" id="totalInboxThreadsBadge">0 Channels</p>
+                </div>
+
+                <!-- UPGRADE: Tab Filter Navigation Layout featuring Embedded Notification Badges -->
+                <div class="flex bg-neutral-100 p-0.5 rounded-xl text-[10px] font-bold font-sans-subtitle shadow-sm select-none shrink-0">
+                    <button type="button" onclick="switchMessagesDisplayFilter('active')" id="messagesTabActiveBtn" class="px-3.5 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none flex items-center gap-1.5 relative whitespace-nowrap">
+                        <span>Active</span>
+                        <span id="messagesActiveTabUnreadBadge" class="hidden bg-red-500 text-white font-bold text-[7px] w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0">0</span>
+                    </button>
+                    <button type="button" onclick="switchMessagesDisplayFilter('archived')" id="messagesTabArchivedBtn" class="px-3.5 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none flex items-center gap-1.5 relative whitespace-nowrap">
+                        <span>Archived</span>
+                        <span id="messagesArchivedTabUnreadBadge" class="hidden bg-red-500 text-white font-bold text-[7px] w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thread List Target Mounting Wrapper Canvas -->
+            <div id="inboxThreadsWrapperCanvas" class="space-y-3">
+                <div class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-14 px-4 flex flex-col items-center justify-center text-center space-y-3.5 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
+                        <i class="ri-chat-history-line text-xl text-neutral-400"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="text-neutral-900 text-sm font-bold tracking-tight">Your Inbox is Empty</h4>
+                        <p class="text-neutral-400 text-xs font-medium max-w-[210px] mx-auto">Purchase item listings or tap contact on a store widget to start a chat thread.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN VIEW PORT B: DETAILED ACTIVE FOCVERSATION WINDOW SCREEN OVERLAY -->
+        <div id="activeChatFocusedViewOverlay" class="absolute inset-0 bg-[#F9F9FB] z-40 hidden flex flex-col pt-0">
+            <div class="sticky top-0 bg-white border-b border-neutral-100 px-4 pt-6 pb-3 flex flex-col gap-2.5 z-40 shadow-[0_2px_10px_rgba(0,0,0,0.01)] text-left">
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="closeActiveFocusedDialogue()" class="w-8 h-8 rounded-full bg-[#F2F2F7] hover:bg-[#EDEDF2] flex items-center justify-center text-neutral-800 outline-none transition-colors shrink-0">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    
+                    <div onclick="routeToCounterpartProfile()" class="flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity active:scale-[0.98] p-1 -ml-1 rounded-xl">
+                        <div id="focusedChatHeaderAvatarContainer" class="w-9 h-9 bg-neutral-200 rounded-full flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden shrink-0 border border-neutral-100">
+                            <i class="ri-user-3-line text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h4 id="focusedChatHeaderCounterpartName" class="text-neutral-950 text-xs font-bold truncate leading-tight">Counterpart User</h4>
+                                <div id="focusedChatHeaderRatingDisplay" class="flex items-center gap-0.5 text-[9px] font-bold"></div>
+                            </div>
+                            <p id="focusedChatHeaderCounterpartSchool" class="text-neutral-400 text-[9px] font-semibold truncate uppercase tracking-wider font-sans-subtitle mt-0.5">University</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="chatHeaderOrderContextBanner" class="bg-[#F9F9FB] hover:bg-neutral-100 border border-neutral-200/60 rounded-xl px-3 py-2 flex items-center justify-between text-[11px] gap-2 cursor-pointer transition-colors active:scale-[0.99]">
+                    <div class="truncate flex-1">
+                        <span class="text-neutral-400 font-medium">Order:</span>
+                        <span id="focusedChatHeaderOrderTitle" class="text-neutral-900 font-bold ml-0.5 truncate inline-block max-w-[140px] align-bottom">Item Listing</span>
+                        <span id="focusedChatHeaderOrderPrice" class="text-neutral-500 font-medium ml-2">₱0.00</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <span id="focusedChatHeaderOrderStatusBadge" class="text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-white border border-neutral-200 text-neutral-600 uppercase font-sans-subtitle">Pending</span>
+                        <i class="ri-arrow-right-s-line text-neutral-400 text-sm"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chatFeedWindowBox" class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col no-scrollbar bg-[#F9F9FB]"></div>
+
+            <form id="chatMessengerForm" class="p-4 bg-white border-t border-neutral-200/60 flex items-center gap-2.5 pb-6">
+                <input type="hidden" id="chatActiveFocusOrderId" />
+                <input type="hidden" id="chatActiveFocusReceiverId" />
+                <input type="text" id="chatInputMessage" placeholder="Type a message safely..." class="flex-1 bg-[#EDEDF2] focus:bg-[#E4E4E9] text-neutral-900 placeholder-neutral-400 text-xs font-medium px-4 py-3 rounded-xl border border-transparent transition-all outline-none" autocomplete="off" required />
+                <button type="submit" class="w-10 h-10 bg-neutral-950 hover:bg-neutral-900 text-white rounded-xl flex items-center justify-center shadow-md transition-colors shrink-0 outline-none">
+                    <i class="ri-send-plane-2-fill text-base"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- UPGRADE: High-Fidelity Premium Product Details Preview Drawer for Chat Interface -->
+        <div id="chatProductDetailsModal" onclick="toggleChatProductModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 hidden flex-col justify-end transition-all opacity-0">
+            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-6 transform translate-y-full transition-transform duration-300 border-t border-neutral-200/40 relative">
+                
+                <!-- Product Image Canvas with Absolute Controls Overlay -->
+                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner mt-2">
+                    <img id="chatModalProductImage" src="" class="w-full h-full object-cover" />
+                    
+                    <div class="absolute top-4 right-4 flex items-center gap-2 z-30">
+                        <button type="button" onclick="toggleChatProductModal(false)" class="w-9 h-9 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-500 hover:text-neutral-950 shadow-md transition-colors outline-none">
+                            <i class="ri-close-line text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-left pt-1">
+                    <div class="flex items-center justify-between">
+                        <span id="chatModalProductCondition" class="bg-neutral-950 text-white font-bold text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full font-sans-subtitle">Good</span>
+                        <span id="chatModalProductPrice" class="text-neutral-950 text-xl font-bold tracking-tight">₱0.00</span>
+                    </div>
+                    <h3 id="chatModalProductTitle" class="text-neutral-950 text-lg font-bold tracking-tight pt-1 leading-snug">Product Title</h3>
+                    <p id="chatModalProductLocation" class="text-neutral-400 text-xs font-medium flex items-center gap-1.5"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span id="chatModalProductLocationText" class="mt-0.5">University</span></p>
+                </div>
+
+                <div class="text-left space-y-1.5">
+                    <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Description</h4>
+                    <p id="chatModalProductDescription" class="text-neutral-600 text-xs font-medium leading-relaxed bg-white border border-neutral-200/60 p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.01)]">Specifications</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <div class="space-y-1.5">
+                        <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Category</h4>
+                        <div class="bg-white border border-neutral-200/60 px-4 py-3 rounded-xl text-neutral-800 text-xs font-bold truncate flex items-center gap-2 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                            <i class="ri-folder-open-line text-neutral-400 text-base"></i>
+                            <span id="chatModalProductCategory" class="mt-0.5">Electronics</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Trading Mode</h4>
+                        <div class="bg-white border border-neutral-200/60 px-4 py-3 rounded-xl text-neutral-800 text-xs font-bold truncate flex items-center gap-2 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                            <i class="ri-arrow-left-right-line text-neutral-400 text-base"></i>
+                            <span id="chatModalProductTrading" class="mt-0.5">Open to Trades</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-left space-y-1.5">
+                    <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Accepted Payment Methods</h4>
+                    <div id="chatModalProductPayments" class="flex flex-wrap gap-2">
+                        <!-- Dynamic payment methods get injected down here -->
+                    </div>
+                </div>
+
+                <div id="chatModalActionButtonsWrapper" class="grid grid-cols-2 gap-4 pt-1">
+                    <button type="button" id="chatModalAddToCartBtn" class="bg-[#EDEDF2] hover:bg-[#E4E4E9] text-neutral-950 py-4 rounded-2xl text-xs font-bold transition-all outline-none flex items-center justify-center gap-2 shadow-sm"><i class="ri-shopping-bag-3-line text-base shrink-0"></i> <span>Add to Cart</span></button>
+                    <button type="button" id="chatModalBuyNowBtn" class="bg-neutral-950 hover:bg-neutral-900 text-white py-4 rounded-2xl text-xs font-bold tracking-wider shadow-md transition-all outline-none flex items-center justify-center"><span>Buy Now</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="globalPurchaseConfirmationModal" class="absolute inset-0 bg-black/60 backdrop-blur-[1px] z-[60] hidden items-center justify-center p-6 transition-opacity opacity-0">
+            <div class="bg-white w-full max-w-[290px] rounded-[32px] p-5 text-center space-y-4 shadow-2xl border border-neutral-100 animate-zoomIn">
+                <div class="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-100 mx-auto flex items-center justify-center text-amber-500">
+                    <i class="ri-shopping-bag-3-line text-xl"></i>
+                </div>
+                <div class="space-y-1.5">
+                    <h4 class="text-neutral-950 text-sm font-bold tracking-tight">Confirm Purchase</h4>
+                    <p class="text-neutral-400 text-xs font-medium px-1">Are you sure you want to purchase this listing item? A system notice will immediately coordinate a meetup conversation thread.</p>
+                </div>
+                <div class="grid grid-cols-2 gap-2.5 pt-1">
+                    <button type="button" onclick="closePurchaseConfirmationModal()" class="w-full py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-bold text-xs rounded-xl transition-colors outline-none">Cancel</button>
+                    <button type="button" id="globalConfirmPurchaseCommitBtn" class="w-full py-2.5 bg-neutral-950 hover:bg-neutral-900 text-white font-bold text-xs rounded-xl transition-colors shadow-sm outline-none">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="customWarningAlertModal" class="absolute inset-0 bg-black/60 backdrop-blur-[1px] z-[70] hidden items-center justify-center p-6 transition-opacity opacity-0">
+            <div class="bg-white w-full max-w-[290px] rounded-[32px] p-5 text-center space-y-4 shadow-2xl border border-neutral-100 animate-zoomIn">
+                <div class="w-11 h-11 rounded-2xl bg-red-50 border border-red-100 mx-auto flex items-center justify-center text-red-500">
+                    <i class="ri-error-warning-line text-xl"></i>
+                </div>
+                <div class="space-y-1.5">
+                    <h4 id="customWarningAlertTitle" class="text-neutral-950 text-sm font-bold tracking-tight">Notice</h4>
+                    <p id="customWarningAlertDescription" class="text-neutral-400 text-xs font-medium px-1">Alert description placeholder.</p>
+                </div>
+                <div class="pt-1">
+                    <button type="button" onclick="closeCustomWarningModal()" class="w-full py-2.5 bg-neutral-950 hover:bg-neutral-900 text-white font-bold text-xs rounded-xl transition-colors shadow-sm outline-none">Dismiss</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="sidebar-container" data-active="chat" class="absolute inset-0 pointer-events-none z-50"></div>
+    </div>
+
+    <script src="js/layout.js"></script>
+    <script>
+        // NEW GLOBAL FILTER STATE TRACKER
+        let currentMessagesTabState = 'active';
+
+        // NEW: Pulls the hidden counterpart ID input parameter to route securely to the seller profile
+        function routeToCounterpartProfile() {
+            const counterpartId = document.getElementById('chatActiveFocusReceiverId').value;
+            if (counterpartId) {
+                window.location.href = `seller.html?id=${counterpartId}`;
+            }
+        }
+
+        function switchMessagesDisplayFilter(tabMode) {
+            currentMessagesTabState = tabMode;
+            
+            document.getElementById('messagesTabActiveBtn').className = tabMode === 'active' 
+                ? 'px-3.5 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none flex items-center justify-center gap-1.5 relative whitespace-nowrap' 
+                : 'px-3.5 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none flex items-center justify-center gap-1.5 relative whitespace-nowrap';
+                
+            document.getElementById('messagesTabArchivedBtn').className = tabMode === 'archived' 
+                ? 'px-3.5 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none flex items-center justify-center gap-1.5 relative whitespace-nowrap' 
+                : 'px-3.5 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none flex items-center justify-center gap-1.5 relative whitespace-nowrap';
+            
+            compileFulfillmentConversations();
+        }
+
+        function safeText(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // FIX: Renamed variable to perfectly isolate it from layout.js collisions
+        let messengerActiveUserId = (function() {
+            try {
+                const cached = localStorage.getItem('zellr_user_profile');
+                if (cached) {
+                    const user = JSON.parse(cached);
+                    return user.id ? parseInt(user.id) : 3;
+                }
+            } catch(e) {}
+            return 3;
+        })();
+
+        let globalProductsCache = [];
+
+        function getAccountProfilesMatrixLookup(order) {
+            // FIX: Repointed this logic check to use the isolated messenger variable
+            const isCurrentSessionSeller = parseInt(order.seller_id) === messengerActiveUserId;
+            const counterpartId = isCurrentSessionSeller ? order.buyer_id : order.seller_id;
+            const counterpartName = isCurrentSessionSeller ? order.buyer_name : order.seller_name;
+            const counterpartSchool = isCurrentSessionSeller ? order.buyer_school : order.seller_school;
+            let counterpartAvatarData = isCurrentSessionSeller ? order.buyer_avatar : order.seller_avatar;
+
+            if (counterpartAvatarData && counterpartAvatarData.startsWith('data:image') && counterpartAvatarData.length < 500) {
+                counterpartAvatarData = ""; 
+            }
+
+            return {
+                isSeller: isCurrentSessionSeller,
+                currentUserId: messengerActiveUserId,
+                counterpartId: parseInt(counterpartId || 0),
+                name: counterpartName || "Campus User",
+                school: counterpartSchool || "University",
+                avatar: counterpartAvatarData || ""
+            };
+        }
+
+        function launchCustomWarningModal(title, description) {
+            document.getElementById('customWarningAlertTitle').textContent = title;
+            document.getElementById('customWarningAlertDescription').textContent = description;
+            
+            const modal = document.getElementById('customWarningAlertModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeCustomWarningModal() {
+            const modal = document.getElementById('customWarningAlertModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+        }
+
+        async function compileFulfillmentConversations() {
+            const threadCanvas = document.getElementById('inboxThreadsWrapperCanvas');
+            if (!threadCanvas) return;
+
+            const cachedProfile = localStorage.getItem('zellr_user_profile');
+            let sessionUserId = messengerActiveUserId;
+            if (cachedProfile) {
+                try { 
+                    let u = JSON.parse(cachedProfile);
+                    if (u && u.id) sessionUserId = parseInt(u.id);
+                } catch(e) {}
+            }
+
+            // FIX: Dynamic API Base Routing ensures seamless transition to external testing IPs
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            let trackingLogs = [];
+            try {
+                const response = await fetch(`${API_BASE}/api/orders`);
+                if (response.ok) trackingLogs = await response.json();
+            } catch (err) {
+                console.error("Failed to fetch live orders:", err);
+            }
+            
+            let chatLogs = [];
+            try {
+                const response = await fetch(`${API_BASE}/api/messages?user_id=${sessionUserId}`);
+                if (response.ok) chatLogs = await response.json();
+            } catch (err) {
+                chatLogs = [];
+            }
+
+            try {
+                const prodResponse = await fetch(`${API_BASE}/api/products`);
+                if (prodResponse.ok) globalProductsCache = await prodResponse.json();
+            } catch(e) {}
+
+            let relevantOrders = trackingLogs.filter(log => 
+                String(log.seller_id) === String(sessionUserId) || 
+                String(log.buyer_id) === String(sessionUserId) ||
+                chatLogs.some(c => parseInt(c.order_id) === parseInt(log.id))
+            );
+
+            let totalUnreadGlobalCount = 0;
+            let activeTabUnreadCount = 0;
+            let archivedTabUnreadCount = 0;
+            let threadStatusMapping = {};
+            let globalSoldOutMapping = {};
+
+            let clearedThreadsMap = {};
+            try {
+                // FIX: User-Specific Local Storage Key ensures Buyer and Seller have strictly independent read states!
+                clearedThreadsMap = JSON.parse(localStorage.getItem(`zellr_cleared_system_messages_${sessionUserId}`) || '{}');
+            } catch(e) {}
+
+            relevantOrders.forEach(order => {
+                let matchMessages = chatLogs.filter(c => parseInt(c.order_id) === parseInt(order.id));
+                let isThreadUnread = false;
+                
+                if (matchMessages.length > 0) {
+                    const lastMsg = matchMessages[matchMessages.length - 1];
+                    const textStr = lastMsg.message_text || lastMsg.text || "";
+                    
+                    const threadLength = matchMessages.length; 
+                    const clearedLength = parseInt(clearedThreadsMap[order.id] || 0); 
+                    
+                    if (parseInt(lastMsg.receiver_id) === sessionUserId && parseInt(lastMsg.is_read) === 0) {
+                        isThreadUnread = true;
+                    }
+                    
+                    if (textStr.includes("SYSTEM NOTICE:")) {
+                        if (threadLength > clearedLength) {
+                            isThreadUnread = true;
+                        }
+                    }
+
+                    if (clearedLength >= threadLength) {
+                        isThreadUnread = false;
+                    }
+                }
+                
+                threadStatusMapping[order.id] = isThreadUnread;
+
+                const isProductSoldGlobally = trackingLogs.some(o => 
+                    parseInt(o.product_id) === parseInt(order.product_id) && 
+                    (String(o.status).toLowerCase() === 'pending' || String(o.status).toLowerCase() === 'ready for delivery' || String(o.status).toLowerCase() === 'completed')
+                );
+                globalSoldOutMapping[order.id] = isProductSoldGlobally;
+
+                if (isThreadUnread) {
+                    totalUnreadGlobalCount++;
+                }
+
+                const s = String(order.status).toLowerCase();
+                const shouldArchive = (s === 'completed' || s === 'canceled' || s === 'cancelled' || (s === 'inquiry' && isProductSoldGlobally)) && !isThreadUnread;
+
+                if (shouldArchive) {
+                    archivedTabUnreadCount++;
+                } else {
+                    activeTabUnreadCount++;
+                }
+            });
+
+            const activeFilterBadge = document.getElementById('messagesActiveTabUnreadBadge');
+            if (activeFilterBadge) {
+                let activeUnreadCount = relevantOrders.filter(o => {
+                    const isUnread = threadStatusMapping[o.id];
+                    const isSoldOut = globalSoldOutMapping[o.id] || false;
+                    const s = String(o.status).toLowerCase();
+                    return isUnread && (s !== 'completed' && s !== 'canceled' && s !== 'cancelled' || isSoldOut);
+                }).length;
+
+                if (activeUnreadCount > 0) {
+                    activeFilterBadge.textContent = activeUnreadCount;
+                    activeFilterBadge.classList.remove('hidden');
+                } else {
+                    activeFilterBadge.classList.add('hidden');
+                }
+            }
+
+            const archivedFilterBadge = document.getElementById('messagesArchivedTabUnreadBadge');
+            if (archivedFilterBadge) archivedFilterBadge.classList.add('hidden');
+
+            relevantOrders = relevantOrders.filter(order => {
+                const isUnread = threadStatusMapping[order.id] || false;
+                const isSoldOut = globalSoldOutMapping[order.id] || false;
+                const s = String(order.status).toLowerCase();
+                
+                const matchesArchiveCondition = (s === 'completed' || s === 'canceled' || s === 'cancelled' || (s === 'inquiry' && isSoldOut)) && !isUnread;
+
+                if (currentMessagesTabState === 'archived') {
+                    return matchesArchiveCondition;
+                } else {
+                    return !matchesArchiveCondition;
+                }
+            });
+
+            document.getElementById('totalInboxThreadsBadge').textContent = `${relevantOrders.length} ${relevantOrders.length === 1 ? 'Channel' : 'Channels'}`;
+
+            if (relevantOrders.length === 0) {
+                threadCanvas.innerHTML = `
+                    <div class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-14 px-4 flex flex-col items-center justify-center text-center space-y-3.5 shadow-sm">
+                        <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
+                            <i class="ri-chat-history-line text-xl text-neutral-400"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-neutral-900 text-sm font-bold tracking-tight">No ${currentMessagesTabState} Threads</h4>
+                            <p class="text-neutral-400 text-xs font-medium max-w-[210px] mx-auto">Conversation logs in this filter group context category appear empty.</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            // DYNAMIC ACTIVITY BUBBLING ENGINE: Calculate recency metrics for each thread channel
+            relevantOrders.forEach(order => {
+                let matchMessages = chatLogs.filter(c => parseInt(c.order_id) === parseInt(order.id));
+                if (matchMessages.length > 0) {
+                    // Chat logs are loaded chronologically (ASC), so the last element is always the latest activity
+                    const lastMsg = matchMessages[matchMessages.length - 1];
+                    order.lastActivity = lastMsg.created_at ? new Date(lastMsg.created_at).getTime() : 0;
+                } else {
+                    // Fallback to order ID if no chat messages exist yet
+                    order.lastActivity = parseInt(order.id);
+                }
+            });
+
+            // Sort descendingly so the highest timestamp (most recent activity) floats to the top
+            relevantOrders.sort((a, b) => b.lastActivity - a.lastActivity);
+
+            let threadsHtml = "";
+            relevantOrders.forEach(order => {
+                let matchMessages = chatLogs.filter(c => parseInt(c.order_id) === parseInt(order.id));
+                let previewSnippet = "No messages written yet inside this thread channel.";
+                let isThreadUnread = threadStatusMapping[order.id] || false;
+                const isSoldOut = globalSoldOutMapping[order.id] || false;
+
+                if (matchMessages.length > 0) {
+                    const lastMsg = matchMessages[matchMessages.length - 1];
+                    previewSnippet = lastMsg.message_text || lastMsg.text;
+                }
+
+                const profile = getAccountProfilesMatrixLookup(order);
+                
+                let liveProductMeta = globalProductsCache.find(p => parseInt(p.id) === parseInt(order.product_id));
+                if (liveProductMeta && profile.isSeller === false) {
+                    if (liveProductMeta.seller_avatar) profile.avatar = liveProductMeta.seller_avatar;
+                    if (liveProductMeta.seller_name) profile.name = liveProductMeta.seller_name;
+                }
+
+                const initialLetter = profile.name.charAt(0).toUpperCase();
+
+                const fallbackHTML = `<div class="w-full h-full bg-neutral-950 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider">${initialLetter}</div>`;
+
+                const avatarAssetLayout = profile.avatar ? 
+                    `<img src="${profile.avatar}" class="w-full h-full object-cover" onerror='this.outerHTML=${JSON.stringify(fallbackHTML)}' />` : 
+                    fallbackHTML;
+
+                let displayBadgeStatus = order.status;
+                if (order.status === 'inquiry' && isSoldOut) {
+                    displayBadgeStatus = "sold out";
+                }
+
+                threadsHtml += `
+                    <div onclick="launchFocusedDialogueChannel(${order.id})" class="bg-white border ${isThreadUnread ? 'border-red-200 bg-red-50/10' : 'border-neutral-200/50'} rounded-2xl p-3.5 flex items-center justify-between gap-3 cursor-pointer shadow-[0_2px_6px_rgba(0,0,0,0.01)] hover:scale-[1.01] transition-transform text-left">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm overflow-hidden shrink-0 border border-neutral-100 bg-neutral-200">
+                            ${avatarAssetLayout}
+                        </div>
+                        <div class="flex-1 min-w-0 space-y-0.5 relative">
+                            <div class="flex items-center justify-between gap-1">
+                                <h4 class="text-neutral-950 text-xs font-bold truncate">${safeText(profile.name)}</h4>
+                                <span class="text-[7px] tracking-wider font-bold px-1.5 py-0.5 rounded ${displayBadgeStatus === 'sold out' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-neutral-100 text-neutral-500'} uppercase font-sans-subtitle shrink-0">${displayBadgeStatus}</span>
+                            </div>
+                            <p class="${isThreadUnread ? 'font-bold text-neutral-950' : 'text-neutral-400'} text-[11px] truncate pr-4">${safeText(previewSnippet)}</p>
+                            <p class="text-neutral-400 text-[9px] font-semibold truncate tracking-wide uppercase font-sans-subtitle pt-0.5">${safeText(order.product_title || 'Marketplace Item')} • ₱${parseFloat(order.product_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                            
+                            ${isThreadUnread ? '<span class="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-red-500 rounded-full"></span>' : ''}
+                        </div>
+                        <div class="shrink-0 text-neutral-300"><i class="ri-arrow-right-s-line text-base"></i></div>
+                    </div>`;
+            });
+
+            const badgeIndicator = document.getElementById('globalUnreadBadgeIndicator');
+            if (badgeIndicator) {
+                let currentTotalUnread = relevantOrders.filter(o => threadStatusMapping[o.id]).length;
+                if (currentTotalUnread > 0) {
+                    badgeIndicator.textContent = currentTotalUnread;
+                    badgeIndicator.classList.remove('hidden');
+                } else {
+                    badgeIndicator.classList.add('hidden');
+                }
+            }
+
+            threadCanvas.innerHTML = threadsHtml;
+        }
+
+        async function launchFocusedDialogueChannel(orderId) {
+            let trackingLogs = [];
+            try {
+                const response = await fetch('http://localhost:3000/api/orders');
+                if (response.ok) trackingLogs = await response.json();
+            } catch (err) {
+                console.error(err);
+            }
+
+            let matchOrder = trackingLogs.find(l => parseInt(l.id) === parseInt(orderId));
+            if (!matchOrder) return;
+
+            document.getElementById('chatActiveFocusOrderId').value = orderId;
+
+            const profile = getAccountProfilesMatrixLookup(matchOrder);
+            
+            let liveProductMeta = globalProductsCache.find(p => parseInt(p.id) === parseInt(matchOrder.product_id));
+            if (liveProductMeta && profile.isSeller === false) {
+                if (liveProductMeta.seller_avatar) profile.avatar = liveProductMeta.seller_avatar;
+                if (liveProductMeta.seller_name) profile.name = liveProductMeta.seller_name;
+                if (liveProductMeta.seller_school) profile.school = liveProductMeta.seller_school;
+            }
+
+            const initialLetter = profile.name.charAt(0).toUpperCase();
+
+            document.getElementById('chatActiveFocusReceiverId').value = profile.counterpartId;
+            document.getElementById('focusedChatHeaderCounterpartName').textContent = profile.name;
+            document.getElementById('focusedChatHeaderCounterpartSchool').textContent = profile.school;
+
+            const headerRatingContainer = document.getElementById('focusedChatHeaderRatingDisplay');
+            if (headerRatingContainer) {
+                headerRatingContainer.innerHTML = `<span class="text-neutral-300">...</span>`;
+                fetch('http://localhost:3000/api/ratings')
+                    .then(res => res.json())
+                    .then(allRatings => {
+                        const counterpartRatings = allRatings.filter(r => String(r.seller_id) === String(profile.counterpartId));
+                        
+                        if (counterpartRatings.length === 0) {
+                            headerRatingContainer.innerHTML = `<span class="text-neutral-400 font-medium tracking-wide">New</span>`;
+                        } else {
+                            const sum = counterpartRatings.reduce((acc, curr) => acc + parseInt(curr.rating), 0);
+                            const avg = (sum / counterpartRatings.length).toFixed(1);
+                            headerRatingContainer.innerHTML = `
+                                <i class="ri-star-fill text-yellow-400 text-[10px]"></i>
+                                <span class="text-neutral-900">${avg}</span>
+                                <span class="text-neutral-400 font-medium ml-0.5">(${counterpartRatings.length})</span>
+                            `;
+                        }
+                    })
+                    .catch(e => {
+                        headerRatingContainer.innerHTML = ``;
+                    });
+            }
+
+            const avatarBox = document.getElementById('focusedChatHeaderAvatarContainer');
+            const fallbackHTML = `<span class="text-[11px] uppercase tracking-wider font-bold">${initialLetter}</span>`;
+            if (profile.avatar) {
+                avatarBox.innerHTML = `<img src="${profile.avatar}" class="w-full h-full object-cover" onerror='this.outerHTML=${JSON.stringify(fallbackHTML)}' />`;
+            } else {
+                avatarBox.innerHTML = fallbackHTML;
+            }
+
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            document.getElementById('focusedChatHeaderOrderTitle').textContent = matchOrder.product_title || 'Marketplace Item';
+            document.getElementById('focusedChatHeaderOrderPrice').textContent = `₱${parseFloat(matchOrder.product_price || 0).toFixed(2)}`;
+            document.getElementById('focusedChatHeaderOrderStatusBadge').textContent = matchOrder.status;
+
+            const banner = document.getElementById('chatHeaderOrderContextBanner');
+            banner.onclick = () => openChatProductViewer(matchOrder.product_id, matchOrder.id, matchOrder.status);
+
+            try {
+                await fetch(`${API_BASE}/api/messages/read/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: profile.currentUserId })
+                });
+            } catch(e) {}
+
+            const overlay = document.getElementById('activeChatFocusedViewOverlay');
+            overlay.classList.remove('hidden');
+
+            await renderDialogueMessageBubbles(orderId, profile.currentUserId);
+        }
+
+        async function openChatProductViewer(productId, orderId, orderStatus) {
+            const item = globalProductsCache.find(p => parseInt(p.id) === parseInt(productId));
+            if (!item) {
+                launchCustomWarningModal("Catalog Item Missing", "This listed item has been deleted by the merchant owner.");
+                return;
+            }
+
+            document.getElementById('chatModalProductImage').src = item.image_url || 'assets/catalog/placeholder.png';
+            document.getElementById('chatModalProductTitle').textContent = item.title;
+            document.getElementById('chatModalProductPrice').textContent = '₱' + parseFloat(item.price).toLocaleString(undefined, {minimumFractionDigits:2});
+            document.getElementById('chatModalProductLocationText').textContent = item.campus || 'Main Campus';
+            document.getElementById('chatModalProductCondition').textContent = item.item_condition || 'Good';
+            document.getElementById('chatModalProductDescription').textContent = item.description || 'No descriptive text provided.';
+            document.getElementById('chatModalProductCategory').textContent = item.category || 'Other';
+
+            const isTradeable = (item.open_to_trades === 1 || item.open_to_trades === true || item.open_to_trades === "true");
+            document.getElementById('chatModalProductTrading').textContent = isTradeable ? "Open to Trades" : "No Trades Allowed";
+            
+            const payCanvas = document.getElementById('chatModalProductPayments');
+            payCanvas.innerHTML = "";
+            
+            let methodsToRender = ["Cash Payment"]; 
+            if (item.payment_methods) {
+                try {
+                    methodsToRender = JSON.parse(item.payment_methods);
+                } catch (e) {
+                    methodsToRender = item.payment_methods.split(',').map(s => s.trim());
+                }
+            }
+            
+            methodsToRender.forEach(m => {
+                let iconClass = "ri-money-cash-line";
+                if (m.toLowerCase().includes("gcash")) iconClass = "ri-smartphone-line";
+                if (m.includes("Credit Card")) iconClass = "ri-bank-card-line";
+                if (m.includes("Debit Card")) iconClass = "ri-bank-card-2-line";
+                if (m.includes("Bank Transfer")) iconClass = "ri-bank-line";
+
+                payCanvas.innerHTML += `
+                    <span class="px-3.5 py-2.5 bg-white border border-neutral-200/60 text-neutral-800 font-bold text-[11px] rounded-xl flex items-center gap-2 shadow-[0_2px_4px_rgba(0,0,0,0.01)]">
+                        <i class="${iconClass} text-neutral-400 text-base"></i> ${safeText(m)}
+                    </span>`;
+            });
+
+            const cachedProfile = localStorage.getItem('zellr_user_profile');
+            let sessionUserId = messengerActiveUserId;
+            if (cachedProfile) {
+                try { 
+                    let u = JSON.parse(cachedProfile);
+                    if (u && u.id) sessionUserId = parseInt(u.id);
+                } catch(e) {}
+            }
+
+            const actionBox = document.getElementById('chatModalActionButtonsWrapper');
+            
+            if (parseInt(item.seller_id) === parseInt(sessionUserId)) {
+                actionBox.className = "block pt-1";
+                actionBox.innerHTML = `
+                    <div class="w-full bg-neutral-100 border border-neutral-200/50 text-neutral-400 py-3.5 rounded-2xl text-xs font-bold tracking-wider flex items-center justify-center gap-2 select-none font-sans-subtitle">
+                        <i class="ri-user-shared-line text-neutral-400 text-base"></i>
+                        <span>YOUR PRODUCT LISTING</span>
+                    </div>`;
+                toggleChatProductModal(true);
+                return;
+            }
+
+            let liveOrders = [];
+            try {
+                const response = await fetch('http://localhost:3000/api/orders');
+                if (response.ok) liveOrders = await response.json();
+            } catch (err) {
+                console.error(err);
+            }
+
+            const isAlreadyBoughtByOther = liveOrders.some(order => 
+                parseInt(order.product_id) === parseInt(productId) && 
+                (order.status === 'pending' || order.status === 'Ready for Delivery' || order.status === 'completed')
+            );
+
+            if (orderStatus !== 'inquiry') {
+                actionBox.className = "hidden";
+            } else if (isAlreadyBoughtByOther) {
+                actionBox.className = "block pt-1";
+                actionBox.innerHTML = `
+                    <div class="w-full bg-neutral-100 border border-neutral-200/50 text-neutral-400 py-3.5 rounded-2xl text-xs font-bold tracking-wider flex items-center justify-center gap-2 select-none cursor-not-allowed font-sans-subtitle">
+                        <i class="ri-error-warning-line text-neutral-400 text-base"></i>
+                        <span>THIS LISTING IS SOLD OUT</span>
+                    </div>`;
+            } else {
+                actionBox.className = "grid grid-cols-2 gap-4 pt-1";
+                actionBox.innerHTML = `
+                    <button type="button" id="chatModalAddToCartBtn" class="bg-[#EDEDF2] hover:bg-[#E4E4E9] text-neutral-950 py-4 rounded-2xl text-xs font-bold transition-all outline-none flex items-center justify-center gap-2 shadow-sm">
+                        <i class="ri-shopping-bag-3-line text-base shrink-0"></i> <span>Add to Cart</span>
+                    </button>
+                    <button type="button" id="chatModalBuyNowBtn" class="bg-neutral-950 hover:bg-neutral-900 text-white py-4 rounded-2xl text-xs font-bold tracking-wider shadow-md transition-all outline-none flex items-center justify-center">
+                        <span>Buy Now</span>
+                    </button>`;
+
+                document.getElementById('chatModalAddToCartBtn').onclick = () => {
+                    let cart = JSON.parse(localStorage.getItem('zellr_cart_basket') || '[]');
+                    if (!cart.some(c => parseInt(c.id) === parseInt(item.id))) {
+                        cart.push(item);
+                        localStorage.setItem('zellr_cart_basket', JSON.stringify(cart));
+                    }
+                    toggleChatProductModal(false);
+                    // FIX: Point to the correct notification element to eliminate the Reference Error crash
+                    showSystemNotification("Item added to Cart Bag");
+                };
+
+                document.getElementById('chatModalBuyNowBtn').onclick = () => {
+                    openPurchaseConfirmationModal(item, orderId, true);
+                };
+            }
+
+            toggleChatProductModal(true);
+        }
+
+        function toggleChatProductModal(show) {
+            const wrapper = document.getElementById('chatProductDetailsModal');
+            const drawer = wrapper ? wrapper.querySelector('div') : null;
+            if (!wrapper || !drawer) return;
+            if (show) {
+                wrapper.classList.remove('hidden');
+                wrapper.classList.add('flex');
+                setTimeout(() => {
+                    wrapper.classList.remove('opacity-0');
+                    drawer.classList.remove('translate-y-full');
+                }, 10);
+            } else {
+                wrapper.classList.add('opacity-0');
+                drawer.classList.add('translate-y-full');
+                setTimeout(() => {
+                    wrapper.classList.add('hidden');
+                    wrapper.classList.remove('flex');
+                }, 300);
+            }
+        }
+
+        function openPurchaseConfirmationModal(productItem, orderId, isFromChat = false) {
+            const modal = document.getElementById('globalPurchaseConfirmationModal');
+            const confirmBtn = document.getElementById('globalConfirmPurchaseCommitBtn');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+
+            confirmBtn.onclick = async function() {
+                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                    ? 'http://localhost:3000' 
+                    : window.location.origin;
+
+                closePurchaseConfirmationModal();
+                if (isFromChat) toggleChatProductModal(false);
+                
+                let checkOrders = [];
+                try {
+                    const checkRes = await fetch(`${API_BASE}/api/orders`);
+                    if (checkRes.ok) checkOrders = await checkRes.json();
+                } catch(e) {}
+
+                const finalRaceConditionBlockCheck = checkOrders.some(order => 
+                    parseInt(order.product_id) === parseInt(productItem.id) && 
+                    (order.status === 'pending' || order.status === 'Ready for Delivery' || order.status === 'completed')
+                );
+
+                if (finalRaceConditionBlockCheck) {
+                    launchCustomWarningModal("Item Unavailable", "This campus listing has already been bought by another student inquirer!");
+                    compileFulfillmentConversations();
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'pending' })
+                    });
+
+                    if (!response.ok) throw new Error("Order creation failed");
+
+                    await fetch('http://localhost:3000/api/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            order_id: orderId,
+                            sender_id: messengerActiveUserId,
+                            receiver_id: parseInt(document.getElementById('chatActiveFocusReceiverId').value),
+                            message_text: `SYSTEM NOTICE: I just bought your item listing "${productItem.title}" for ₱${parseFloat(productItem.price).toFixed(2)}. Let's coordinate delivery meetup context variables!`
+                        })
+                    });
+
+                    await launchFocusedDialogueChannel(orderId);
+                } catch(e) {
+                    console.error(e);
+                }
+            };
+        }
+
+        function closePurchaseConfirmationModal() {
+            const modal = document.getElementById('globalPurchaseConfirmationModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+        }
+
+        async function renderDialogueMessageBubbles(orderId, sessionUserId) {
+            const feedBox = document.getElementById('chatFeedWindowBox');
+            if (!feedBox) return;
+
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            let trackingLogs = [];
+            try {
+                const response = await fetch(`${API_BASE}/api/orders`);
+                if (response.ok) trackingLogs = await response.json();
+            } catch (e) {}
+
+            let chatLogs = [];
+            try {
+                const response = await fetch(`${API_BASE}/api/messages?user_id=${sessionUserId}`);
+                if (response.ok) chatLogs = await response.json();
+            } catch (err) {
+                chatLogs = [];
+                console.error("Failed to sync message streams from database.");
+            }
+
+            let activeMessages = chatLogs.filter(c => parseInt(c.order_id) === parseInt(orderId));
+            let matchOrder = trackingLogs.find(l => parseInt(l.id) === parseInt(orderId));
+
+            if (activeMessages.length === 0) {
+                feedBox.innerHTML = `<div class="my-auto text-center text-xs text-neutral-400 font-medium px-4">No logged communication rows recorded. Enter text inside console box down below to negotiate meetup variables!</div>`;
+                return;
+            }
+
+            if (activeMessages.length > 0) {
+                try {
+                    // FORCE SYNC: Bind the cleared status strictly to the message array length
+                    let clearedThreadsMap = JSON.parse(localStorage.getItem(`zellr_cleared_system_messages_${sessionUserId}`) || '{}');
+                    clearedThreadsMap[orderId] = activeMessages.length;
+                    localStorage.setItem(`zellr_cleared_system_messages_${sessionUserId}`, JSON.stringify(clearedThreadsMap));
+                } catch(e) {}
+            }
+
+            const targetsPendingUpdate = activeMessages.some(m => parseInt(m.receiver_id) === parseInt(sessionUserId) && parseInt(m.is_read) === 0);
+            if (targetsPendingUpdate) {
+                try {
+                    await fetch(`http://localhost:3000/api/messages/read/${orderId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: sessionUserId })
+                    });
+                } catch(e) {}
+            }
+
+            let htmlPayload = "";
+            activeMessages.forEach((msg, idx) => {
+                const textContent = msg.message_text || msg.text;
+                const isSystem = String(textContent).includes("SYSTEM NOTICE:");
+                const rawDate = msg.created_at ? new Date(msg.created_at) : new Date();
+                const clockTimestamp = rawDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                if (isSystem) {
+                    htmlPayload += `
+                        <div class="w-full text-center py-1.5 px-1 shrink-0 clear-both">
+                            <span class="bg-[#EDEDF2] text-neutral-600 font-medium text-[10px] px-3.5 py-1.5 rounded-xl border border-neutral-200/40 shadow-sm leading-relaxed inline-block max-w-[90%] text-center">
+                                ${safeText(textContent)}
+                            </span>
+                            <span class="block text-[8px] text-neutral-400 mt-1 uppercase font-sans-subtitle tracking-wider">${clockTimestamp}</span>
+                        </div>`;
+                    return;
+                }
+                
+                const isOutgoing = String(msg.sender_id) === String(sessionUserId);
+                const isLastMsgInThread = idx === activeMessages.length - 1;
+
+                if (isOutgoing) {
+                    let readStatusString = parseInt(msg.is_read) === 1 ? "Read" : "Delivered";
+                    htmlPayload += `
+                        <div class="flex flex-col items-end w-full space-y-0.5 clear-both">
+                            <div class="max-w-[72%] p-3 rounded-2xl text-xs font-medium bg-neutral-950 text-white text-left shadow-sm border border-white/5 leading-relaxed shrink-0">
+                                ${safeText(textContent)}
+                            </div>
+                            <div class="flex items-center gap-1.5 text-[8px] font-semibold text-neutral-400 font-sans-subtitle tracking-wide pr-1">
+                                <span>${clockTimestamp}</span>
+                                ${isLastMsgInThread ? `• <span class="text-neutral-500 uppercase font-bold">${readStatusString}</span>` : ''}
+                            </div>
+                        </div>`;
+                } else {
+                    let senderName = "Counterpart";
+                    let senderAvatar = "";
+                    if (matchOrder) {
+                        if (String(msg.sender_id) === String(matchOrder.buyer_id)) {
+                            senderName = matchOrder.buyer_name || "Buyer";
+                            senderAvatar = matchOrder.buyer_avatar || "";
+                        } else {
+                            senderName = matchOrder.seller_name || "Seller";
+                            senderAvatar = matchOrder.seller_avatar || "";
+                        }
+                    }
+
+                    const cleanSenderInitial = senderName.trim().charAt(0).toUpperCase();
+                    const fallbackHTML = `<span class="text-neutral-700 text-[10px] font-bold">${cleanSenderInitial}</span>`;
+                    const avatarLayoutMarkup = senderAvatar ? 
+                        `<img src="${senderAvatar}" class="w-full h-full object-cover" onerror='this.outerHTML=${JSON.stringify(fallbackHTML)}' />` : 
+                        fallbackHTML;
+
+                    htmlPayload += `
+                        <div class="flex flex-col items-start space-y-0.5 w-full clear-both">
+                            <div class="flex items-center gap-2.5 max-w-[78%]">
+                                <div class="w-7 h-7 rounded-full bg-neutral-200 border border-neutral-300 shadow-inner flex items-center justify-center overflow-hidden shrink-0 shadow-sm select-none">
+                                    ${avatarLayoutMarkup}
+                                </div>
+                                <div class="p-3 rounded-2xl text-xs font-medium bg-white text-neutral-900 text-left shadow-sm border border-neutral-200/60 leading-relaxed">
+                                    ${safeText(textContent)}
+                                </div>
+                            </div>
+                            <span class="text-[8px] font-semibold text-neutral-400 font-sans-subtitle tracking-wide ml-[38px]">${clockTimestamp}</span>
+                        </div>`;
+                }
+            });
+            feedBox.innerHTML = htmlPayload;
+            setTimeout(() => { feedBox.scrollTop = feedBox.scrollHeight; }, 50);
+        }
+
+        function SampleActiveSessionUserDetection() {
+            const cachedProfile = localStorage.getItem('zellr_user_profile');
+            if (cachedProfile) {
+                try {
+                    const user = JSON.parse(cachedProfile);
+                    if (user && user.id) messengerActiveUserId = parseInt(user.id);
+                } catch(e) {
+                    console.error("Session profile token parse failure:", e);
+                }
+            }
+        }
+
+        function closeActiveFocusedDialogue() {
+            document.getElementById('activeChatFocusedViewOverlay').classList.add('hidden');
+            document.getElementById('chatActiveFocusOrderId').value = ""; // FIX: Clear the focus ID to stop the interval from overlapping!
+            compileFulfillmentConversations(); 
+        }
+
+        document.getElementById('chatMessengerForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const inputField = document.getElementById('chatInputMessage');
+            const targetOrderId = document.getElementById('chatActiveFocusOrderId').value;
+            const targetReceiverId = document.getElementById('chatActiveFocusReceiverId').value;
+            
+            if (!inputField.value.trim() || !targetOrderId) return;
+
+            SampleActiveSessionUserDetection();
+
+            const messageText = inputField.value.trim();
+            inputField.value = "";
+
+            const textPayload = {
+                order_id: parseInt(targetOrderId),
+                sender_id: messengerActiveUserId,
+                receiver_id: parseInt(targetReceiverId || 3),
+                message_text: messageText
+            };
+
+            // FIX: Environment-aware routing applied along with your premium UI error modal
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            try {
+                let response = await fetch(`${API_BASE}/api/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(textPayload)
+                });
+                
+                if (!response.ok) throw new Error("Sync failure");
+            } catch (err) {
+                console.error("Database tracking node lost context sync parameters:", err);
+                launchCustomWarningModal("Message Not Sent", "Cannot establish sync connection to the campus network.");
+            }
+
+            await renderDialogueMessageBubbles(targetOrderId, messengerActiveUserId);
+        });
+
+        window.onload = async function() {
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            SampleActiveSessionUserDetection();
+            
+            try {
+                const liveData = await fetch(`${API_BASE}/api/products`);
+                if (liveData.ok) {
+                    globalProductsCache = await liveData.json();
+                }
+            } catch (err) {
+                console.error("Could not fetch live products.", err);
+            }
+            
+            await compileFulfillmentConversations();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const openOrderId = urlParams.get('open_order_id');
+            if (openOrderId) {
+                launchFocusedDialogueChannel(parseInt(openOrderId));
+            }
+            
+            setInterval(() => {
+                const focusOrderId = document.getElementById('chatActiveFocusOrderId').value;
+                if (focusOrderId) {
+                    renderDialogueMessageBubbles(focusOrderId, messengerActiveUserId);
+                } else {
+                    compileFulfillmentConversations();
+                }
+            }, 4500);
+        };
+    </script>
+</body>
+</html>

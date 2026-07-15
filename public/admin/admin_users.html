@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const token = localStorage.getItem('zellr_session_token');
+            const profile = localStorage.getItem('zellr_user_profile');
+            if (!token || !profile) { window.location.replace('../login.html'); return; }
+            try { if (String(JSON.parse(profile).role).toLowerCase().trim() !== 'admin') window.location.replace('../dashboard.html'); } catch(e) { window.location.replace('../login.html'); }
+        })();
+    </script>
+    <title>Zellr Admin | User Distribution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/png" href="../assets/zellr-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    <style>
+        .font-sans-premium { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-sans-subtitle { font-family: 'Montserrat', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
+
+    <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
+        
+        <div id="admin-header" class="z-30"></div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-5 pt-24 px-4">
+            <div class="px-1 text-left">
+                <p class="text-neutral-400 text-[10px] font-bold uppercase tracking-wider font-sans-subtitle">Community</p>
+                <h2 class="text-neutral-950 text-xl font-bold tracking-tight mt-0.5">User Rankings</h2>
+            </div>
+
+            <div class="w-full bg-white border border-neutral-200/50 rounded-[28px] p-5 shadow-sm flex flex-col items-center">
+                <p class="w-full text-[10px] font-bold text-neutral-400 uppercase tracking-wider font-sans-subtitle text-left mb-2">Buyers vs. Sellers</p>
+                <div class="w-44 h-44 relative flex items-center justify-center">
+                    <canvas id="userRatioPieChart"></canvas>
+                </div>
+            </div>
+
+            <div class="flex bg-neutral-100 p-0.5 rounded-xl text-[10px] font-bold font-sans-subtitle shadow-sm select-none w-full">
+                <button type="button" onclick="switchUserOverviewTab(this, 'sellers')" class="user-tab-btn flex-1 py-1.5 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none">Sellers</button>
+                <button type="button" onclick="switchUserOverviewTab(this, 'buyers')" class="user-tab-btn flex-1 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Buyers</button>
+                <button type="button" onclick="switchUserOverviewTab(this, 'all')" class="user-tab-btn flex-1 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">All</button>
+            </div>
+
+            <div id="sellerSortSelectorCard" class="bg-white border border-neutral-200/50 rounded-2xl p-3 flex items-center justify-between shadow-sm">
+                <p class="text-neutral-400 text-[9px] font-bold tracking-wider uppercase font-sans-subtitle">Sort Parameters</p>
+                <select id="sellerRatingFilterMode" onchange="runSellersTypographySorter()" class="bg-neutral-50 text-neutral-800 text-[11px] font-bold px-2 py-1.5 rounded-lg border border-neutral-200 shadow-inner outline-none font-sans-subtitle">
+                    <option value="listings">Most Listings</option>
+                    <option value="highRating">Ratings: Highest to Lowest</option>
+                    <option value="lowRating">Ratings: Lowest to Highest</option>
+                </select>
+            </div>
+
+            <div id="adminSellersWrapperBlock" class="space-y-2.5">
+                <p class="text-neutral-400 text-[10px] font-bold tracking-wider uppercase font-sans-subtitle pl-1 text-left">Top Sellers</p>
+                <div id="adminSellersRankFeed" class="space-y-2"></div>
+            </div>
+
+            <div id="adminBuyersWrapperBlock" class="space-y-2.5 hidden">
+                <p class="text-neutral-400 text-[10px] font-bold tracking-wider uppercase font-sans-subtitle pl-1 text-left">Top Buyers</p>
+                <div id="adminBuyersRankFeed" class="space-y-2"></div>
+            </div>
+
+            <div id="adminAllUsersWrapperBlock" class="space-y-2.5 hidden">
+                <p class="text-neutral-400 text-[10px] font-bold tracking-wider uppercase font-sans-subtitle pl-1 text-left">All Registered Accounts</p>
+                <div id="adminAllUsersRankFeed" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <div id="admin-sidebar-container" data-active="users" class="absolute inset-0 pointer-events-none z-50"></div>
+    </div>
+
+    <script src="admin_layout.js"></script>
+    <script>
+        let userChartInstance = null;
+        let globalSellersDataset = [];
+        let globalBuyersDataset = [];
+        let globalAllUsersDataset = [];
+        let activeUserTabState = 'sellers';
+
+        function switchUserOverviewTab(btnElement, targetTab) {
+            if (activeUserTabState === targetTab) return;
+            activeUserTabState = targetTab;
+
+            document.querySelectorAll('.user-tab-btn').forEach(btn => {
+                btn.className = "user-tab-btn flex-1 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none";
+            });
+            btnElement.className = "user-tab-btn flex-1 py-1.5 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none";
+
+            const sortCard = document.getElementById('sellerSortSelectorCard');
+            const sellersBlock = document.getElementById('adminSellersWrapperBlock');
+            const buyersBlock = document.getElementById('adminBuyersWrapperBlock');
+            const allBlock = document.getElementById('adminAllUsersWrapperBlock');
+
+            if (targetTab === 'sellers') {
+                sortCard.classList.remove('hidden');
+                sortCard.classList.add('flex');
+                sellersBlock.classList.remove('hidden');
+                buyersBlock.classList.add('hidden');
+                allBlock.classList.add('hidden');
+            } else if (targetTab === 'buyers') {
+                sortCard.classList.remove('flex');
+                sortCard.classList.add('hidden');
+                sellersBlock.classList.add('hidden');
+                buyersBlock.classList.remove('hidden');
+                allBlock.classList.add('hidden');
+            } else if (targetTab === 'all') {
+                sortCard.classList.remove('flex');
+                sortCard.classList.add('hidden');
+                sellersBlock.classList.add('hidden');
+                buyersBlock.classList.add('hidden');
+                allBlock.classList.remove('hidden');
+            }
+        }
+
+        function runSellersTypographySorter() {
+            const sortMode = document.getElementById('sellerRatingFilterMode').value;
+            let displayList = [...globalSellersDataset];
+
+            if (sortMode === 'listings') {
+                displayList.sort((a, b) => b.count - a.count);
+            } else if (sortMode === 'highRating') {
+                displayList.sort((a, b) => b.numericalStarsValue - a.numericalStarsValue);
+            } else if (sortMode === 'lowRating') {
+                displayList.sort((a, b) => a.numericalStarsValue - b.numericalStarsValue);
+            }
+
+            renderSellersFeedDom(displayList);
+        }
+
+        async function computeUserRankingsEngine() {
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
+            let products = [], orders = [], ratings = [], usersList = [];
+
+            try {
+                const pRes = await fetch(`${API_BASE}/api/products`);
+                const oRes = await fetch(`${API_BASE}/api/orders`);
+                const rRes = await fetch(`${API_BASE}/api/ratings`);
+                const uRes = await fetch(`${API_BASE}/api/users`); // Unified list query fetch
+                
+                if (pRes.ok) products = await pRes.json();
+                if (oRes.ok) orders = await oRes.json();
+                if (rRes.ok) ratings = await rRes.json();
+                if (uRes.ok) usersList = await uRes.json();
+            } catch(e) { console.error(e); }
+
+            let sellerMap = {}, buyerMap = {}, masterFullRosterMap = {};
+
+            // Initialize total user tracking map
+            usersList.forEach(u => {
+                if (String(u.role).toLowerCase().trim() === 'admin') return;
+                const derivedName = u.name || `${u.first_name || ''} ${u.last_name || ''}`.trim() || "Campus Member";
+                
+                masterFullRosterMap[u.id] = {
+                    id: u.id,
+                    name: derivedName,
+                    school: u.school || "University",
+                    avatar: u.avatar_url || u.avatar || "",
+                    listingsCount: 0,
+                    purchasesCount: 0
+                };
+            });
+
+            products.forEach(p => {
+                if (!p.seller_id) return;
+                
+                if (masterFullRosterMap[p.seller_id]) {
+                    masterFullRosterMap[p.seller_id].listingsCount++;
+                }
+
+                if (!sellerMap[p.seller_id]) {
+                    const merchantRatings = ratings.filter(r => String(r.seller_id) === String(p.seller_id));
+                    let starsScore = "No ratings yet";
+                    let numericalStarsValue = 0;
+
+                    if (merchantRatings.length > 0) {
+                        const scoreSum = merchantRatings.reduce((acc, curr) => acc + parseInt(curr.rating), 0);
+                        let avgCalc = scoreSum / merchantRatings.length;
+                        numericalStarsValue = avgCalc;
+                        starsScore = `${avgCalc.toFixed(1)} (${merchantRatings.length})`;
+                    }
+
+                    sellerMap[p.seller_id] = { 
+                        name: p.seller_name || (masterFullRosterMap[p.seller_id] ? masterFullRosterMap[p.seller_id].name : "Merchant"), 
+                        school: p.seller_school || (masterFullRosterMap[p.seller_id] ? masterFullRosterMap[p.seller_id].school : "University"), 
+                        count: 0, 
+                        avatar: p.seller_avatar || (masterFullRosterMap[p.seller_id] ? masterFullRosterMap[p.seller_id].avatar : ""),
+                        stars: starsScore,
+                        numericalStarsValue: numericalStarsValue
+                    };
+                }
+                sellerMap[p.seller_id].count++;
+            });
+
+            orders.filter(o => String(o.status).toLowerCase() === 'completed').forEach(o => {
+                if (!o.buyer_id) return;
+                
+                if (masterFullRosterMap[o.buyer_id]) {
+                    masterFullRosterMap[o.buyer_id].purchasesCount++;
+                }
+
+                if (!buyerMap[o.buyer_id]) {
+                    buyerMap[o.buyer_id] = { 
+                        name: o.buyer_name || (masterFullRosterMap[o.buyer_id] ? masterFullRosterMap[o.buyer_id].name : "Buyer"), 
+                        school: o.buyer_school || (masterFullRosterMap[o.buyer_id] ? masterFullRosterMap[o.buyer_id].school : "University"), 
+                        count: 0, 
+                        avatar: o.buyer_avatar || (masterFullRosterMap[o.buyer_id] ? masterFullRosterMap[o.buyer_id].avatar : "")
+                    };
+                }
+                buyerMap[o.buyer_id].count++;
+            });
+
+            globalSellersDataset = Object.values(sellerMap).sort((a,b) => b.count - a.count);
+            globalBuyersDataset = Object.values(buyerMap).sort((a,b) => b.count - a.count);
+            globalAllUsersDataset = Object.values(masterFullRosterMap).sort((a, b) => b.id - a.id); // Sorted sequentially by signup ID
+
+            const ctx = document.getElementById('userRatioPieChart').getContext('2d');
+            if (userChartInstance) userChartInstance.destroy();
+            userChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sellers', 'Buyers'],
+                    datasets: [{
+                        data: [globalSellersDataset.length, globalBuyersDataset.length],
+                        backgroundColor: ['#6366f1', '#f59e0b'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { 
+                            display: true,
+                            position: 'bottom',
+                            labels: { boxWidth: 10, padding: 8, font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' } }
+                        } 
+                    }, 
+                    cutout: '72%' 
+                }
+            });
+
+            runSellersTypographySorter();
+            renderBuyersFeedDom(globalBuyersDataset);
+            renderAllUsersFeedDom(globalAllUsersDataset);
+        }
+
+        function renderSellersFeedDom(sellersList) {
+            const container = document.getElementById('adminSellersRankFeed');
+            if (sellersList.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-xs text-neutral-400 bg-white border border-neutral-200/40 rounded-2xl">No active sellers mapped.</div>`;
+                return;
+            }
+            container.innerHTML = sellersList.map((u, i) => `
+                <div class="bg-white border border-neutral-200/50 p-3 rounded-2xl flex items-center justify-between shadow-sm text-left">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-8 h-8 rounded-full bg-neutral-900 font-bold text-white flex items-center justify-center text-[10px] uppercase tracking-wider shrink-0 overflow-hidden">
+                            ${u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover" />` : `<span>${u.name.charAt(0)}</span>`}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h4 class="text-neutral-950 text-xs font-bold truncate leading-tight">${i+1}. ${u.name}</h4>
+                            <div class="flex items-center gap-1.5 mt-0.5 text-neutral-400 font-semibold text-[9px] truncate">
+                                <span>${u.school}</span>
+                                <span>•</span>
+                                <span class="text-neutral-800 flex items-center"><i class="ri-star-fill text-amber-400 mr-0.5 text-[10px]"></i> ${u.stars}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold bg-neutral-50 px-2.5 py-1 rounded-xl text-neutral-800 shrink-0">${u.count} Listed</span>
+                </div>`).join('');
+        }
+
+        function renderBuyersFeedDom(buyersList) {
+            const container = document.getElementById('adminBuyersRankFeed');
+            if (buyersList.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-xs text-neutral-400 bg-white border border-neutral-200/40 rounded-2xl">No buyer data mapped.</div>`;
+                return;
+            }
+            container.innerHTML = buyersList.map((u, i) => `
+                <div class="bg-white border border-neutral-200/50 p-3 rounded-2xl flex items-center justify-between shadow-sm text-left">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-8 h-8 rounded-full bg-neutral-900 font-bold text-white flex items-center justify-center text-[10px] uppercase tracking-wider shrink-0 overflow-hidden">
+                            ${u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover" />` : `<span>${u.name.charAt(0)}</span>`}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h4 class="text-neutral-950 text-xs font-bold truncate leading-tight">${i+1}. ${u.name}</h4>
+                            <p class="text-[9px] text-neutral-400 font-semibold truncate mt-0.5">${u.school}</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold bg-neutral-50 px-2.5 py-1 rounded-xl text-neutral-800 shrink-0">${u.count} Bought</span>
+                </div>`).join('');
+        }
+
+        function renderAllUsersFeedDom(allUsersList) {
+            const container = document.getElementById('adminAllUsersRankFeed');
+            if (allUsersList.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-xs text-neutral-400 bg-white border border-neutral-200/40 rounded-2xl">No registered users in registry.</div>`;
+                return;
+            }
+            container.innerHTML = allUsersList.map((u) => `
+                <div class="bg-white border border-neutral-200/50 p-3 rounded-2xl flex items-center justify-between shadow-sm text-left">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-8 h-8 rounded-full bg-neutral-900 font-bold text-white flex items-center justify-center text-[10px] uppercase tracking-wider shrink-0 overflow-hidden">
+                            ${u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover" />` : `<span>${u.name.charAt(0)}</span>`}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h4 class="text-neutral-950 text-xs font-bold truncate leading-tight">${u.name}</h4>
+                            <p class="text-[9px] text-neutral-400 font-semibold truncate mt-0.5">${u.school} • ID: ${u.id}</p>
+                        </div>
+                    </div>
+                    <span class="text-[9px] font-bold bg-neutral-50 px-2.5 py-1 rounded-xl text-neutral-500 shrink-0 font-sans-subtitle tracking-tight">${u.listingsCount}L • ${u.purchasesCount}B</span>
+                </div>`).join('');
+        }
+
+        window.onload = computeUserRankingsEngine;
+    </script>
+</body>
+</html>

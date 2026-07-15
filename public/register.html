@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zellr | Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="icon" type="image/png" href="assets/zellr-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+
+    <style>
+        .font-sans-premium { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif-logo { font-family: 'Playfair Display', serif; letter-spacing: -0.01em; }
+        .font-sans-subtitle { font-family: 'Montserrat', sans-serif; }
+
+        /* SOLID PURE CSS SPOTLIGHT BEAM */
+        @keyframes spotlightBreathe {
+            0%, 100% { opacity: 0.35; transform: scaleX(1.0) translateY(0px); }
+            50% { opacity: 0.65; transform: scaleX(1.20) translateY(2px); }
+        }
+        .premium-spotlight-beam {
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 280px;
+            pointer-events: none; z-index: 10; filter: blur(28px);
+            will-change: opacity, transform; animation: spotlightBreathe 6s ease-in-out infinite;
+            background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 55%, rgba(0, 0, 0, 0) 100__);
+        }
+
+        /* Premium Ambient Breathing Logo Pulse Keyframes */
+        @keyframes logoBreathingPulse {
+            0%, 100% { opacity: 0.30; transform: scale(0.92); filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
+            50% { opacity: 1; transform: scale(1.02); filter: drop-shadow(0 0 20px rgba(255,255,255,0.15)); }
+        }
+        .animate-pulse-logo {
+            animation: logoBreathingPulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            will-change: opacity, transform, filter;
+        }
+
+        @keyframes sheetPanUp {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(0); }
+        }
+        .auth-sheet-entry { animation: sheetPanUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-black flex justify-center items-center min-h-screen p-4 font-sans-premium">
+
+    <div class="w-[390px] h-[844px] bg-black rounded-[48px] shadow-[0_30px_70px_-15px_rgba(0,0,0,1)] overflow-hidden flex flex-col justify-between relative select-none border border-neutral-900/60">
+        
+        <div id="successModal" class="absolute inset-0 bg-black z-40 flex flex-col items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-500">
+            <div class="w-24 h-24 flex items-center justify-center">
+                <img src="assets/zellr-logo.png" alt="Zellr Logo" class="w-full h-auto object-contain invert brightness-200 animate-pulse-logo" />
+            </div>
+        </div>
+
+        <div class="premium-spotlight-beam"></div>
+        
+        <div class="w-full h-[200px] relative flex flex-col items-center justify-center text-center p-4 z-10">
+            <h1 class="text-[50px] font-bold text-white font-serif-logo leading-none">Zellr</h1>
+            <p class="text-[9.5px] uppercase tracking-[0.24em] font-bold text-neutral-400 mt-2 font-sans-subtitle">The Trusted Campus Marketplace</p>
+        </div>
+
+        <div class="bg-white rounded-t-[40px] p-6 flex flex-col justify-between h-[644px] shadow-[0_-15px_40px_rgba(0,0,0,0.4)] auth-sheet-entry z-20">
+            <div class="flex flex-col flex-1 overflow-y-auto no-scrollbar pb-2">
+                <div class="text-center mb-5">
+                    <h2 class="text-2xl font-bold text-neutral-950 tracking-tight">Create your account</h2>
+                    <p class="text-neutral-400 text-sm font-medium mt-1">Join the campus marketplace</p>
+                </div>
+
+                <div id="googleButtonContainer" class="w-full flex justify-center"></div>
+
+                <div class="flex items-center my-4">
+                    <div class="flex-1 border-t border-neutral-100"></div>
+                    <span class="px-4 text-[10px] font-bold text-neutral-400 tracking-widest uppercase">or</span>
+                    <div class="flex-1 border-t border-neutral-100"></div>
+                </div>
+
+                <form id="registerForm" class="space-y-3.5" novalidate>
+                    <!-- TWO-COLUMN GRID COUPLING MODULE FOR NAME INPUT SEPARATION -->
+                    <div class="grid grid-cols-2 gap-3 text-left">
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">First Name</label>
+                            <input id="firstNameInput" type="text" placeholder="Juan" class="w-full bg-neutral-50 focus:bg-white text-neutral-900 placeholder-neutral-400 text-sm font-medium px-4 py-2.5 rounded-xl border border-neutral-200/80 focus:border-neutral-950 focus:ring-4 focus:ring-neutral-100 transition-all outline-none" required />
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Last Name</label>
+                            <input id="lastNameInput" type="text" placeholder="Dela Cruz" class="w-full bg-neutral-50 focus:bg-white text-neutral-900 placeholder-neutral-400 text-sm font-medium px-4 py-2.5 rounded-xl border border-neutral-200/80 focus:border-neutral-950 focus:ring-4 focus:ring-neutral-100 transition-all outline-none" required />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Gmail Address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-neutral-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                                </svg>
+                            </span>
+                            <input id="emailInput" type="email" placeholder="example@gmail.com" class="w-full bg-neutral-50 focus:bg-white text-neutral-900 placeholder-neutral-400 text-sm font-medium pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200/80 focus:border-neutral-950 focus:ring-4 focus:ring-neutral-100 transition-all outline-none" required />
+                        </div>
+                        <p id="emailError" class="hidden text-red-600 text-xs font-semibold mt-1.5 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                            </svg>
+                            System requires a valid working @gmail.com address.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-neutral-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                                </svg>
+                            </span>
+                            <input id="passwordInput" type="password" placeholder="Create a strong password" class="w-full bg-neutral-50 focus:bg-white text-neutral-900 placeholder-neutral-400 text-sm pl-10 pr-10 py-2.5 rounded-xl border border-neutral-200/80 focus:border-neutral-950 focus:ring-4 focus:ring-neutral-100 transition-all outline-none" required />
+                            <button type="button" onclick="toggleFieldType('passwordInput', 'regEyeIcon')" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-neutral-400 hover:text-neutral-950 transition-colors focus:outline-none">
+                                <i id="regEyeIcon" class="ri-eye-line text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5">Confirm Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-neutral-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </span>
+                            <input id="confirmPasswordInput" type="password" placeholder="Retype your password" class="w-full bg-neutral-50 focus:bg-white text-neutral-900 placeholder-neutral-400 text-sm pl-10 pr-10 py-2.5 rounded-xl border border-neutral-200/80 focus:border-neutral-950 focus:ring-4 focus:ring-neutral-100 transition-all outline-none" required />
+                            <button type="button" onclick="toggleFieldType('confirmPasswordInput', 'confirmEyeIcon')" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-neutral-400 hover:text-neutral-950 transition-colors focus:outline-none">
+                                <i id="confirmEyeIcon" class="ri-eye-line text-lg"></i>
+                            </button>
+                        </div>
+                        <p id="passwordError" class="hidden text-red-600 text-xs font-semibold mt-1.5 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                            </svg>
+                            Passwords do not match.
+                        </p>
+                    </div>
+
+                    <p id="registerFormFeedback" class="hidden text-red-600 text-xs font-semibold flex items-center gap-1.5 pt-1">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                        </svg>
+                        <span id="regFeedbackText">Registration failed.</span>
+                    </p>
+
+                    <button type="submit" id="registerSubmitBtn" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-bold text-sm py-3.5 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md">
+                        Register
+                    </button>
+                </form>
+            </div>
+
+            <div class="w-full pt-4 text-center border-t border-neutral-100">
+                <p class="text-xs text-neutral-400 font-medium">Already have an account? <button onclick="window.location.href='login.html'" class="text-neutral-950 font-bold hover:underline ml-1 focus:outline-none">Log in!</button></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clean Animated Image Pulse Transition
+        function executeSuccessModalFlow(fallbackRedirectUrl) {
+            const overlayLoader = document.getElementById('successModal');
+            overlayLoader.classList.remove('opacity-0', 'pointer-events-none');
+            overlayLoader.classList.add('opacity-100');
+            setTimeout(() => { window.location.href = fallbackRedirectUrl; }, 1400);
+        }
+
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "732790915641-9mcsgdk0evenaaraevki7enjjv3vrhu9.apps.googleusercontent.com",
+                callback: handleGoogleAuthCallback
+            });
+
+            // NEW: Renders the official Canva-style inline iframe button
+            google.accounts.id.renderButton(
+                document.getElementById("googleButtonContainer"),
+                { theme: "outline", size: "large", width: 342, text: "continue_with", shape: "rectangular", logo_alignment: "center" }
+            );
+
+            // Optional: Automatically shows the slide-down One Tap prompt if the user hasn't closed it recently
+            google.accounts.id.prompt(); 
+        };
+
+        // Shared OAuth Handshake Pipeline Response Logic
+        async function handleGoogleAuthCallback(response) {
+            try {
+                const res = await fetch('http://localhost:3000/api/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: response.credential })
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('zellr_session_token', data.token);
+                    localStorage.setItem('zellr_user_profile', JSON.stringify(data.user));
+                    executeSuccessModalFlow('dashboard.html');
+                } else {
+                    displayRegisterFeedback(data.error || 'Google verification failed.');
+                }
+            } catch (err) {
+                displayRegisterFeedback('Google integration gateway timed out.');
+            }
+        }
+
+        function displayRegisterFeedback(message) {
+            const container = document.getElementById('registerFormFeedback');
+            const labelText = document.getElementById('regFeedbackText');
+            if (container && labelText) {
+                labelText.textContent = message;
+                container.classList.remove('hidden');
+            }
+        }
+
+        function clearAllValidationStates() {
+            document.getElementById('registerFormFeedback').classList.add('hidden');
+            document.getElementById('emailError').classList.add('hidden');
+            document.getElementById('passwordError').classList.add('hidden');
+            document.getElementById('emailInput').classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-100');
+            document.getElementById('confirmPasswordInput').classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-100');
+        }
+
+        function toggleFieldType(fieldId, iconId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(iconId);
+
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('ri-eye-line');
+                icon.classList.add('ri-eye-off-line');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('ri-eye-off-line');
+                icon.classList.add('ri-eye-line');
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            clearAllValidationStates();
+            
+            const firstNameField = document.getElementById('firstNameInput');
+            const lastNameField = document.getElementById('lastNameInput');
+            const emailField = document.getElementById('emailInput');
+            const passwordField = document.getElementById('passwordInput');
+            const confirmPasswordField = document.getElementById('confirmPasswordInput');
+            
+            if (!emailField.value.trim().toLowerCase().endsWith('@gmail.com')) {
+                emailField.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-100');
+                document.getElementById('emailError').classList.remove('hidden');
+                return;
+            }
+
+            if (passwordField.value !== confirmPasswordField.value) {
+                confirmPasswordField.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-100');
+                document.getElementById('passwordError').classList.remove('hidden');
+                return;
+            }
+
+            const submitBtn = document.getElementById('registerSubmitBtn');
+            const originalText = submitBtn.innerHTML;
+
+            // NEW: Dynamic API Base Routing
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            submitBtn.innerHTML = '<i class="p-1 border-2 border-t-transparent border-white rounded-full animate-spin"></i> Creating...';
+            submitBtn.style.pointerEvents = 'none';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        firstName: firstNameField.value.trim(),
+                        lastName: lastNameField.value.trim(),
+                        email: emailField.value.trim(),
+                        password: passwordField.value.trim()
+                    })
+                });
+
+                const data = await res.json();
+                submitBtn.innerHTML = originalText;
+                submitBtn.style.pointerEvents = 'auto';
+
+                if (res.status === 201 || res.status === 200) {
+                    executeSuccessModalFlow('login.html');
+                } else {
+                    displayRegisterFeedback(data.error || 'Registration failed.');
+                }
+            } catch (error) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.style.pointerEvents = 'auto';
+                displayRegisterFeedback('Cannot establish handshake contact with the server.');
+            }
+        });
+    </script>
+</body>
+</html>

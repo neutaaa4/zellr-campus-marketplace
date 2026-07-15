@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const token = localStorage.getItem('zellr_session_token');
+            const profile = localStorage.getItem('zellr_user_profile');
+            if (!token || !profile) { window.location.replace('../login.html'); return; }
+            try { if (String(JSON.parse(profile).role).toLowerCase().trim() !== 'admin') window.location.replace('../dashboard.html'); } catch(e) { window.location.replace('../login.html'); }
+        })();
+    </script>
+    <title>Zellr Admin | Marketplace Overview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/png" href="../assets/zellr-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    <style>
+        .font-sans-premium { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-sans-subtitle { font-family: 'Montserrat', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
+
+    <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
+        
+        <div id="admin-header" class="z-30"></div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-10 relative z-20 space-y-5 pt-24 px-4">
+            <div class="px-1 text-left">
+                <p class="text-neutral-400 text-[10px] font-bold uppercase tracking-wider font-sans-subtitle">Product Listings</p>
+                <h2 class="text-neutral-950 text-xl font-bold tracking-tight mt-0.5">Marketplace Inventory</h2>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5">
+                <div class="bg-white border border-neutral-200/40 rounded-2xl p-3 text-center shadow-sm">
+                    <p id="badgeActiveCount" class="text-neutral-950 text-base font-bold leading-none">0</p>
+                    <p class="text-emerald-600 font-bold uppercase tracking-widest text-[8px] font-sans-subtitle mt-1.5">Active</p>
+                </div>
+                <div class="bg-white border border-neutral-200/40 rounded-2xl p-3 text-center shadow-sm">
+                    <p id="badgeSoldCount" class="text-neutral-950 text-base font-bold leading-none">0</p>
+                    <p class="text-indigo-600 font-bold uppercase tracking-widest text-[8px] font-sans-subtitle mt-1.5">Sold</p>
+                </div>
+                <div class="bg-white border border-neutral-200/40 rounded-2xl p-3 text-center shadow-sm">
+                    <p id="badgeCanceledCount" class="text-neutral-950 text-base font-bold leading-none">0</p>
+                    <p class="text-red-500 font-bold uppercase tracking-widest text-[8px] font-sans-subtitle mt-1.5">Canceled</p>
+                </div>
+            </div>
+
+            <div class="w-full bg-white border border-neutral-200/50 rounded-[28px] p-5 shadow-sm flex flex-col items-center">
+                <p class="w-full text-[10px] font-bold text-neutral-400 uppercase tracking-wider font-sans-subtitle text-left mb-2">Listing status</p>
+                <!-- DYNAMIC WRAPPER: Replaces empty canvas chart with a clean status placeholder -->
+                <div id="chartContainerCanvasWrapper" class="w-full h-44 relative flex items-center justify-center">
+                    <canvas id="productInventoryPieChart"></canvas>
+                </div>
+            </div>
+
+            <div class="flex bg-neutral-100 p-0.5 rounded-xl text-[10px] font-bold font-sans-subtitle shadow-sm select-none w-full">
+                <button type="button" onclick="toggleInventoryFilterTab(this, 'all')" class="inv-filter-btn flex-1 py-1.5 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none">All</button>
+                <button type="button" onclick="toggleInventoryFilterTab(this, 'active')" class="inv-filter-btn flex-1 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Active</button>
+                <button type="button" onclick="toggleInventoryFilterTab(this, 'sold')" class="inv-filter-btn flex-1 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Sold</button>
+                <button type="button" onclick="toggleInventoryFilterTab(this, 'canceled')" class="inv-filter-btn flex-1 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Canceled</button>
+            </div>
+
+            <div class="space-y-2.5">
+                <p class="text-neutral-400 text-[10px] font-bold tracking-wider uppercase font-sans-subtitle pl-1 text-left">All Listings</p>
+                <div id="adminProductTableFeed" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <div id="admin-sidebar-container" data-active="inventory" class="absolute inset-0 pointer-events-none z-50"></div>
+    </div>
+
+    <script src="admin_layout.js"></script>
+    <script>
+        let myChartInstance = null;
+        let originalProductsCache = [];
+        let activeStatusTabFilter = 'all';
+
+        function safeText(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function toggleInventoryFilterTab(btnElement, targetStatus) {
+            if (activeStatusTabFilter === targetStatus) return;
+            activeStatusTabFilter = targetStatus;
+
+            document.querySelectorAll('.inv-filter-btn').forEach(btn => {
+                btn.className = "inv-filter-btn flex-1 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none";
+            });
+            btnElement.className = "inv-filter-btn flex-1 py-1.5 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none";
+            
+            renderFilteredProductGrid();
+        }
+
+        async function populateAdminInventoryMetricsEngine() {
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
+            let liveProducts = [];
+            let liveOrders = [];
+
+            try {
+                const prodRes = await fetch(`${API_BASE}/api/products`);
+                if (prodRes.ok) liveProducts = await prodRes.json();
+                const ordRes = await fetch(`${API_BASE}/api/orders`);
+                if (ordRes.ok) liveOrders = await ordRes.json();
+            } catch(e) { console.error(e); }
+
+            let totalActive = 0, totalSold = 0, totalCanceled = 0;
+
+            originalProductsCache = liveProducts.map(product => {
+                const matchingTransactions = liveOrders.filter(o => parseInt(o.product_id) === parseInt(product.id) && String(o.status).toLowerCase() !== 'inquiry');
+                
+                let assignedStatus = 'active';
+                if (product.status === 'sold' || matchingTransactions.some(t => t.status === 'completed')) {
+                    assignedStatus = 'sold';
+                    totalSold++;
+                } else if (matchingTransactions.some(t => t.status === 'canceled' || t.status === 'cancelled')) {
+                    assignedStatus = 'canceled';
+                    totalCanceled++;
+                } else {
+                    totalActive++;
+                }
+                
+                product.computedStatus = assignedStatus;
+                return product;
+            });
+
+            document.getElementById('badgeActiveCount').textContent = totalActive;
+            document.getElementById('badgeSoldCount').textContent = totalSold;
+            document.getElementById('badgeCanceledCount').textContent = totalCanceled;
+
+            const chartWrapper = document.getElementById('chartContainerCanvasWrapper');
+
+            // INTENTIONAL EMPTY STATE: Replaces the blank chart with a clean placeholder
+            if (totalActive === 0 && totalSold === 0 && totalCanceled === 0) {
+                chartWrapper.innerHTML = `
+                    <div class="flex flex-col items-center justify-center text-center space-y-2 py-4">
+                        <div class="w-10 h-10 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400"><i class="ri-pie-chart-line text-lg"></i></div>
+                        <div class="space-y-0.5">
+                            <h4 class="text-neutral-900 text-xs font-bold tracking-tight">No Listings Yet</h4>
+                            <p class="text-neutral-400 text-[10px] font-medium max-w-[180px] mx-auto">This chart updates automatically as campus items are posted.</p>
+                        </div>
+                    </div>`;
+            } else {
+                chartWrapper.innerHTML = `<canvas id="productInventoryPieChart"></canvas>`;
+                const ctx = document.getElementById('productInventoryPieChart').getContext('2d');
+                if (myChartInstance) myChartInstance.destroy();
+                myChartInstance = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Active', 'Sold', 'Canceled'],
+                        datasets: [{
+                            data: [totalActive, totalSold, totalCanceled],
+                            backgroundColor: ['#10b981', '#4f46e5', '#ef4444'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { 
+                                display: true,
+                                position: 'bottom',
+                                labels: { boxWidth: 10, padding: 12, font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' } }
+                            } 
+                        } 
+                    }
+                });
+            }
+
+            renderFilteredProductGrid();
+        }
+
+        function renderFilteredProductGrid() {
+            const feedContainer = document.getElementById('adminProductTableFeed');
+            
+            let dataset = originalProductsCache;
+            if (activeStatusTabFilter !== 'all') {
+                dataset = originalProductsCache.filter(p => p.computedStatus === activeStatusTabFilter);
+            }
+
+            if (dataset.length === 0) {
+                feedContainer.innerHTML = `
+                    <div class="w-full bg-white border border-neutral-200/40 rounded-[24px] py-12 px-4 flex flex-col items-center justify-center text-center space-y-3 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400"><i class="ri-box-3-line text-lg"></i></div>
+                        <div class="space-y-0.5">
+                            <h4 class="text-neutral-900 text-xs font-bold tracking-tight">No Items Match Filter</h4>
+                            <p class="text-neutral-400 text-[10px] font-medium max-w-[180px] mx-auto">There are no items matching the "${activeStatusTabFilter}" status criteria inside the registry ledger.</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            let html = "";
+            dataset.forEach(item => {
+                let badgeStyle = "bg-neutral-50 text-neutral-500";
+                if (item.computedStatus === 'active') badgeStyle = "bg-emerald-50 text-emerald-600 border border-emerald-100";
+                if (item.computedStatus === 'sold') badgeStyle = "bg-indigo-50 text-indigo-600 border border-indigo-100";
+                if (item.computedStatus === 'canceled') badgeStyle = "bg-red-50 text-red-600 border border-red-100";
+
+                html += `
+                    <div class="bg-white border border-neutral-200/60 p-3 rounded-2xl flex items-center justify-between gap-3 shadow-sm text-left">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <div class="w-10 h-10 bg-neutral-100 border border-neutral-200 rounded-xl overflow-hidden shrink-0">
+                                <img src="${item.image_url || 'assets/catalog/placeholder.png'}" class="w-full h-full object-cover" />
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h4 class="text-neutral-950 text-xs font-bold truncate leading-tight">${safeText(item.title)}</h4>
+                                <p class="text-[9px] text-neutral-400 font-semibold truncate uppercase mt-0.5">${safeText(item.category)} • ID: ${item.id}</p>
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-neutral-950 font-bold text-xs">₱${parseFloat(item.price || 0).toFixed(2)}</p>
+                            <span class="text-[7px] tracking-wider font-bold px-1.5 py-0.5 rounded uppercase mt-0.5 ${badgeStyle}">${item.computedStatus}</span>
+                        </div>
+                    </div>`;
+            });
+            feedContainer.innerHTML = html;
+        }
+
+        window.onload = populateAdminInventoryMetricsEngine;
+    </script>
+</body>
+</html>

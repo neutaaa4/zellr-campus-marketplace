@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const token = localStorage.getItem('zellr_session_token');
+            if (!token) {
+                // Using .replace instead of .href ensures the user cannot use 
+                // the browser's "Back" button to return to the protected dashboard area.
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    <title>Zellr | Seller Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="assets/zellr-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    
+    <style>
+        .font-sans-premium { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif-logo { font-family: 'Playfair Display', serif; letter-spacing: -0.01em; }
+        .font-sans-subtitle { font-family: 'Montserrat', sans-serif; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* PREMIUM VISIBLE EMPTY CIRCLE CHECKBOX TOGGLES */
+        .custom-rounded-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #A1A1AA;
+            border-radius: 9999px;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            flex-shrink: 0;
+            cursor: pointer;
+            background-color: transparent;
+        }
+        .custom-rounded-checkbox:checked {
+            background-color: #0A0A0A;
+            border-color: #0A0A0A;
+        }
+        .custom-rounded-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: white;
+            border-radius: 9999px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
+
+    <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
+        
+        <div id="app-header" class="z-30"></div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-5 pt-24">
+            
+            <div class="px-4">
+                <div class="w-full bg-white border border-neutral-200/50 rounded-[32px] p-5 shadow-[0_8px_25px_rgba(0,0,0,0.02)] space-y-4">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <p class="text-neutral-400 text-xs font-semibold uppercase tracking-wider font-sans-subtitle text-[10px]">Merchant Panel</p>
+                            <div id="merchantOverallRatingDisplay" class="flex items-center gap-0.5 text-xs">
+                                <span class="text-neutral-400 font-medium">Loading...</span>
+                            </div>
+                        </div>
+                        <h2 class="text-neutral-950 text-2xl font-bold tracking-tight mt-1">
+                            <span id="sellerHubUserName">Art Nathan</span>'s Shop
+                        </h2>
+                        <p class="text-neutral-500 text-xs font-medium mt-1">Monitor your performance and marketplace store inventory.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 pt-1">
+                        <button onclick="toggleSellModal(true)" class="bg-neutral-950 hover:bg-neutral-900 active:scale-[0.98] transition-all text-white py-3 px-4 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold shadow-md outline-none">
+                            <i class="ri-price-tag-3-line text-sm"></i>
+                            <span>Sell Product</span>
+                        </button>
+                        
+                        <button onclick="toggleAnalyticsModal(true)" class="bg-[#EDEDF2] hover:bg-[#E4E4E9] active:scale-[0.98] transition-all text-neutral-950 py-3 px-4 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold outline-none">
+                            <i class="ri-line-chart-line text-sm text-neutral-700"></i>
+                            <span>See Sales</span>
+                        </button>
+
+                        <button onclick="openRatingsViewer()" class="col-span-2 bg-white border border-neutral-200/80 hover:bg-neutral-50 active:scale-[0.98] transition-all text-neutral-950 py-3 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold shadow-sm outline-none">
+                            <i class="ri-star-smile-fill text-sm text-yellow-500"></i>
+                            <span>View Customer Ratings</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-4">
+                <div class="w-full bg-white border border-neutral-200/40 rounded-3xl p-4 shadow-[0_4px_15px_rgba(0,0,0,0.01)] grid grid-cols-3 gap-2 text-center divide-x divide-neutral-100">
+                    <div>
+                        <p id="activeCountLabel" class="text-neutral-950 text-base font-bold leading-none">0</p>
+                        <p class="text-neutral-400 font-bold uppercase tracking-widest text-[8.5px] font-sans-subtitle mt-1.5">Active</p>
+                    </div>
+                    <div>
+                        <p id="soldCountLabel" class="text-neutral-950 text-base font-bold leading-none">0</p>
+                        <p class="text-neutral-400 font-bold uppercase tracking-widest text-[8.5px] font-sans-subtitle mt-1.5">Sold</p>
+                    </div>
+                    <div>
+                        <p id="totalCountLabel" class="text-neutral-950 text-base font-bold leading-none">0</p>
+                        <p class="text-neutral-400 font-bold uppercase tracking-widest text-[8.5px] font-sans-subtitle mt-1.5">Total</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-5 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-neutral-900 text-[15px] font-bold tracking-tight text-left">Orders</h3>
+                    <div class="flex bg-neutral-100 p-0.5 rounded-xl text-[10px] font-bold font-sans-subtitle shadow-sm">
+                        <button type="button" onclick="switchOrdersDisplayFilter('incoming')" id="ordersTabIncomingBtn" class="px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none">Incoming</button>
+                        <button type="button" onclick="switchOrdersDisplayFilter('completed')" id="ordersTabCompletedBtn" class="px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Completed</button>
+                        <button type="button" onclick="switchOrdersDisplayFilter('canceled')" id="ordersTabCanceledBtn" class="px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Canceled</button>
+                    </div>
+                </div>
+                <div id="incomingOrdersTrackWrapper" class="space-y-2">
+                    <div class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-12 px-4 flex flex-col items-center justify-center text-center space-y-3 shadow-sm">
+                        <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
+                            <i class="ri-file-list-3-line text-xl"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-neutral-900 text-sm font-bold tracking-tight">Loading orders...</h4>
+                            <p class="text-neutral-400 text-xs font-medium max-w-[200px] mx-auto">Please wait while we sync.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="catalogListingWrapper" class="space-y-3 px-5 relative">
+                <div class="flex bg-neutral-100 p-0.5 rounded-xl text-[10px] font-bold font-sans-subtitle shadow-sm">
+                    <button type="button" onclick="switchListingsDisplayFilter('active')" id="listingsTabActiveBtn" class="px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none">Active</button>
+                    <button type="button" onclick="switchListingsDisplayFilter('reserved')" id="listingsTabReservedBtn" class="px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Reserved</button>
+                    <button type="button" onclick="switchListingsDisplayFilter('sold')" id="listingsTabSoldBtn" class="px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Sold</button>
+                </div>
+
+                <div id="emptyCatalogState" class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-12 px-4 flex flex-col items-center justify-center text-center space-y-3 shadow-sm">
+                    <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400"><i class="ri-inbox-archive-line text-xl"></i></div>
+                    <div class="space-y-1">
+                        <h4 class="text-neutral-900 text-sm font-bold tracking-tight">Loading listings...</h4>
+                        <p class="text-neutral-400 text-xs font-medium max-w-[200px] mx-auto">Please wait while we sync.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="sellProductModal" onclick="triggerDiscardConfirmation('sell')" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
+            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-4 transform translate-y-full transition-transform duration-300 modal-drawer border-t border-neutral-200/60">
+                <div class="flex items-center justify-between pb-2 border-b border-neutral-200/60">
+                    <h3 class="text-neutral-950 text-lg font-bold tracking-tight">List Item For Sale</h3>
+                    <button type="button" onclick="triggerDiscardConfirmation('sell')" class="w-8 h-8 rounded-full bg-[#EDEDF2] flex items-center justify-center text-neutral-600 outline-none"><i class="ri-close-line text-lg"></i></button>
+                </div>
+                
+                <form id="sellItemForm" novalidate class="space-y-4 text-left">
+                    <div>
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Attach Multiple Photos * (Minimum 1 Required)</label>
+                        <div class="grid grid-cols-4 gap-2 mt-1.5">
+                            <div onclick="document.getElementById('sellFileInputTrigger').click()" class="aspect-square bg-[#EDEDF2] border-2 border-dashed border-neutral-300 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-[#E4E4E9] transition-colors">
+                                <i class="ri-camera-line text-neutral-400 text-lg"></i>
+                                <span class="text-[8px] font-bold text-neutral-500 mt-0.5">Add</span>
+                            </div>
+                            <div id="sellPhotoPreviewCanvas" class="contents"></div>
+                        </div>
+                        <input type="file" id="sellFileInputTrigger" multiple accept="image/*" class="hidden" onchange="handleStorePhotoSelection(this, 'sell')" />
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Title *</label>
+                        <input type="text" name="title" maxlength="150" placeholder="e.g., Casio fx-991ES Plus" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium px-4 py-3 rounded-xl mt-1 outline-none focus:border-neutral-950 transition-colors" required />
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Description *</label>
+                        <textarea name="description" rows="3" placeholder="Provide operational features, notes, defects or negotiation terms..." class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium p-4 rounded-xl mt-1 outline-none focus:border-neutral-950 resize-none transition-colors" required></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Price (PHP) *</label>
+                            <input type="number" name="price" step="0.01" placeholder="0.00" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium px-4 py-3 rounded-xl mt-1 outline-none focus:border-neutral-950 transition-colors" required />
+                        </div>
+                        <div class="relative">
+                            <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Category *</label>
+                            <div class="relative mt-1">
+                                <select name="category" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium pl-4 pr-10 py-3 rounded-xl outline-none focus:border-neutral-950 appearance-none transition-colors" required>
+                                    <option value="Books">Books</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Clothing">Clothing</option>
+                                    <option value="Dorm">Dorm</option>
+                                    <option value="Supplies">Supplies</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <i class="ri-arrow-down-s-line absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none text-base"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Campus Location *</label>
+                        <input type="text" id="sellFieldCampus" name="campus" maxlength="100" placeholder="e.g., PUP Taguig" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium px-4 py-3 rounded-xl mt-1 outline-none focus:border-neutral-950 transition-colors" required />
+                        <p id="sellCampusDefaultNotice" class="text-[10px] text-amber-600 font-medium mt-1.5 hidden flex items-center gap-1">
+                            <i class="ri-error-warning-line text-xs shrink-0"></i>
+                            <span>Displays 'University'. Update this on your Account Profile page.</span>
+                        </p>
+                    </div>
+
+                    <div class="relative">
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Condition *</label>
+                        <div class="relative mt-1">
+                            <select name="item_condition" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium pl-4 pr-10 py-3 rounded-xl outline-none appearance-none" required>
+                                <option value="Brand New">Brand New</option>
+                                <option value="Good">Good</option>
+                                <option value="Used">Used</option>
+                            </select>
+                            <i class="ri-arrow-down-s-line absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none text-base"></i>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Accepted Payment Methods</label>
+                        <div class="flex flex-wrap gap-2 pt-0.5">
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="sellPayCash" checked class="custom-rounded-checkbox" /> <i class="ri-money-cash-line text-sm text-neutral-400"></i> <span>Cash</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="sellPayGCash" class="custom-rounded-checkbox" /> <i class="ri-smartphone-line text-sm text-neutral-400"></i> <span>GCash</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="sellPayCredit" class="custom-rounded-checkbox" /> <i class="ri-bank-card-line text-sm text-neutral-400"></i> <span>Credit Card</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="sellPayDebit" class="custom-rounded-checkbox" /> <i class="ri-bank-card-2-line text-sm text-neutral-400"></i> <span>Debit Card</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="sellPayBank" class="custom-rounded-checkbox" /> <i class="ri-bank-line text-sm text-neutral-400"></i> <span>Bank Transfer</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Trading Options</label>
+                        <label class="w-full flex items-center justify-between p-3.5 bg-white border border-neutral-200 rounded-2xl cursor-pointer shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-neutral-950 leading-tight">Open to Trades</p>
+                                <p class="text-[10px] font-medium text-neutral-400">Allow others to propose a trade</p>
+                            </div>
+                            <input type="checkbox" id="sellTradeOpen" checked class="custom-rounded-checkbox w-4 h-4" />
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-bold py-3.5 rounded-xl text-xs tracking-wider shadow-md mt-2 transition-colors">SUBMIT TO MARKETPLACE</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="productDetailsModal" onclick="triggerDiscardConfirmation('edit')" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
+            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-4 transform translate-y-full transition-transform duration-300 modal-drawer border-t border-neutral-200/60">
+                <div class="flex items-center justify-between pb-2 border-b border-neutral-200/60">
+                    <h3 class="text-neutral-950 text-lg font-bold tracking-tight">Edit Product Details</h3>
+                    <button type="button" onclick="triggerDiscardConfirmation('edit')" class="w-8 h-8 rounded-full bg-[#EDEDF2] flex items-center justify-center text-neutral-600 outline-none"><i class="ri-close-line text-lg"></i></button>
+                </div>
+                
+                <form id="editItemForm" novalidate class="space-y-4 text-left">
+                    <input type="hidden" name="id" id="editTargetProductId" />
+                    
+                    <div>
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Attached Photos *</label>
+                        <div class="grid grid-cols-4 gap-2 mt-1.5">
+                            <div onclick="document.getElementById('editFileInputTrigger').click()" class="aspect-square bg-[#EDEDF2] border-2 border-dashed border-neutral-300 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-[#E4E4E9] transition-colors">
+                                <i class="ri-camera-line text-neutral-400 text-lg"></i>
+                                <span class="text-[8px] font-bold text-neutral-500 mt-0.5">Add</span>
+                            </div>
+                            <div id="editPhotoPreviewCanvas" class="contents"></div>
+                        </div>
+                        <input type="file" id="editFileInputTrigger" multiple accept="image/*" class="hidden" onchange="handleStorePhotoSelection(this, 'edit')" />
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Title *</label>
+                        <input type="text" id="editFieldTitle" name="title" maxlength="150" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium px-4 py-3 rounded-xl mt-1 outline-none focus:border-neutral-950 transition-colors" required />
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Description *</label>
+                        <textarea id="editFieldDescription" name="description" rows="3" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium p-4 rounded-xl mt-1 outline-none focus:border-neutral-950 resize-none transition-colors" required></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Price (PHP) *</label>
+                            <input type="number" id="editFieldPrice" name="price" step="0.01" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium px-4 py-3 rounded-xl mt-1 outline-none focus:border-neutral-950 transition-colors" required />
+                        </div>
+                        <div class="relative">
+                            <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Category *</label>
+                            <div class="relative mt-1">
+                                <select id="editFieldCategory" name="category" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium pl-4 pr-10 py-3 rounded-xl outline-none focus:border-neutral-950 appearance-none transition-colors" required>
+                                    <option value="Books">Books</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Clothing">Clothing</option>
+                                    <option value="Dorm">Dorm</option>
+                                    <option value="Supplies">Supplies</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <i class="ri-arrow-down-s-line absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none text-base"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Campus Location *</label>
+                        <input type="text" id="editFieldCampus" name="campus" maxlength="100" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium px-4 py-3 rounded-xl mt-1 outline-none focus:border-neutral-950 transition-colors" required />
+                    </div>
+
+                    <div class="relative">
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Condition *</label>
+                        <div class="relative mt-1">
+                            <select id="editFieldCondition" name="item_condition" class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium pl-4 pr-10 py-3 rounded-xl outline-none focus:border-neutral-950 appearance-none transition-colors" required>
+                                <option value="Brand New">Brand New</option>
+                                <option value="Good">Good</option>
+                                <option value="Used">Used</option>
+                            </select>
+                            <i class="ri-arrow-down-s-line absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none text-base"></i>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Accepted Payment Methods</label>
+                        <div class="flex flex-wrap gap-2 pt-0.5">
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="editPayCash" class="custom-rounded-checkbox" /> <i class="ri-money-cash-line text-sm text-neutral-400"></i> <span>Cash</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="editPayGCash" class="custom-rounded-checkbox" /> <i class="ri-smartphone-line text-sm text-neutral-400"></i> <span>GCash</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="editPayCredit" class="custom-rounded-checkbox" /> <i class="ri-bank-card-line text-sm text-neutral-400"></i> <span>Credit Card</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="editPayDebit" class="custom-rounded-checkbox" /> <i class="ri-bank-card-2-line text-sm text-neutral-400"></i> <span>Debit Card</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 px-3 py-2 bg-white border border-neutral-200 rounded-xl cursor-pointer text-xs font-medium text-neutral-800 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                                <input type="checkbox" id="editPayBank" class="custom-rounded-checkbox" /> <i class="ri-bank-line text-sm text-neutral-400"></i> <span>Bank Transfer</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Trading Options</label>
+                        <label class="w-full flex items-center justify-between p-3.5 bg-white border border-neutral-200 rounded-2xl cursor-pointer shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-neutral-950 leading-tight">Open to Trades</p>
+                                <p class="text-[10px] font-medium text-neutral-400">Allow others to propose a trade</p>
+                            </div>
+                            <input type="checkbox" id="editTradeOpen" class="custom-rounded-checkbox w-4 h-4" />
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-bold py-3.5 rounded-xl text-xs tracking-wider shadow-md mt-2 transition-colors">SAVE CHANGES</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="listedProductDetailsModal" onclick="toggleDetailsModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
+            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar transform translate-y-full transition-transform duration-300 border-t border-neutral-200/40 relative">
+                
+                <div class="absolute top-4 right-4 flex items-center gap-2 z-40">
+                    <button id="viewModalEditBtn" class="w-9 h-9 bg-white/90 backdrop-blur-md border border-neutral-200/40 rounded-full flex items-center justify-center text-neutral-700 shadow-md hover:text-neutral-950 transition-all outline-none">
+                        <i class="ri-edit-line text-sm"></i>
+                    </button>
+                    <button id="viewModalDeleteBtn" class="w-9 h-9 bg-white/90 backdrop-blur-md border border-neutral-200/40 rounded-full flex items-center justify-center text-red-500 shadow-md hover:bg-red-50 transition-all outline-none">
+                        <i class="ri-delete-bin-line text-sm"></i>
+                    </button>
+                    <button onclick="toggleDetailsModal(false)" class="w-9 h-9 bg-white/90 backdrop-blur-md border border-neutral-200/40 rounded-full flex items-center justify-center text-neutral-700 shadow-md hover:text-neutral-950 transition-all outline-none">
+                        <i class="ri-close-line text-base"></i>
+                    </button>
+                </div>
+
+                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner">
+                    <img id="viewModalProductImage" src="" class="w-full h-full object-cover transition-opacity duration-200" />
+                    <div id="viewModalSoldBadgeOverlay" class="absolute inset-0 bg-black/10 flex items-center justify-center hidden">
+                        <span class="bg-neutral-950 text-white font-bold text-[10px] tracking-widest uppercase px-4 py-2 rounded-full shadow-lg font-sans-subtitle">SOLD</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-left pt-3">
+                    <div class="flex items-center justify-between">
+                        <span id="viewModalProductCondition" class="bg-neutral-950 text-white font-bold text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full font-sans-subtitle">Good</span>
+                        <span id="viewModalProductPrice" class="text-neutral-950 text-xl font-bold">₱0.00</span>
+                    </div>
+                    <h3 id="viewModalProductTitle" class="text-neutral-950 text-lg font-bold tracking-tight pt-1">Product Title</h3>
+                    <p id="viewModalProductLocation" class="text-neutral-400 text-xs font-medium flex items-center gap-1"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span class="mt-0.5">PUP Taguig</span></p>
+                </div>
+
+                <div class="text-left space-y-2 pt-2">
+                    <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Description</h4>
+                    <p id="viewModalProductDescription" class="text-neutral-600 text-xs font-medium leading-relaxed bg-white border border-neutral-200/50 p-4 rounded-2xl max-h-24 overflow-y-auto no-scrollbar shadow-[0_2px_8px_rgba(0,0,0,0.01)]">Specifications</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-left pt-2">
+                    <div class="space-y-1">
+                        <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Category</h4>
+                        <div class="bg-white border border-neutral-200/60 px-4 py-3 rounded-xl text-neutral-800 text-xs font-bold truncate flex items-center gap-2 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                            <i class="ri-folder-open-line text-neutral-400 text-base"></i>
+                            <span id="viewModalProductCategory" class="mt-0.5">Electronics</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Trading Mode</h4>
+                        <div class="bg-white border border-neutral-200/60 px-4 py-3 rounded-xl text-neutral-800 text-xs font-bold truncate flex items-center gap-2 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                            <i class="ri-arrow-left-right-line text-neutral-400 text-base"></i>
+                            <span id="viewModalProductTrading" class="mt-0.5">Open to Trades</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-left space-y-2 pt-2 pb-1">
+                    <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Accepted Payment Methods</h4>
+                    <div id="viewModalProductPayments" class="flex flex-wrap gap-2 pt-0.5">
+                        <span class="px-3.5 py-2.5 bg-white border border-neutral-200/60 text-neutral-800 font-bold text-[11px] rounded-xl flex items-center gap-2 shadow-[0_2px_4px_rgba(0,0,0,0.01)]"><i class="ri-money-cash-line text-neutral-400 text-base"></i> Cash Payment</span>
+                    </div>
+                </div>
+
+                <div id="viewModalBuyerSectionBlock" class="hidden text-left space-y-2 pt-2 border-t border-neutral-200/60 mt-4">
+                    <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Acquired By Buyer</h4>
+                    <div class="flex items-center justify-between p-4 bg-white border border-neutral-200/40 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.01)]">
+                        <div class="flex items-center gap-3 text-left">
+                            <div id="viewModalBuyerAvatarWrapper" class="w-10 h-10 bg-neutral-950 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden shrink-0 border border-neutral-100">
+                                <i class="ri-user-line text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 id="viewModalBuyerNameText" class="text-neutral-950 text-xs font-bold leading-tight">Nate</h4>
+                                <p id="viewModalBuyerSchoolText" class="text-neutral-400 text-[10px] font-medium mt-0.5">Main Campus Student</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="analyticsProductModal" onclick="toggleAnalyticsModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
+            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 space-y-5 transform translate-y-full transition-transform duration-300 modal-drawer border-t border-neutral-200/60">
+                <div class="flex items-center gap-3 pb-2 border-b border-neutral-200/60"><button type="button" onclick="toggleAnalyticsModal(false)" class="w-8 h-8 rounded-full bg-[#EDEDF2] flex items-center justify-center text-neutral-950"><i class="ri-arrow-left-line font-bold"></i></button><h3 class="text-neutral-950 text-lg font-bold tracking-tight">Sales Dashboard</h3></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white border border-neutral-200/40 p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] space-y-2 text-left">
+                        <p class="text-neutral-400 text-[10px] font-bold uppercase tracking-wider font-sans-subtitle">Today</p>
+                        <p id="salesTodayLabel" class="text-neutral-950 text-base font-bold">₱0.00</p>
+                    </div>
+                    <div class="bg-white border border-neutral-200/40 p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] space-y-2 text-left">
+                        <p class="text-neutral-400 text-[10px] font-bold uppercase tracking-wider font-sans-subtitle">This Week</p>
+                        <p id="salesWeekLabel" class="text-neutral-950 text-base font-bold">₱0.00</p>
+                    </div>
+                    <div class="bg-white border border-neutral-200/40 p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] space-y-2 text-left">
+                        <p class="text-neutral-400 text-[10px] font-bold uppercase tracking-wider font-sans-subtitle">This Month</p>
+                        <p id="salesMonthLabel" class="text-neutral-950 text-base font-bold">₱0.00</p>
+                    </div>
+                    <div class="bg-white border border-neutral-200/40 p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] space-y-2 text-left">
+                        <p class="text-neutral-400 text-[10px] font-bold uppercase tracking-wider font-sans-subtitle">Total Revenue</p>
+                        <p id="salesTotalRevenueLabel" class="text-neutral-950 text-base font-bold">₱0.00</p>
+                        <p id="salesTotalCountLabel" class="text-neutral-400 text-[9px] font-medium mt-0.5">0 listings total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="premiumAlertSystemModal" class="absolute inset-0 bg-black/70 backdrop-blur-sm z-[150] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-6">
+            <div class="w-full bg-[#232325] rounded-[28px] border border-neutral-800 p-5 space-y-4 text-center shadow-2xl transform scale-95 transition-transform duration-200">
+                <div class="mx-auto w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-neutral-300" id="alertSystemIconBox">
+                    <i class="ri-information-line text-xl"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 id="alertSystemTitle" class="text-white text-base font-bold tracking-tight">Confirmation Request</h3>
+                    <p id="alertSystemMessage" class="text-neutral-400 text-xs font-medium leading-relaxed px-2">Are you sure you want to perform this action?</p>
+                </div>
+                <div class="flex items-center gap-2 pt-1" id="alertSystemActionButtonGroup">
+                    <button type="button" id="alertSystemCancelBtn" class="flex-1 bg-white/5 hover:bg-white/10 text-neutral-300 py-3 rounded-xl text-xs font-bold transition-all outline-none">Cancel</button>
+                    <button type="button" id="alertSystemConfirmBtn" class="flex-1 bg-white text-neutral-950 hover:bg-neutral-100 py-3 rounded-xl text-xs font-bold transition-all outline-none">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="imageCropperModal" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-[140] hidden flex-col justify-end transition-all opacity-0 pointer-events-none">
+            <div onclick="event.stopPropagation()" class="bg-white w-full rounded-t-[32px] flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-5 space-y-4 max-h-[88%]">
+                <div class="flex items-center justify-between border-b border-neutral-100 pb-2">
+                    <div>
+                        <h3 class="text-neutral-950 text-[15px] font-bold tracking-tight">Adjust & Crop Photo</h3>
+                        <p class="text-[10px] font-medium text-neutral-400 mt-0.5">Drag to reposition. Scroll your mouse wheel to zoom in and out.</p>
+                    </div>
+                    <button type="button" onclick="closeCropperModalWorkflow()" class="w-8 h-8 bg-neutral-100 hover:bg-neutral-200 rounded-full flex items-center justify-center text-neutral-600 transition-colors outline-none shrink-0"><i class="ri-close-line text-lg"></i></button>
+                </div>
+
+                <div class="w-full flex items-center justify-center bg-neutral-950 p-2 rounded-2xl relative overflow-hidden select-none aspect-square shadow-inner group">
+                    <canvas id="cropWorkspaceCanvas" class="max-w-full max-h-full rounded-xl object-contain cursor-move"></canvas>
+                    <div class="absolute inset-4 border border-dashed border-white/40 rounded-xl pointer-events-none flex items-center justify-center">
+                        <div class="w-full h-[1px] bg-white/20 absolute"></div>
+                        <div class="h-full w-[1px] bg-white/20 absolute"></div>
+                    </div>
+                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-neutral-900/80 backdrop-blur-md px-3 py-1 rounded-full text-[9px] font-bold text-neutral-300 tracking-wide uppercase font-sans-subtitle pointer-events-none transition-opacity duration-200 opacity-100 group-hover:opacity-0">
+                        <i class="ri-hand-coin-line mr-1"></i> Drag & Scroll Canvas
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-1 pb-3">
+                    <button type="button" onclick="closeCropperModalWorkflow()" class="flex-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 py-3 rounded-xl text-xs font-bold transition-all outline-none">Cancel</button>
+                    <button type="button" id="cropperConfirmSelectionBtn" class="flex-1 bg-neutral-950 hover:bg-neutral-900 text-white py-3 rounded-xl text-xs font-bold transition-all outline-none tracking-wide">APPLY CROP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Product Ratings Viewer Modal (Safely tucked INSIDE the mobile container) -->
+        <div id="productRatingsViewerModal" onclick="closeRatingsViewer()" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-[70] hidden flex-col justify-end transition-all opacity-0 pointer-events-none">
+            <div onclick="event.stopPropagation()" class="bg-white w-full rounded-t-[32px] flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-6 space-y-4 max-h-[80%]">
+                <div class="flex items-center justify-between border-b border-neutral-100 pb-3">
+                    <div>
+                        <h3 class="text-neutral-950 text-[17px] font-bold tracking-tight">Customer Ratings</h3>
+                        <p id="ratingsModalProductTitle" class="text-[11px] font-medium text-neutral-400 mt-0.5 truncate max-w-[200px]">Product Title</p>
+                    </div>
+                    <button type="button" onclick="closeRatingsViewer()" class="w-8 h-8 bg-neutral-100 hover:bg-neutral-200 rounded-full flex items-center justify-center text-neutral-600 transition-colors outline-none shrink-0 active:scale-95">
+                        <i class="ri-close-line text-lg"></i>
+                    </button>
+                </div>
+                
+                <div id="ratingsModalFeed" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-6">
+                    <!-- Reviews injected here via Javascript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Single, clean sidebar container fixed to the absolute front layer -->
+        <div id="sidebar-container" data-active="listing" class="absolute inset-0 pointer-events-none z-[100]"></div>
+        
+    </div> <!-- This successfully closes the Main Mobile App Wrapper -->
+
+    <script src="js/layout.js"></script>
+    <script>
+        // UPGRADE: Dynamically initializes the session identifier from local storage immediately at startup
+        let loggedInUserId = (function() {
+            try {
+                const cached = localStorage.getItem('zellr_user_profile');
+                if (cached) {
+                    const user = JSON.parse(cached);
+                    return user.id ? parseInt(user.id) : 3;
+                }
+            } catch(e) {}
+            return 3;
+        })();
+
+        let localProductsCache = []; 
+        let sellUploadedPhotos = [];
+        let editUploadedPhotos = []; 
+
+        // Core Image Cropper Native Interaction State Handlers
+        let cropperOriginalImageInstance = null;
+        let cropperActiveTargetMode = null; 
+        
+        // Precise Floating Point Coordinate Memory Matrices
+        let cropperInternalZoomState = 1.0;
+        let cropperInternalPanXState = 0;
+        let cropperInternalPanYState = 0;
+        
+        // Drag Tracking Context Lifecycles
+        let cropperIsCurrentlyDragging = false;
+        let cropperLastDragPointerX = 0;
+        let cropperLastDragPointerY = 0;
+
+        let currentOrdersTabState = 'incoming';
+        let currentListingsTabState = 'active';
+        
+        // NEW: Caches for order/rating lookups
+        let activeOrdersCache = [];  
+        let activeRatingsCache = [];
+
+        function safeText(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function triggerPremiumConfirmation(title, message, isDestructive, onConfirm) {
+            const modal = document.getElementById('premiumAlertSystemModal');
+            const box = modal ? modal.querySelector('div') : null;
+            const confirmBtn = document.getElementById('alertSystemConfirmBtn');
+            const cancelBtn = document.getElementById('alertSystemCancelBtn');
+            const iconBox = document.getElementById('alertSystemIconBox');
+            
+            if (!modal || !box) return;
+
+            document.getElementById('alertSystemTitle').textContent = title;
+            document.getElementById('alertSystemMessage').textContent = message;
+
+            if (isDestructive) {
+                confirmBtn.className = "flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl text-xs font-bold transition-all outline-none";
+                iconBox.className = "mx-auto w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center text-red-400";
+                iconBox.innerHTML = `<i class="ri-error-warning-line text-xl"></i>`;
+            } else {
+                confirmBtn.className = "flex-1 bg-white text-neutral-950 hover:bg-neutral-100 py-3 rounded-xl text-xs font-bold transition-all outline-none";
+                iconBox.className = "mx-auto w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-neutral-300";
+                iconBox.innerHTML = `<i class="ri-question-answer-line text-xl"></i>`;
+            }
+
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            box.classList.remove('scale-95');
+
+            confirmBtn.onclick = null;
+            cancelBtn.onclick = null;
+
+            confirmBtn.onclick = () => { modal.classList.add('pointer-events-none', 'opacity-0'); box.classList.add('scale-95'); if(onConfirm) onConfirm(); };
+            cancelBtn.onclick = () => { modal.classList.add('pointer-events-none', 'opacity-0'); box.classList.add('scale-95'); };
+        }
+
+        function validateCustomFormFields(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return false;
+            
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                field.classList.remove('!border-red-500', '!bg-red-50');
+                if (!field.value || field.value.trim() === '') {
+                    isValid = false;
+                    field.classList.add('!border-red-500', '!bg-red-50');
+                    field.addEventListener('input', function removeRed() {
+                        field.classList.remove('!border-red-500', '!bg-red-50');
+                        field.removeEventListener('input', removeRed);
+                    });
+                }
+            });
+
+            if (!isValid) {
+                triggerPremiumConfirmation("Missing Information", "Please fill out all the highlighted text fields in the form to continue.", true, null);
+            }
+            return isValid;
+        }
+
+        function isFormDirty(formId, photoArray) {
+            const form = document.getElementById(formId);
+            if (!form) return false;
+            const fields = form.querySelectorAll('input[type="text"], input[type="number"], textarea');
+            for (let f of fields) {
+                if (f.value.trim().length > 0) return true;
+            }
+            if (photoArray && photoArray.length > 0) return true;
+            return false;
+        }
+
+        function handleStorePhotoSelection(inputElement, mode) {
+            const files = Array.from(inputElement.files);
+            if (files.length === 0) return;
+
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    openImageCropperWorkflow(img, mode);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            inputElement.value = ""; 
+        }
+
+        function openImageCropperWorkflow(imageElement, mode) {
+            cropperOriginalImageInstance = imageElement;
+            cropperActiveTargetMode = mode;
+
+            // Reset interaction tracking frames cleanly
+            cropperInternalZoomState = 1.0;
+            cropperInternalPanXState = 0;
+            cropperInternalPanYState = 0;
+            cropperIsCurrentlyDragging = false;
+
+            const modal = document.getElementById('imageCropperModal');
+            const content = modal.querySelector('div');
+            const workspaceCanvas = document.getElementById('cropWorkspaceCanvas');
+
+            modal.classList.remove('hidden', 'pointer-events-none');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+                content.classList.remove('translate-y-full');
+                redrawCropperWorkspacePreview();
+                bindDirectWorkspaceInteractionEvents(workspaceCanvas);
+            }, 10);
+
+            document.getElementById('cropperConfirmSelectionBtn').onclick = commitCroppedPhotoPayloadSelection;
+        }
+
+        function bindDirectWorkspaceInteractionEvents(canvas) {
+            // Remove previous trailing event traces safely before rebinding
+            canvas.onmousedown = null;
+            canvas.onmousemove = null;
+            window.onmouseup = null;
+            canvas.onwheel = null;
+
+            // Support Mobile/Touch Drag Actions natively
+            canvas.ontouchstart = null;
+            canvas.ontouchmove = null;
+            canvas.ontouchend = null;
+
+            // 1. DRAG START POINTER INTERCEPTION
+            const startDragAction = (clientX, clientY) => {
+                cropperIsCurrentlyDragging = true;
+                cropperLastDragPointerX = clientX;
+                cropperLastDragPointerY = clientY;
+            };
+
+            canvas.onmousedown = (e) => { e.preventDefault(); startDragAction(e.clientX, e.clientY); };
+            canvas.ontouchstart = (e) => { if(e.touches.length === 1) startDragAction(e.touches[0].clientX, e.touches[0].clientY); };
+
+            // 2. MOVE MOVEMENT DELTA VECTOR RE-CALCULATION
+            const moveDragAction = (clientX, clientY) => {
+                if (!cropperIsCurrentlyDragging || !cropperOriginalImageInstance) return;
+                
+                const deltaX = clientX - cropperLastDragPointerX;
+                const deltaY = clientY - cropperLastDragPointerY;
+
+                cropperInternalPanXState += deltaX;
+                cropperInternalPanYState -= deltaY; // Sync inverted alignment metrics across mouse vectors
+
+                cropperLastDragPointerX = clientX;
+                cropperLastDragPointerY = clientY;
+
+                redrawCropperWorkspacePreview();
+            };
+
+            canvas.onmousemove = (e) => { if(cropperIsCurrentlyDragging) moveDragAction(e.clientX, e.clientY); };
+            canvas.ontouchmove = (e) => { if(cropperIsCurrentlyDragging && e.touches.length === 1) { e.preventDefault(); moveDragAction(e.touches[0].clientX, e.touches[0].clientY); } };
+
+            // 3. RELEASE CYCLE CLOSURE CLOSES LIFECYCLE
+            window.onmouseup = () => { cropperIsCurrentlyDragging = false; };
+            canvas.ontouchend = () => { cropperIsCurrentlyDragging = false; };
+
+            // 4. MOUSE WHEEL SCROLL SCALING EMULATION INTERCEPTOR
+            canvas.onwheel = (e) => {
+                e.preventDefault();
+                const zoomFactorDelta = e.deltaY * -0.0015; // Fine-tune zooming tracking speeds
+                cropperInternalZoomState = Math.min(Math.max(1.0, cropperInternalZoomState + zoomFactorDelta), 4.0);
+                redrawCropperWorkspacePreview();
+            };
+        }
+
+        function closeCropperModalWorkflow() {
+            const modal = document.getElementById('imageCropperModal');
+            const content = modal.querySelector('div');
+
+            modal.classList.remove('opacity-100');
+            content.classList.add('translate-y-full');
+
+            setTimeout(() => {
+                modal.classList.add('hidden', 'pointer-events-none');
+                modal.classList.remove('flex');
+                cropperOriginalImageInstance = null;
+                cropperActiveTargetMode = null;
+            }, 300);
+        }
+
+        function redrawCropperWorkspacePreview() {
+            const canvas = document.getElementById('cropWorkspaceCanvas');
+            if (!canvas || !cropperOriginalImageInstance) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 400; 
+
+            ctx.fillStyle = "#171717";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const img = cropperOriginalImageInstance;
+            let renderWidth, renderHeight;
+            const aspectRatio = img.width / img.height;
+
+            if (aspectRatio > 1) {
+                renderWidth = canvas.width * aspectRatio;
+                renderHeight = canvas.height;
+            } else {
+                renderWidth = canvas.width;
+                renderHeight = canvas.height / aspectRatio;
+            }
+
+            renderWidth *= cropperInternalZoomState;
+            renderHeight *= cropperInternalZoomState;
+
+            const x = (canvas.width - renderWidth) / 2 + cropperInternalPanXState;
+            const y = (canvas.height - renderHeight) / 2 - cropperInternalPanYState; 
+
+            ctx.drawImage(img, x, y, renderWidth, renderHeight);
+        }
+
+        function commitCroppedPhotoPayloadSelection() {
+            if (!cropperOriginalImageInstance) return;
+
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = 600;
+            finalCanvas.height = 600; 
+            const finalCtx = finalCanvas.getContext('2d');
+
+            const workspace = document.getElementById('cropWorkspaceCanvas');
+            const img = cropperOriginalImageInstance;
+
+            finalCtx.fillStyle = "#FFFFFF";
+            finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+            let renderWidth, renderHeight;
+            const aspectRatio = img.width / img.height;
+
+            if (aspectRatio > 1) {
+                renderWidth = finalCanvas.width * aspectRatio;
+                renderHeight = finalCanvas.height;
+            } else {
+                renderWidth = finalCanvas.width;
+                renderHeight = finalCanvas.height / aspectRatio;
+            }
+
+            renderWidth *= cropperInternalZoomState;
+            renderHeight *= cropperInternalZoomState;
+
+            // Map interaction coordinate offsets accurately across dynamic canvas scales
+            const scaleMultiplierFactor = finalCanvas.width / workspace.width;
+            const x = (finalCanvas.width - renderWidth) / 2 + (cropperInternalPanXState * scaleMultiplierFactor);
+            const y = (finalCanvas.height - renderHeight) / 2 - (cropperInternalPanYState * scaleMultiplierFactor);
+
+            finalCtx.drawImage(img, x, y, renderWidth, renderHeight);
+
+            const croppedBase64Payload = finalCanvas.toDataURL('image/jpeg', 0.75);
+
+            if (cropperActiveTargetMode === 'sell') {
+                sellUploadedPhotos.push(croppedBase64Payload);
+            } else {
+                editUploadedPhotos.push(croppedBase64Payload);
+            }
+
+            renderUploadedPreviews(cropperActiveTargetMode);
+            closeCropperModalWorkflow();
+        }
+
+        function removeSelectedPhoto(index, mode) {
+            if (mode === 'sell') sellUploadedPhotos.splice(index, 1);
+            else editUploadedPhotos.splice(index, 1);
+            renderUploadedPreviews(mode);
+        }
+
+        function renderUploadedPreviews(mode) {
+            const targetCanvas = document.getElementById(mode === 'sell' ? 'sellPhotoPreviewCanvas' : 'editPhotoPreviewCanvas');
+            const dataCollection = mode === 'sell' ? sellUploadedPhotos : editUploadedPhotos;
+            if (!targetCanvas) return;
+
+            targetCanvas.innerHTML = "";
+            dataCollection.forEach((photoData, idx) => {
+                targetCanvas.innerHTML += `
+                    <div class="aspect-square bg-neutral-100 border border-neutral-200 rounded-2xl overflow-hidden relative shadow-sm">
+                        <img src="${photoData}" class="w-full h-full object-cover" />
+                        <button type="button" onclick="removeSelectedPhoto(${idx}, '${mode}')" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-neutral-950/70 text-white flex items-center justify-center text-[10px] outline-none">
+                            <i class="ri-close-fill"></i>
+                        </button>
+                    </div>`;
+            });
+        }
+
+        function toggleActionDropdown(buttonElement, productId) {
+            document.querySelectorAll('[id^="dropdown-menu-"]').forEach(menu => {
+                if (menu.id !== `dropdown-menu-${productId}`) menu.classList.add('hidden');
+            });
+            const currentDropdown = document.getElementById(`dropdown-menu-${productId}`);
+            if (currentDropdown) currentDropdown.classList.toggle('hidden');
+        }
+
+        function toggleSellModal(show) {
+            const wrapper = document.getElementById('sellProductModal');
+            const drawer = wrapper ? wrapper.querySelector('.modal-drawer') : null;
+            if (wrapper && drawer) {
+                if (show) {
+                    const form = document.getElementById('sellItemForm');
+                    if (form) {
+                        form.reset();
+                        form.querySelectorAll('[required]').forEach(f => f.classList.remove('!border-red-500', '!bg-red-50'));
+                        
+                        // UPGRADE: Auto-extract school details and manage onboarding hints
+                        try {
+                            const cachedProfile = localStorage.getItem('zellr_user_profile');
+                            if (cachedProfile) {
+                                const user = JSON.parse(cachedProfile);
+                                const profileSchool = user.school ? user.school.trim() : "University";
+                                
+                                document.getElementById('sellFieldCampus').value = profileSchool;
+                                
+                                const noticeNode = document.getElementById('sellCampusDefaultNotice');
+                                if (noticeNode) {
+                                    if (profileSchool.toLowerCase() === 'university') {
+                                        noticeNode.classList.remove('hidden');
+                                    } else {
+                                        noticeNode.classList.add('hidden');
+                                    }
+                                }
+                            }
+                        } catch(e) {}
+                    }
+                    sellUploadedPhotos = []; 
+                    renderUploadedPreviews('sell');
+                    wrapper.classList.remove('pointer-events-none', 'opacity-0');
+                    wrapper.classList.add('opacity-100');
+                    drawer.classList.remove('translate-y-full');
+                } else {
+                    wrapper.classList.add('pointer-events-none', 'opacity-0');
+                    wrapper.classList.remove('opacity-100');
+                    drawer.classList.add('translate-y-full');
+                }
+            }
+        }
+
+        // 2. LIVE DATABASE MODAL: Eradicated local storage bug to properly generate the "SOLD" overlay and Buyer Context window
+        async function openListedProductViewer(productId) {
+            const item = localProductsCache.find(p => parseInt(p.id) === parseInt(productId));
+            if (!item) return;
+
+            // Load actual rows dynamically instead of querying dead browser storage caches
+            let liveOrders = [];
+            try {
+                const response = await fetch('http://localhost:3000/api/orders');
+                if (response.ok) liveOrders = await response.json();
+            } catch(e) {}
+
+            const validOrders = liveOrders.filter(log => parseInt(log.product_id) === parseInt(item.id) && log.status !== 'inquiry');
+            const hasCompleted = validOrders.some(log => log.status === 'completed');
+            const isSold = item.status === 'sold' || hasCompleted;
+            
+            const matchedLog = validOrders.find(log => log.status === 'completed') || validOrders[0];
+
+            const modalProductImage = document.getElementById('viewModalProductImage');
+            const modalSoldBadgeOverlay = document.getElementById('viewModalSoldBadgeOverlay');
+            const modalBuyerSectionBlock = document.getElementById('viewModalBuyerSectionBlock');
+
+            modalProductImage.src = item.image_url || 'assets/catalog/placeholder.png';
+            document.getElementById('viewModalProductTitle').textContent = item.title;
+            document.getElementById('viewModalProductPrice').textContent = '₱' + parseFloat(item.price).toFixed(2);
+            document.getElementById('viewModalProductLocation').innerHTML = `<i class="ri-map-pin-line text-neutral-400 text-sm"></i><span class="mt-0.5">` + (item.campus || 'Main Campus') + `</span>`;
+            document.getElementById('viewModalProductCondition').textContent = item.item_condition || 'Good';
+            document.getElementById('viewModalProductDescription').textContent = item.description || 'No description supplied.';
+            document.getElementById('viewModalProductCategory').textContent = item.category || 'Other';
+
+            if (isSold) {
+                modalProductImage.classList.add('opacity-40');
+                if (modalSoldBadgeOverlay) modalSoldBadgeOverlay.classList.remove('hidden');
+                if (modalBuyerSectionBlock) {
+                    modalBuyerSectionBlock.classList.remove('hidden');
+
+                    let computedBuyerName = matchedLog ? matchedLog.buyer_name : "Campus User";
+                    let computedBuyerSchool = matchedLog ? matchedLog.buyer_school : "Main Campus Student";
+                    let computedBuyerAvatar = matchedLog ? matchedLog.buyer_avatar : "";
+
+                    document.getElementById('viewModalBuyerNameText').textContent = computedBuyerName;
+                    document.getElementById('viewModalBuyerSchoolText').textContent = computedBuyerSchool;
+                    
+                    const avatarBox = document.getElementById('viewModalBuyerAvatarWrapper');
+                    if (computedBuyerAvatar) {
+                        avatarBox.innerHTML = `<img src="${computedBuyerAvatar}" class="w-full h-full object-cover" />`;
+                    } else {
+                        const fallbackLetter = computedBuyerName.charAt(0).toUpperCase();
+                        avatarBox.innerHTML = `<div class="w-full h-full bg-neutral-950 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider">${fallbackLetter}</div>`;
+                    }
+                }
+            } else {
+                modalProductImage.classList.remove('opacity-40');
+                if (modalSoldBadgeOverlay) modalSoldBadgeOverlay.classList.add('hidden');
+                if (modalBuyerSectionBlock) modalBuyerSectionBlock.classList.add('hidden');
+            }
+
+            // ---------------------------------------------------------
+            // LIVE DATABASE META EXTRACTION
+            // ---------------------------------------------------------
+            
+            // 1. Trading Mode Extraction
+            const isTradeable = (item.open_to_trades === 1 || item.open_to_trades === true || item.open_to_trades === "true");
+            document.getElementById('viewModalProductTrading').textContent = isTradeable ? "Open to Trades" : "No Trades Allowed";
+            
+            // 2. Payment Methods Extraction
+            const payCanvas = document.getElementById('viewModalProductPayments');
+            payCanvas.innerHTML = "";
+            
+            let methodsToRender = ["Cash Payment"]; // Fallback
+            if (item.payment_methods) {
+                try {
+                    methodsToRender = JSON.parse(item.payment_methods);
+                } catch (e) {
+                    methodsToRender = item.payment_methods.split(',').map(s => s.trim());
+                }
+            }
+            
+            methodsToRender.forEach(m => {
+                let iconClass = "ri-money-cash-line";
+                if (m === "GCash" || m === "Gcash") iconClass = "ri-smartphone-line";
+                if (m === "Credit Card") iconClass = "ri-bank-card-line";
+                if (m === "Debit Card") iconClass = "ri-bank-card-2-line";
+                if (m === "Bank Transfer") iconClass = "ri-bank-line";
+
+                payCanvas.innerHTML += `
+                    <span class="px-3.5 py-2.5 bg-white border border-neutral-200/60 text-neutral-800 font-bold text-[11px] rounded-xl flex items-center gap-2 shadow-[0_2px_4px_rgba(0,0,0,0.01)]">
+                        <i class="${iconClass} text-neutral-400 text-base"></i> ${safeText(m)}
+                    </span>`;
+            });
+
+            const editBtn = document.getElementById('viewModalEditBtn');
+            const deleteBtn = document.getElementById('viewModalDeleteBtn');
+            
+            if (editBtn) {
+                editBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleDetailsModal(false);
+                    openEditWorkflow(productId);
+                };
+            }
+            if (deleteBtn) {
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleDetailsModal(false);
+                    executeDeleteWorkflow(productId);
+                };
+            }
+
+            toggleDetailsModal(true);
+        }
+
+        function toggleDetailsModal(show) {
+            const wrapper = document.getElementById('listedProductDetailsModal');
+            const drawer = wrapper ? wrapper.querySelector('div') : null;
+            if (wrapper && drawer) {
+                if (show) {
+                    wrapper.classList.remove('pointer-events-none', 'opacity-0');
+                    wrapper.classList.add('opacity-100');
+                    drawer.classList.remove('translate-y-full');
+                } else {
+                    wrapper.classList.add('pointer-events-none', 'opacity-0');
+                    wrapper.classList.remove('opacity-100');
+                    drawer.classList.add('translate-y-full');
+                }
+            }
+        }
+
+        function toggleEditModal(show) {
+            // FIX: Map target query accurately to 'productDetailsModal' to resolve the unresponsive click block
+            const wrapper = document.getElementById('productDetailsModal');
+            const drawer = wrapper ? wrapper.querySelector('.modal-drawer') : null;
+            if (wrapper && drawer) {
+                if (show) {
+                    const form = document.getElementById('editItemForm');
+                    if (form) form.querySelectorAll('[required]').forEach(f => f.classList.remove('!border-red-500', '!bg-red-50'));
+                    wrapper.classList.remove('pointer-events-none', 'opacity-0');
+                    wrapper.classList.add('opacity-100');
+                    drawer.classList.remove('translate-y-full');
+                } else {
+                    wrapper.classList.add('pointer-events-none', 'opacity-0');
+                    wrapper.classList.remove('opacity-100');
+                    drawer.classList.add('translate-y-full');
+                }
+            }
+        }
+
+        function triggerDiscardConfirmation(mode) {
+            if (mode === 'sell' && !isFormDirty('sellItemForm', sellUploadedPhotos)) {
+                toggleSellModal(false);
+                return;
+            }
+            if (mode === 'edit' && !isFormDirty('editItemForm', editUploadedPhotos)) {
+                toggleEditModal(false);
+                return;
+            }
+
+            triggerPremiumConfirmation(
+                "Discard Progress?", 
+                "Are you sure you want to discard your edits? Any information you've entered here will be completely lost.", 
+                true, 
+                () => {
+                    if (mode === 'sell') toggleSellModal(false);
+                    if (mode === 'edit') toggleEditModal(false);
+                }
+            );
+        }
+
+        function toggleEditProfileModal(show) {}
+
+        function toggleAnalyticsModal(show) {
+            const wrapper = document.getElementById('analyticsProductModal');
+            const drawer = wrapper ? wrapper.querySelector('.modal-drawer') : null;
+            if (wrapper && drawer) {
+                if (show) {
+                    wrapper.classList.remove('pointer-events-none', 'opacity-0');
+                    wrapper.classList.add('opacity-100');
+                    drawer.classList.remove('translate-y-full');
+                    loadSalesAnalytics();
+                } else {
+                    wrapper.classList.add('pointer-events-none', 'opacity-0');
+                    wrapper.classList.remove('opacity-100');
+                    drawer.classList.add('translate-y-full');
+                }
+            }
+        }
+
+        function openEditWorkflow(productId) {
+            const item = localProductsCache.find(p => parseInt(p.id) === parseInt(productId));
+            if (!item) return;
+
+            document.getElementById('editTargetProductId').value = item.id;
+            document.getElementById('editFieldTitle').value = item.title;
+            document.getElementById('editFieldPrice').value = item.price;
+            document.getElementById('editFieldCampus').value = item.campus || '';
+            document.getElementById('editFieldCategory').value = item.category;
+            document.getElementById('editFieldCondition').value = item.item_condition || 'Good';
+            document.getElementById('editFieldDescription').value = item.description || '';
+
+            const isTradeable = (item.open_to_trades === 1 || item.open_to_trades === true || item.open_to_trades === "true");
+            
+            let storedMethods = ["Cash Payment"];
+            if (item.payment_methods) {
+                try { storedMethods = JSON.parse(item.payment_methods); } 
+                catch(e) { storedMethods = item.payment_methods.split(',').map(s => s.trim()); }
+            }
+
+            document.getElementById('editPayCash').checked = storedMethods.some(m => m.includes("Cash"));
+            document.getElementById('editPayGCash').checked = storedMethods.some(m => m.toLowerCase().includes("gcash"));
+            document.getElementById('editPayCredit').checked = storedMethods.includes("Credit Card");
+            document.getElementById('editPayDebit').checked = storedMethods.includes("Debit Card");
+            document.getElementById('editPayBank').checked = storedMethods.includes("Bank Transfer");
+            document.getElementById('editTradeOpen').checked = isTradeable;
+
+            editUploadedPhotos = item.image_url ? [item.image_url] : [];
+            renderUploadedPreviews('edit');
+            toggleEditModal(true);
+        }
+
+        function executeDeleteWorkflow(productId) {
+            triggerPremiumConfirmation(
+                "Remove Product Listing", 
+                "Are you sure you want to permanently delete this listing from the database? This transaction cannot be undone.", 
+                true, 
+                async () => {
+                    try {
+                        const response = await fetch(`http://localhost:3000/api/products/${productId}`, { method: 'DELETE' });
+                        const result = await response.json();
+                        if (!response.ok || result.error) throw new Error(result.error || 'Failed deletion.');
+                        await synchroniseMerchantStorefront();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            );
+        }
+
+        function switchOrdersDisplayFilter(tabMode) {
+            currentOrdersTabState = tabMode;
+            document.getElementById('ordersTabIncomingBtn').className = tabMode === 'incoming' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
+            document.getElementById('ordersTabCompletedBtn').className = tabMode === 'completed' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
+            document.getElementById('ordersTabCanceledBtn').className = tabMode === 'canceled' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
+            renderOrdersTrackingPipeline();
+        }
+
+        function switchListingsDisplayFilter(tabMode) {
+            currentListingsTabState = tabMode;
+            document.getElementById('listingsTabActiveBtn').className = tabMode === 'active' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
+            
+            const reservedBtn = document.getElementById('listingsTabReservedBtn');
+            if (reservedBtn) {
+                reservedBtn.className = tabMode === 'reserved' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
+            }
+            
+            document.getElementById('listingsTabSoldBtn').className = tabMode === 'sold' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
+            processAndRenderCatalogListings();
+        }
+
+        async function synchroniseMerchantStorefront() {
+            // FIX: Dynamic API Base Routing ensures absolute stability across testing networks
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/products`);
+                const allProducts = await response.json();
+
+                try {
+                    const ordRes = await fetch(`${API_BASE}/api/orders`);
+                    if (ordRes.ok) activeOrdersCache = await ordRes.json();
+                    
+                    const ratRes = await fetch(`${API_BASE}/api/ratings`);
+                    if (ratRes.ok) activeRatingsCache = await ratRes.json();
+                } catch(e) {}
+
+                // NEW: Update Global Seller Rating Badge in the Header
+                const myRatings = activeRatingsCache.filter(r => String(r.seller_id) === String(loggedInUserId));
+                const ratingContainer = document.getElementById('merchantOverallRatingDisplay');
+                if (ratingContainer) {
+                    if (myRatings.length > 0) {
+                        const sum = myRatings.reduce((acc, curr) => acc + parseInt(curr.rating), 0);
+                        const avg = (sum / myRatings.length).toFixed(1);
+                        ratingContainer.innerHTML = `<i class="ri-star-fill text-yellow-500 text-[13px]"></i> <span class="text-neutral-950 font-bold">${avg}</span> <span class="text-neutral-400 font-medium ml-0.5">(${myRatings.length})</span>`;
+                    } else {
+                        ratingContainer.innerHTML = `<span class="text-neutral-400 font-medium text-[9px] bg-neutral-100 px-2 py-0.5 rounded uppercase tracking-wider font-bold">New Seller</span>`;
+                    }
+                }
+
+                if (!response.ok || allProducts.error) return;
+                localProductsCache = allProducts; 
+                
+                processAndRenderCatalogListings();
+            } catch (error) {
+                console.error("⛔ storefront stream synchronization failure:", error);
+            }
+        }
+
+        // 1. ROBUST CATALOG SORTING: Scans all records securely using .some()
+        async function processAndRenderCatalogListings() {
+            const catalogWrapper = document.getElementById('catalogListingWrapper');
+            if (!catalogWrapper) return;
+
+            const sectionTitleHtml = `
+                <div class="flex items-center justify-between">
+                    <h3 class="text-neutral-900 text-[15px] font-bold tracking-tight">Listings</h3>
+                    <div class="flex bg-neutral-100 p-0.5 rounded-xl text-[10px] font-bold font-sans-subtitle shadow-sm">
+                        <button type="button" onclick="switchListingsDisplayFilter('active')" id="listingsTabActiveBtn" class="px-3 py-1 rounded-lg ${currentListingsTabState === 'active' ? 'bg-white text-neutral-950 shadow-sm' : 'text-neutral-400 hover:text-neutral-600'} transition-all outline-none">Active</button>
+                        <button type="button" onclick="switchListingsDisplayFilter('reserved')" id="listingsTabReservedBtn" class="px-3 py-1 rounded-lg ${currentListingsTabState === 'reserved' ? 'bg-white text-neutral-950 shadow-sm' : 'text-neutral-400 hover:text-neutral-600'} transition-all outline-none">Reserved</button>
+                        <button type="button" onclick="switchListingsDisplayFilter('sold')" id="listingsTabSoldBtn" class="px-3 py-1 rounded-lg ${currentListingsTabState === 'sold' ? 'bg-white text-neutral-950 shadow-sm' : 'text-neutral-400 hover:text-neutral-600'} transition-all outline-none">Sold</button>
+                    </div>
+                </div>`;
+
+            let liveOrders = [];
+            try {
+                const response = await fetch('http://localhost:3000/api/orders');
+                if (response.ok) liveOrders = await response.json();
+            } catch (err) {
+                console.error("Could not fetch database orders:", err);
+            }
+
+            const sellerProducts = localProductsCache.filter(item => String(item.seller_id) === String(loggedInUserId));
+
+            let processedSellerProducts = sellerProducts.map(item => {
+                // Find all authentic transaction records associated with this specific product
+                const validOrders = liveOrders.filter(log => parseInt(log.product_id) === parseInt(item.id) && log.status !== 'inquiry');
+                
+                let derivedStatus = 'active';
+                
+                // Guarantee completion mapping regardless of database return sequence
+                if (item.status === 'sold' || validOrders.some(log => log.status === 'completed')) {
+                    derivedStatus = 'sold';
+                } else if (validOrders.some(log => log.status === 'pending' || log.status === 'Ready for Delivery')) {
+                    derivedStatus = 'reserved';
+                }
+
+                return { ...item, status: derivedStatus };
+            });
+
+            const activeItems = processedSellerProducts.filter(item => item.status === 'active');
+            const reservedItems = processedSellerProducts.filter(item => item.status === 'reserved');
+            const soldItems = processedSellerProducts.filter(item => item.status === 'sold');
+
+            document.getElementById('activeCountLabel').textContent = activeItems.length;
+            document.getElementById('soldCountLabel').textContent = soldItems.length;
+            document.getElementById('totalCountLabel').textContent = processedSellerProducts.length;
+
+            let filteredTargetList = activeItems;
+            if (currentListingsTabState === 'reserved') filteredTargetList = reservedItems;
+            if (currentListingsTabState === 'sold') filteredTargetList = soldItems;
+
+            if (filteredTargetList.length === 0) {
+                catalogWrapper.innerHTML = sectionTitleHtml + `
+                    <div id="emptyCatalogState" class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-12 px-4 flex flex-col items-center justify-center text-center space-y-3 shadow-sm">
+                        <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
+                            <i class="ri-inbox-archive-line text-xl"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-neutral-900 text-sm font-bold tracking-tight">No ${currentListingsTabState} listings</h4>
+                            <p class="text-neutral-400 text-xs font-medium max-w-[200px] mx-auto">Items matching this specific listing category will appear here.</p>
+                        </div>
+                    </div>`;
+                
+                renderOrdersTrackingPipeline();
+                return;
+            }
+
+            let catalogGridHtml = sectionTitleHtml + `<div class="grid grid-cols-2 gap-3.5">`;
+            filteredTargetList.forEach(item => {
+                const isSold = item.status === 'sold';
+                const isReserved = item.status === 'reserved';
+
+                catalogGridHtml += `
+                    <div onclick="openListedProductViewer(${item.id})" class="bg-white border border-neutral-100/70 rounded-[28px] flex flex-col justify-between p-2 relative shadow-sm cursor-pointer hover:scale-[1.01] transition-transform">
+                        
+                        ${isSold ? '<span class="absolute top-3 left-3 bg-neutral-950 text-white font-bold text-[8px] tracking-wider uppercase px-2 py-0.5 rounded-full z-10 shadow-sm font-sans-subtitle">SOLD</span>' : ''}
+                        ${isReserved ? '<span class="absolute top-3 left-3 bg-amber-500 text-white font-bold text-[8px] tracking-wider uppercase px-2 py-0.5 rounded-full z-10 shadow-sm font-sans-subtitle">RESERVED</span>' : ''}
+                        
+                        <button type="button" onclick="event.stopPropagation(); toggleActionDropdown(this, ${item.id})" class="absolute top-3 right-3 w-7 h-7 bg-white/80 backdrop-blur-md hover:bg-white rounded-full flex items-center justify-center text-neutral-800 shadow-sm transition-all outline-none z-20">
+                            <i class="ri-more-2-fill text-sm"></i>
+                        </button>
+
+                        <div id="dropdown-menu-${item.id}" class="hidden absolute top-11 right-3 bg-white border border-neutral-200/80 rounded-xl py-1.5 w-24 shadow-lg z-30 text-left">
+                            <button type="button" onclick="event.stopPropagation(); openEditWorkflow(${item.id});" class="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold text-neutral-700 hover:bg-neutral-50 hover:text-neutral-950 transition-colors">
+                                <i class="ri-edit-line text-xs"></i><span>Edit</span>
+                            </button>
+                            <button type="button" onclick="event.stopPropagation(); executeDeleteWorkflow(${item.id});" class="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-bold text-red-500 hover:bg-red-50 transition-colors">
+                                <i class="ri-delete-bin-line text-xs"></i><span>Delete</span>
+                            </button>
+                        </div>
+
+                        <div class="w-full h-32 bg-[#F2F2F7] rounded-[22px] overflow-hidden flex items-center justify-center relative ${isSold || isReserved ? 'opacity-60' : ''}">
+                            <i class="ri-image-line text-neutral-300 text-3xl absolute"></i>
+                            <img src="${item.image_url || ''}" class="w-full h-full object-cover error-fallback relative z-10" onerror="this.style.display='none'" onload="this.style.display='block'" />
+                        </div>
+                        <div class="pt-3 pb-2 px-1.5 space-y-0.5 text-left">
+                            <h4 class="text-neutral-900 text-xs font-bold tracking-tight truncate ${isSold ? 'text-neutral-400' : ''}">${safeText(item.title)}</h4>
+                            <p class="text-neutral-950 font-bold text-[13px]">₱${parseFloat(item.price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+                        </div>
+                    </div>`;
+            });
+            catalogGridHtml += `</div>`;
+            catalogWrapper.innerHTML = catalogGridHtml;
+            
+            renderOrdersTrackingPipeline();
+        }
+
+        function openRatingsViewer() {
+            document.getElementById('ratingsModalProductTitle').textContent = "All Store Reviews";
+            
+            const sellerRatings = activeRatingsCache.filter(r => String(r.seller_id) === String(loggedInUserId));
+            const feed = document.getElementById('ratingsModalFeed');
+            
+            if (sellerRatings.length === 0) {
+                feed.innerHTML = `
+                    <div class="text-center py-10">
+                        <div class="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400 mx-auto mb-2 shadow-inner">
+                            <i class="ri-star-smile-line text-xl"></i>
+                        </div>
+                        <h4 class="text-neutral-950 text-sm font-bold tracking-tight">No Ratings Yet</h4>
+                        <p class="text-neutral-400 text-xs mt-1 font-medium px-4">Complete more sales to receive customer reviews on your store profile.</p>
+                    </div>`;
+            } else {
+                let html = "";
+                sellerRatings.forEach(rating => {
+                    const matchOrder = activeOrdersCache.find(o => parseInt(o.id) === parseInt(rating.order_id));
+                    const buyerName = matchOrder ? (matchOrder.buyer_name || 'Customer') : 'Customer';
+                    const buyerAvatar = matchOrder ? matchOrder.buyer_avatar : null;
+                    const productName = matchOrder ? (matchOrder.product_title || 'Marketplace Item') : 'Marketplace Item';
+
+                    const cleanInitial = String(buyerName).charAt(0).toUpperCase();
+                    const fbHtml = `<span class="text-white font-bold text-xs">${cleanInitial}</span>`;
+                    
+                    let avatarHtml = `<div class="w-8 h-8 rounded-full bg-neutral-950 flex items-center justify-center text-white shrink-0 shadow-sm border border-neutral-100 overflow-hidden">`;
+                    const safeAvatar = String(buyerAvatar || "");
+                    
+                    if (safeAvatar.trim() !== "" && !(safeAvatar.startsWith('data:image') && safeAvatar.length < 500)) {
+                        avatarHtml += `<img src="${safeAvatar}" class="w-full h-full object-cover" onerror='this.outerHTML=${JSON.stringify(fbHtml)}' />`;
+                    } else {
+                        avatarHtml += fbHtml;
+                    }
+                    avatarHtml += `</div>`;
+
+                    let starsHtml = "";
+                    for(let i=1; i<=5; i++) {
+                        if (i <= parseInt(rating.rating)) starsHtml += `<i class="ri-star-fill text-yellow-400 text-[11px]"></i>`;
+                        else starsHtml += `<i class="ri-star-line text-neutral-300 text-[11px]"></i>`;
+                    }
+
+                    html += `
+                    <div class="p-3.5 bg-[#F9F9FB] rounded-[20px] border border-neutral-200/60 shadow-[0_2px_4px_rgba(0,0,0,0.01)] text-left">
+                        <div class="flex items-center gap-3 mb-2.5">
+                            ${avatarHtml}
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-neutral-950 text-[11px] font-bold truncate">${safeText(buyerName)}</h4>
+                                <div class="flex items-center gap-1.5 mt-0.5">
+                                    <div class="flex gap-0.5">${starsHtml}</div>
+                                    <span class="text-[9px] text-neutral-400 font-medium truncate">• ${safeText(productName)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        ${rating.comment && rating.comment.trim() !== "" ? `<p class="text-neutral-600 text-xs font-medium leading-relaxed bg-white p-3 rounded-xl border border-neutral-200/50 shadow-sm">${safeText(rating.comment)}</p>` : `<p class="text-neutral-400 text-[10px] italic">No written review provided.</p>`}
+                    </div>`;
+                });
+                feed.innerHTML = html;
+            }
+
+            const modal = document.getElementById('productRatingsViewerModal');
+            const content = modal.querySelector('div');
+            
+            modal.classList.remove('hidden', 'pointer-events-none');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+                content.classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closeRatingsViewer() {
+            const modal = document.getElementById('productRatingsViewerModal');
+            const content = modal.querySelector('div');
+            
+            modal.classList.remove('opacity-100');
+            content.classList.add('translate-y-full');
+            setTimeout(() => {
+                modal.classList.add('hidden', 'pointer-events-none');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // 3. ENHANCED LAYOUT: Deploys stylized text-label badges next to icons on the Orders timeline
+        async function renderOrdersTrackingPipeline() {
+            const wrapper = document.getElementById('incomingOrdersTrackWrapper');
+            if (!wrapper) return;
+
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            let liveOrders = [];
+            try {
+                const response = await fetch(`${API_BASE}/api/orders`);
+                if (response.ok) liveOrders = await response.json();
+            } catch (err) {
+                console.error("Could not trace orders stream from database query nodes:", err);
+            }
+
+            let mine = liveOrders.filter(log => String(log.seller_id) === String(loggedInUserId));
+
+            // DATA-TYPE STRICTNESS UPGRADE: Isolate canceled logs cleanly into their own display filter state
+            let filteredOrders = mine.filter(log => {
+                const normalizedStatus = String(log.status).toLowerCase().trim();
+                
+                if (currentOrdersTabState === 'canceled') {
+                    return normalizedStatus === 'canceled' || normalizedStatus === 'cancelled';
+                }
+                if (currentOrdersTabState === 'completed') {
+                    return normalizedStatus === 'completed';
+                }
+                // Incoming filter covers active negotiation lifecycles
+                return normalizedStatus === 'pending' || normalizedStatus === 'ready for delivery';
+            });
+
+            if (filteredOrders.length === 0) {
+                wrapper.innerHTML = `
+                    <div class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-12 px-4 flex flex-col items-center justify-center text-center space-y-3 shadow-sm">
+                        <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
+                            <i class="ri-file-list-3-line text-xl"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-neutral-900 text-sm font-bold tracking-tight capitalize">No ${currentOrdersTabState} orders</h4>
+                            <p class="text-neutral-400 text-xs font-medium max-w-[200px] mx-auto">You currently have no ${currentOrdersTabState} orders in your pipeline.</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            let html = "";
+            filteredOrders.forEach(log => {
+                // NEW: Manually cross-reference the cache because the backend drops product data on canceled orders
+                const matchedProduct = localProductsCache.find(p => parseInt(p.id) === parseInt(log.product_id)) || {};
+                
+                const safeTitleText = log.product_title || log.title || matchedProduct.title || 'Marketplace Item';
+                const safePriceValue = log.product_price || log.price || matchedProduct.price || 0;
+                const safeImageSrc = log.product_image || matchedProduct.image_url || '';
+
+                const cleanBuyerInitial = (log.buyer_name || "C").trim().charAt(0).toUpperCase();
+                
+                const buyerAvatarMarkup = log.buyer_avatar ? 
+                    `<img src="${log.buyer_avatar}" class="w-full h-full object-cover" />` : 
+                    `<span class="text-neutral-700 text-[8px] font-bold">${cleanBuyerInitial}</span>`;
+
+                const isIncomingTab = currentOrdersTabState === 'incoming';
+
+                html += `
+                    <div class="bg-white border border-neutral-200/60 p-3.5 rounded-2xl flex items-center justify-between gap-3 shadow-[0_2px_8px_rgba(0,0,0,0.01)] text-left">
+                        <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                            
+                            <div class="relative w-12 h-12 shrink-0 select-none bg-neutral-100 rounded-xl border border-neutral-200 flex items-center justify-center">
+                                <i class="ri-image-line text-neutral-300 text-xl absolute"></i>
+                                <img src="${safeImageSrc}" class="w-full h-full object-cover rounded-xl absolute inset-0 z-10" style="display: ${safeImageSrc ? 'block' : 'none'};" />
+                                
+                                <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white border border-neutral-200 shadow-sm flex items-center justify-center overflow-hidden z-20">
+                                    ${buyerAvatarMarkup}
+                                </div>
+                            </div>
+                            
+                            <div class="min-w-0 flex-1 space-y-0.5">
+                                <h4 class="text-neutral-950 text-xs font-bold truncate leading-tight">${safeText(safeTitleText)}</h4>
+                                <p class="text-[10px] text-neutral-400 font-medium truncate">Buyer: <span class="text-neutral-700 font-semibold">${safeText(log.buyer_name || 'Campus User')}</span></p>
+                                <div class="flex items-center gap-1.5 pt-0.5">
+                                    <span class="text-[8px] tracking-wider font-bold px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-500 uppercase font-sans-subtitle">${log.status}</span>
+                                    <span class="text-[10px] font-bold text-neutral-950">₱${parseFloat(safePriceValue).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="shrink-0 flex flex-col items-end gap-1.5 pl-1">
+                            ${isIncomingTab && log.status === 'pending' ? `
+                                <button type="button" onclick="updateOrderStatusAction(${log.id}, 'Ready for Delivery')" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white text-[10px] font-bold px-3 py-2 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95">
+                                    Mark Ready
+                                </button>
+                                <button type="button" onclick="confirmCancelOrder(${log.id}, ${log.product_id}, ${log.buyer_id})" class="w-full bg-white hover:bg-red-50 text-red-500 border border-red-100 text-[10px] font-bold px-3 py-2 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95">
+                                    Cancel Order
+                                </button>
+                            ` : `
+                                ${log.status === 'Ready for Delivery' ? `
+                                    <div class="flex items-center gap-1.5 px-3 py-2 bg-amber-50 rounded-xl border border-amber-100/50 select-none">
+                                        <i class="ri-time-fill text-amber-500 text-sm animate-pulse"></i>
+                                        <span class="text-[9px] font-bold text-amber-700 tracking-wide uppercase">Awaiting Pickup</span>
+                                    </div>
+                                    <button type="button" onclick="confirmCancelOrder(${log.id}, ${log.product_id}, ${log.buyer_id})" class="w-full bg-white hover:bg-red-50 text-red-500 border border-red-100 text-[10px] font-bold px-3 py-2 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95">
+                                        Cancel Order
+                                    </button>
+                                ` : `
+                                    ${log.status === 'completed' ? `
+                                        <div class="flex items-center gap-1.5 px-3 py-2 bg-green-50 rounded-xl border border-green-100/50 select-none">
+                                            <i class="ri-checkbox-circle-fill text-green-500 text-sm"></i>
+                                            <span class="text-[9px] font-bold text-green-700 tracking-wide uppercase">Delivered</span>
+                                        </div>
+                                    ` : `
+                                        <div class="flex items-center gap-1.5 px-3 py-2 bg-red-50 rounded-xl border border-red-100/50 select-none">
+                                            <i class="ri-close-circle-fill text-red-500 text-sm"></i>
+                                            <span class="text-[9px] font-bold text-red-700 tracking-wide uppercase">Canceled</span>
+                                        </div>
+                                    `}
+                                `}
+                            `}
+                        </div>
+                    </div>`;
+            });
+            wrapper.innerHTML = html;
+        }
+
+        async function updateOrderStatusAction(orderId, nextStatus) {
+            try {
+                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                    ? 'http://localhost:3000' 
+                    : window.location.origin;
+
+                // 1. We must fetch the actual order details first so we have the IDs for the message!
+                let liveOrders = [];
+                const ordersRes = await fetch(`${API_BASE}/api/orders`);
+                if (ordersRes.ok) liveOrders = await ordersRes.json();
+                
+                // Find the specific log object safely
+                const matchedLog = liveOrders.find(o => parseInt(o.id) === parseInt(orderId));
+                if (!matchedLog) throw new Error("Order tracking log mismatch.");
+
+                // 2. Execute the actual status mutation
+                const reconstructedOrderPayload = { ...matchedLog, status: nextStatus };
+
+                await fetch(`${API_BASE}/api/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reconstructedOrderPayload)
+                });
+
+                // 3. Dispatch the milestone notice using the matchedLog context
+                await fetch(`${API_BASE}/api/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        sender_id: matchedLog.seller_id, // Safely extracted from database row
+                        receiver_id: matchedLog.buyer_id, // Safely extracted from database row
+                        message_text: `SYSTEM NOTICE: The merchant has marked the item "${matchedLog.product_title || 'your listed item'}" as Ready for Delivery! Prepare to meet at the campus drop-off spot.`
+                    })
+                });
+
+                await synchroniseMerchantStorefront();
+            } catch (err) {
+                console.error("Fulfillment transaction pipeline conversion failure:", err);
+            }
+        }
+
+        let pendingCancelData = null; // Store data temporarily
+
+        // Trigger the modal using your custom premium confirmation system
+        function confirmCancelOrder(orderId, productId, buyerId) {
+            pendingCancelData = { orderId, productId, buyerId };
+            
+            triggerPremiumConfirmation(
+                "Cancel Order", 
+                "Are you sure you want to cancel this order? The item will be returned to the public marketplace and the buyer will be notified.", 
+                true, // This 'true' automatically makes the confirm button red (Destructive)
+                executeCancelOrder
+            );
+        }
+
+        // NEW: Cancellation Engine (executed after confirmation)
+        async function executeCancelOrder() {
+            if (!pendingCancelData) return;
+            const { orderId, productId, buyerId } = pendingCancelData;
+
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            try {
+                // 1. Terminate the active order state
+                const orderRes = await fetch(`${API_BASE}/api/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'canceled' })
+                });
+                if (!orderRes.ok) throw new Error("Cancel failed");
+
+                // 2. Re-list the product publicly (PREVENT DATA WIPE)
+                const cachedItem = localProductsCache.find(p => parseInt(p.id) === parseInt(productId));
+                let productPayload = { status: 'active' }; 
+
+                if (cachedItem) {
+                    let parsedMethods = ["Cash"];
+                    if (cachedItem.payment_methods) {
+                        try { parsedMethods = JSON.parse(cachedItem.payment_methods); } 
+                        catch(e) { parsedMethods = cachedItem.payment_methods.split(',').map(s => s.trim()); }
+                    }
+                    
+                    const isTradeable = (cachedItem.open_to_trades === 1 || cachedItem.open_to_trades === true || String(cachedItem.open_to_trades).toLowerCase() === "true");
+
+                    productPayload = {
+                        seller_id: loggedInUserId, 
+                        title: cachedItem.title,
+                        price: cachedItem.price,
+                        campus: cachedItem.campus,
+                        category: cachedItem.category,
+                        item_condition: cachedItem.item_condition,
+                        description: cachedItem.description,
+                        image_url: cachedItem.image_url,
+                        open_to_trades: isTradeable,
+                        payment_methods: parsedMethods,
+                        status: 'active'
+                    };
+                }
+
+                await fetch(`${API_BASE}/api/products/${productId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productPayload)
+                });
+
+                // 3. Drop official notice in chat thread
+                await fetch(`${API_BASE}/api/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        sender_id: loggedInUserId, 
+                        receiver_id: buyerId,
+                        message_text: `SYSTEM NOTICE: This order has been officially cancelled by the seller. The transaction is now closed and the item has been returned to the public marketplace.`
+                    })
+                });
+
+                pendingCancelData = null; 
+                await synchroniseMerchantStorefront(); 
+                
+            } catch (err) {
+                console.error(err);
+                // FIX: Replaced native browser alert with uniform premium overlay confirmation modal
+                triggerPremiumConfirmation("Operation Failed", "Failed to finalize cancellation due to a server sync error.", true, null);
+            }
+        }
+
+        // FIXED SALES ANALYTICS LOGIC ENGINE: Resolves total metrics directly using active SQL orders dataset
+        async function loadSalesAnalytics() {
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            let liveOrders = [];
+            try {
+                const response = await fetch(`${API_BASE}/api/orders`);
+                if (response.ok) liveOrders = await response.json();
+            } catch (err) {
+                console.error("Analytics ledger sync break:", err);
+            }
+
+            let mine = liveOrders.filter(log => String(log.seller_id) === String(loggedInUserId));
+            let completeSales = mine.filter(l => l.status === 'completed');
+            
+            let grandRevenueTotal = 0;
+            completeSales.forEach(s => grandRevenueTotal += parseFloat(s.product_price || s.price || 0));
+            
+            document.getElementById('salesTodayLabel').textContent = '₱' + grandRevenueTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('salesWeekLabel').textContent = '₱' + grandRevenueTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('salesMonthLabel').textContent = '₱' + grandRevenueTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('salesTotalRevenueLabel').textContent = '₱' + grandRevenueTotal.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('salesTotalCountLabel').textContent = `${mine.length} ${mine.length === 1 ? 'listing' : 'listings'} total`;
+        }
+
+        window.onload = function() {
+            const cachedProfile = localStorage.getItem('zellr_user_profile');
+            if (cachedProfile) {
+                try {
+                    const user = JSON.parse(cachedProfile);
+                    if (user && user.id) loggedInUserId = parseInt(user.id);
+                    
+                    // UPGRADE: Matches dashboard schema preferences by focusing greeting text strictly on the user's first name
+                    if (user) {
+                        let displayName = "Campus User";
+                        if (user.firstName) {
+                            displayName = user.firstName;
+                        } else if (user.name) {
+                            displayName = user.name.trim().split(/\s+/)[0];
+                        }
+                        document.getElementById('sellerHubUserName').textContent = displayName;
+                    }
+                } catch(e) { console.error("Cached session missing.", e); }
+            }
+            synchroniseMerchantStorefront();
+        };
+
+        document.getElementById('sellItemForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = event.target;
+
+            if (!validateCustomFormFields('sellItemForm')) return;
+
+            if (sellUploadedPhotos.length === 0) {
+                triggerPremiumConfirmation("Photo Entry Required", "You must attach at least 1 image file before you can launch this listing to the store.", true, null);
+                return;
+            }
+
+            const payCash = document.getElementById('sellPayCash').checked;
+            const payGCash = document.getElementById('sellPayGCash').checked;
+            const payCredit = document.getElementById('sellPayCredit').checked;
+            const payDebit = document.getElementById('sellPayDebit').checked;
+            const payBank = document.getElementById('sellPayBank').checked;
+            const openToTrades = document.getElementById('sellTradeOpen').checked;
+            
+            let methods = [];
+            if (payCash) methods.push("Cash");
+            if (payGCash) methods.push("GCash");
+            if (payCredit) methods.push("Credit Card");
+            if (payDebit) methods.push("Debit Card");
+            if (payBank) methods.push("Bank Transfer");
+
+            // CONSTRAINT UPGRADE: Aborts item generation logic if payment arrays map completely empty
+            if (methods.length === 0) {
+                triggerPremiumConfirmation("Payment Method Required", "Please check at least one accepted financial channel option to receive student transactions.", true, null);
+                return;
+            }
+
+            triggerPremiumConfirmation(
+                "Publish New Listing", 
+                "Are you sure you want to list this product for sale on the public campus marketplace?", 
+                false, 
+                async () => {
+                    const formData = new FormData(form);
+                    const payload = {
+                        seller_id: loggedInUserId,
+                        title: formData.get('title'),
+                        price: parseFloat(formData.get('price')),
+                        campus: formData.get('campus'),
+                        category: formData.get('category'),
+                        item_condition: formData.get('item_condition'),
+                        description: formData.get('description'),
+                        image_url: sellUploadedPhotos[0],
+                        open_to_trades: openToTrades, // NEW: Directly mapped to API
+                        payment_methods: methods      // NEW: Directly mapped to API
+                    };
+
+                    const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                        ? 'http://localhost:3000' 
+                        : window.location.origin;
+
+                    try {
+                        const response = await fetch(`${API_BASE}/api/products`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const result = await response.json();
+                        if (!response.ok || result.error) throw new Error(result.error || 'Write error.');
+
+                        // LOCAL STORAGE OVERRIDE DELETED HERE
+
+                        form.reset();
+                        sellUploadedPhotos = [];
+                        toggleSellModal(false);
+                        await synchroniseMerchantStorefront();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            );
+        });
+
+        document.getElementById('editItemForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = event.target;
+
+            if (!validateCustomFormFields('editItemForm')) return;
+
+            if (editUploadedPhotos.length === 0) {
+                triggerPremiumConfirmation("Photo Asset Required", "Your product catalog profile entry requires a valid image cover file link.", true, null);
+                return;
+            }
+
+            const payCash = document.getElementById('editPayCash').checked;
+            const payGCash = document.getElementById('editPayGCash').checked;
+            const payCredit = document.getElementById('editPayCredit').checked;
+            const payDebit = document.getElementById('editPayDebit').checked;
+            const payBank = document.getElementById('editPayBank').checked;
+            const openToTrades = document.getElementById('editTradeOpen').checked;
+            
+            let methods = [];
+            if (payCash) methods.push("Cash");
+            if (payGCash) methods.push("GCash");
+            if (payCredit) methods.push("Credit Card");
+            if (payDebit) methods.push("Debit Card");
+            if (payBank) methods.push("Bank Transfer");
+
+            // CONSTRAINT UPGRADE: Blocks form updates if all checkboxes are unselected
+            if (methods.length === 0) {
+                triggerPremiumConfirmation("Payment Method Required", "You must select at least one transactional option for this catalog item profile.", true, null);
+                return;
+            }
+
+            triggerPremiumConfirmation(
+                "Save Modifications", 
+                "Are you sure you want to commit these update modifications onto your catalog item row?", 
+                false, 
+                async () => {
+                    const formData = new FormData(form);
+                    const productId = document.getElementById('editTargetProductId').value;
+                    const payload = {
+                        title: formData.get('title'),
+                        price: parseFloat(formData.get('price')),
+                        campus: formData.get('campus'),
+                        category: formData.get('category'),
+                        item_condition: formData.get('item_condition'),
+                        description: formData.get('description'),
+                        image_url: editUploadedPhotos[0],
+                        open_to_trades: openToTrades, // NEW: Directly mapped to API
+                        payment_methods: methods      // NEW: Directly mapped to API
+                    };
+
+                    const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                        ? 'http://localhost:3000' 
+                        : window.location.origin;
+
+                    try {
+                        const response = await fetch(`${API_BASE}/api/products/${productId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const result = await response.json();
+                        if (!response.ok || result.error) throw new Error(result.error || 'Update failed.');
+
+                        // LOCAL STORAGE OVERRIDE DELETED HERE
+
+                        toggleEditModal(false);
+                        await synchroniseMerchantStorefront();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+            );
+        });
+
+        window.onload = function() {
+            const cachedProfile = localStorage.getItem('zellr_user_profile');
+            if (cachedProfile) {
+                try {
+                    const user = JSON.parse(cachedProfile);
+                    if (user && user.id) loggedInUserId = parseInt(user.id);
+                    
+                    // UPGRADE: Matches dashboard schema preferences by focusing greeting text strictly on the user's first name
+                    if (user) {
+                        let displayName = "Campus User";
+                        if (user.firstName) {
+                            displayName = user.firstName;
+                        } else if (user.name) {
+                            displayName = user.name.trim().split(/\s+/)[0];
+                        }
+                        document.getElementById('sellerHubUserName').textContent = displayName;
+                    }
+                } catch(e) { console.error("Cached session missing.", e); }
+            }
+            synchroniseMerchantStorefront();
+        };
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('[id^="dropdown-menu-"]').forEach(menu => menu.classList.add('hidden'));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const token = localStorage.getItem('zellr_session_token');
+            if (!token) {
+                // Using .replace instead of .href ensures the user cannot use 
+                // the browser's "Back" button to return to the protected dashboard area.
+                window.location.replace('login.html');
+            }
+        })();
+    </script>
+    <title>Zellr | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="assets/zellr-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    
+    <style>
+        .font-sans-premium { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif-logo { font-family: 'Playfair Display', serif; letter-spacing: -0.01em; }
+        .font-sans-subtitle { font-family: 'Montserrat', sans-serif; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
+
+    <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
+        
+        <div id="app-header" class="z-30"></div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-6 pt-24">
+            
+            <div class="px-4">
+                <div class="w-full bg-white border border-neutral-200/50 rounded-[32px] p-5 shadow-[0_8px_25px_rgba(0,0,0,0.02)] space-y-4">
+                    <div>
+                        <p class="text-neutral-400 text-xs font-medium">Welcome back,</p>
+                        <h2 id="welcomeUserName" class="text-neutral-950 text-2xl font-bold tracking-tight mt-0.5">Art Nathan</h2>
+                        <p class="text-neutral-500 text-xs font-medium mt-1">What are you looking for today?</p>
+                    </div>
+
+                    <!-- Integrated Search & Sort Menu Placement -->
+                    <div class="space-y-2 relative">
+                        <div class="relative flex items-center">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-neutral-400 pointer-events-none">
+                                <i class="ri-search-line text-neutral-400 text-base"></i>
+                            </span>
+                            <input id="dashboardSearchInput" type="text" placeholder="Search for campus items..." class="w-full bg-[#EDEDF2] focus:bg-[#E4E4E9] text-neutral-900 placeholder-neutral-400 text-xs font-medium pl-11 pr-12 py-3 rounded-[20px] border border-transparent transition-all outline-none" />
+                            
+                            <!-- Filter Toggle Button -->
+                            <button onclick="toggleSortMenu()" class="absolute inset-y-0 right-1.5 flex items-center justify-center w-9 h-9 my-auto rounded-[14px] bg-[#E4E4E9] hover:bg-[#D4D4D9] text-neutral-700 transition-colors outline-none">
+                                <i class="ri-equalizer-line text-sm"></i>
+                            </button>
+                        </div>
+
+                        <!-- Full-Width Dropdown Menu (Hidden by default) -->
+                        <div id="dashboardSortMenu" class="hidden flex-col gap-1 bg-[#EDEDF2] rounded-[20px] p-1.5 shadow-inner transition-all">
+                            <button onclick="triggerFeedSort('recent', 'Most Recent')" class="text-left px-4 py-2.5 text-xs font-bold font-sans-subtitle rounded-[14px] outline-none transition-colors bg-white text-neutral-900 shadow-sm sort-option-btn">Most Recent</button>
+                            <button onclick="triggerFeedSort('priceAsc', 'Price: Low to High')" class="text-left px-4 py-2.5 text-xs font-bold font-sans-subtitle rounded-[14px] outline-none transition-colors text-neutral-500 hover:bg-white/60 sort-option-btn">Price: Low to High</button>
+                            <button onclick="triggerFeedSort('priceDesc', 'Price: High to Low')" class="text-left px-4 py-2.5 text-xs font-bold font-sans-subtitle rounded-[14px] outline-none transition-colors text-neutral-500 hover:bg-white/60 sort-option-btn">Price: High to Low</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5 pt-1">
+                        <p class="text-neutral-400 text-[11px] font-bold tracking-wider uppercase font-sans-subtitle">Categories</p>
+                        <div class="flex gap-3 overflow-x-auto no-scrollbar py-0.5">
+                            <!-- NEW: "All" Default Toggle -->
+                            <div class="flex flex-col items-center gap-1 shrink-0">
+                                <button onclick="toggleCategoryFilter(this, 'All')" id="dashCatBtn_All" class="w-12 h-12 bg-neutral-950 text-white rounded-[16px] flex items-center justify-center shadow-sm outline-none transition-all dash-cat-btn">
+                                    <i class="ri-function-line text-base"></i>
+                                </button>
+                                <span class="text-[10px] font-bold text-neutral-950 transition-colors">All</span>
+                            </div>
+                            
+                            <div class="flex flex-col items-center gap-1 shrink-0">
+                                <button onclick="toggleCategoryFilter(this, 'Books')" id="dashCatBtn_Books" class="w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all dash-cat-btn">
+                                    <i class="ri-book-open-line text-base"></i>
+                                </button>
+                                <span class="text-[10px] font-medium text-neutral-400 transition-colors">Books</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 shrink-0">
+                                <button onclick="toggleCategoryFilter(this, 'Electronics')" id="dashCatBtn_Electronics" class="w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all dash-cat-btn">
+                                    <i class="ri-macbook-line text-base"></i>
+                                </button>
+                                <span class="text-[10px] font-medium text-neutral-400 transition-colors">Electronics</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 shrink-0">
+                                <button onclick="toggleCategoryFilter(this, 'Clothing')" id="dashCatBtn_Clothing" class="w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all dash-cat-btn">
+                                    <i class="ri-shirt-line text-base"></i>
+                                </button>
+                                <span class="text-[10px] font-medium text-neutral-400 transition-colors">Clothing</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 shrink-0">
+                                <button onclick="toggleCategoryFilter(this, 'Dorm')" id="dashCatBtn_Dorm" class="w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all dash-cat-btn">
+                                    <i class="ri-hotel-bed-line text-base"></i>
+                                </button>
+                                <span class="text-[10px] font-medium text-neutral-400 transition-colors">Dorm</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 shrink-0">
+                                <button onclick="toggleCategoryFilter(this, 'Supplies')" id="dashCatBtn_Supplies" class="w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all dash-cat-btn">
+                                    <i class="ri-pen-nib-line text-base"></i>
+                                </button>
+                                <span class="text-[10px] font-medium text-neutral-400 transition-colors">Supplies</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 shrink-0">
+                                <button onclick="toggleCategoryFilter(this, 'Sports')" id="dashCatBtn_Sports" class="w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all dash-cat-btn">
+                                    <i class="ri-basketball-line text-base"></i>
+                                </button>
+                                <span class="text-[10px] font-medium text-neutral-400 transition-colors">Sports</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1 shrink-0">
+                                <button onclick="toggleCategoryFilter(this, 'Other')" id="dashCatBtn_Other" class="w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all dash-cat-btn">
+                                    <i class="ri-apps-2-line text-base"></i>
+                                </button>
+                                <span class="text-[10px] font-medium text-neutral-400 transition-colors">Other</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="listingsFeedContainer" class="space-y-3 px-5">
+                
+                <div id="usersSearchSection" class="hidden flex-col space-y-3 pb-4 border-b border-neutral-200/50 mb-1">
+                    <h3 class="text-neutral-900 text-[15px] font-bold tracking-tight">Users</h3>
+                    <div id="usersSearchGrid" class="flex flex-col gap-2.5">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <h3 class="text-neutral-900 text-[15px] font-bold tracking-tight">Fresh Listings</h3>
+                </div>
+                
+                <div id="feedGridMountingPoint">
+                    <div class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-14 px-4 flex flex-col items-center justify-center text-center space-y-3.5 shadow-sm">
+                        <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
+                            <i class="ri-store-2-line text-xl text-neutral-400"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="text-neutral-900 text-sm font-bold tracking-tight">Loading listings...</h4>
+                            <p class="text-neutral-400 text-xs font-medium max-w-[210px] mx-auto">Connecting to server node feed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="productDetailsModal" onclick="toggleDetailsModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
+            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-6 transform translate-y-full transition-transform duration-300 border-t border-neutral-200/40 relative">
+                
+                <!-- Product Image Canvas with Absolute Controls Overlay -->
+                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner mt-2">
+                    <img id="modalProductImage" src="" class="w-full h-full object-cover" />
+                    
+                    <!-- FIX: Floating control action buttons over image canvas -->
+                    <div class="absolute top-4 right-4 flex items-center gap-2 z-30">
+                        <button type="button" onclick="toggleWishlistState()" class="w-9 h-9 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-400 hover:text-red-500 shadow-md transition-colors outline-none">
+                            <i id="wishlistHeartIcon" class="ri-heart-line text-lg transition-colors"></i>
+                        </button>
+                        <button type="button" onclick="toggleDetailsModal(false)" class="w-9 h-9 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-500 hover:text-neutral-950 shadow-md transition-colors outline-none">
+                            <i class="ri-close-line text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-left pt-1">
+                    <div class="flex items-center justify-between">
+                        <span id="modalProductCondition" class="bg-neutral-950 text-white font-bold text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full font-sans-subtitle">Good</span>
+                        <span id="modalProductPrice" class="text-neutral-950 text-xl font-bold tracking-tight">₱0.00</span>
+                    </div>
+                    <h3 id="modalProductTitle" class="text-neutral-950 text-lg font-bold tracking-tight pt-1 leading-snug">Casio Calculator</h3>
+                    <p id="modalProductLocation" class="text-neutral-400 text-xs font-medium flex items-center gap-1.5"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span class="mt-0.5">PUP Taguig</span></p>
+                </div>
+
+                <!-- FIX: Fully fluid box layout that eliminates scrolling inside text box boxes -->
+                <div class="text-left space-y-1.5">
+                    <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Description</h4>
+                    <p id="modalProductDescription" class="text-neutral-600 text-xs font-medium leading-relaxed bg-white border border-neutral-200/60 p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.01)]">Specifications</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <div class="space-y-1.5">
+                        <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Category</h4>
+                        <div class="bg-white border border-neutral-200/60 px-4 py-3 rounded-xl text-neutral-800 text-xs font-bold truncate flex items-center gap-2 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                            <i class="ri-folder-open-line text-neutral-400 text-base"></i>
+                            <span id="modalProductCategory" class="mt-0.5">Electronics</span>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Trading Mode</h4>
+                        <div class="bg-white border border-neutral-200/60 px-4 py-3 rounded-xl text-neutral-800 text-xs font-bold truncate flex items-center gap-2 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
+                            <i class="ri-arrow-left-right-line text-neutral-400 text-base"></i>
+                            <span id="modalProductTrading" class="mt-0.5">Open to Trades</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-left space-y-1.5">
+                    <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Accepted Payment Methods</h4>
+                    <div id="modalProductPayments" class="flex flex-wrap gap-2">
+                        <span class="px-3.5 py-2.5 bg-white border border-neutral-200/60 text-neutral-800 font-bold text-[11px] rounded-xl flex items-center gap-2 shadow-[0_2px_4px_rgba(0,0,0,0.01)]"><i class="ri-money-cash-line text-neutral-400 text-base"></i> Cash Payment</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-white border border-neutral-200/50 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+                    <div onclick="routeToSellerProfile()" class="flex items-center gap-3 text-left cursor-pointer hover:opacity-80 active:scale-[0.98] transition-all p-1 -ml-1 rounded-xl">
+                        <div class="w-10 h-10 bg-neutral-950 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden shrink-0 border border-neutral-100">
+                            <img id="modalSellerAvatar" src="" class="w-full h-full object-cover hidden" />
+                            <i id="modalSellerAvatarIconFallback" class="ri-user-line text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 id="modalSellerName" class="text-neutral-950 text-xs font-bold leading-tight">Seller Name</h4>
+                            
+                            <div id="modalSellerRatingDisplay" class="flex items-center gap-1 text-[10px] font-bold mt-0.5">
+                                <span class="text-neutral-400 font-medium">Loading...</span>
+                            </div>
+                            
+                            <p id="modalSellerSchool" class="text-neutral-400 text-[10px] font-medium mt-0.5">University</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="initializeChatSession()" class="text-neutral-950 hover:text-neutral-600 font-bold text-xs flex items-center gap-1.5 px-3.5 py-2.5 bg-[#EDEDF2] rounded-xl shadow-sm outline-none transition-colors"><i class="ri-chat-3-line text-sm"></i> Contact</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-1">
+                    <button type="button" onclick="executeAddToCartWorkflow()" class="bg-[#EDEDF2] hover:bg-[#E4E4E9] text-neutral-950 py-4 rounded-2xl text-xs font-bold transition-all outline-none flex items-center justify-center gap-2 shadow-sm"><i class="ri-shopping-bag-3-line text-base shrink-0"></i> <span>Add to Cart</span></button>
+                    <button type="button" onclick="executePurchaseWorkflow()" class="bg-neutral-950 hover:bg-neutral-900 text-white py-4 rounded-2xl text-xs font-bold tracking-wider shadow-md transition-all outline-none flex items-center justify-center"><span>Buy Now</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="sidebar-container" data-active="home" class="absolute inset-0 pointer-events-none z-[100]"></div>
+    </div>
+
+    <div id="dashboardPurchaseConfirmModal" class="absolute inset-0 bg-black/60 backdrop-blur-[1px] z-[60] hidden items-center justify-center p-6 transition-opacity opacity-0">
+        <div class="bg-white w-full max-w-[290px] rounded-[32px] p-5 text-center space-y-4 shadow-2xl border border-neutral-100">
+            <div class="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-100 mx-auto flex items-center justify-center text-amber-500">
+                <i class="ri-shopping-bag-3-line text-xl"></i>
+            </div>
+            <div class="space-y-1.5">
+                <h4 class="text-neutral-950 text-sm font-bold tracking-tight">Confirm Purchase</h4>
+                <p class="text-neutral-400 text-xs font-medium px-1">Are you sure you want to purchase this listing item? A system notice will immediately coordinate a meetup conversation thread.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5 pt-1">
+                <button type="button" onclick="closeDashboardConfirmModal()" class="w-full py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-bold text-xs rounded-xl transition-colors outline-none">Cancel</button>
+                <button type="button" id="dashboardFinalConfirmCommitBtn" class="w-full py-2.5 bg-neutral-950 hover:bg-neutral-900 text-white font-bold text-xs rounded-xl transition-colors shadow-sm outline-none">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastNotificationAlert" class="absolute top-6 mx-auto bg-neutral-950/95 border border-white/10 text-white px-5 py-3 rounded-full text-xs font-semibold shadow-2xl tracking-wide z-[200] transform -translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
+        <i class="ri-checkbox-circle-fill text-green-400 text-sm"></i>
+        <span id="toastAlertMessage">Item added cleanly!</span>
+    </div>
+
+    <script src="js/layout.js"></script>
+    <script>
+
+        function routeToSellerProfile() {
+            if (!activeFocusProduct || !activeFocusProduct.seller_id) return;
+            window.location.href = `seller.html?id=${activeFocusProduct.seller_id}`;
+        }
+        
+        function safeText(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // UPGRADE: Instantly derives the real user context token from your active session array
+        let currentUserId = (function() {
+            try {
+                const cached = localStorage.getItem('zellr_user_profile');
+                if (cached) {
+                    const user = JSON.parse(cached);
+                    return user.id ? parseInt(user.id) : 3;
+                }
+            } catch(e) {}
+            return 3;
+        })();
+        
+        let activeFocusProduct = null;
+        let localProductsCache = []; 
+        let localOrdersCache = [];    // FIX: Global cache prevents re-pollution on search/filter events
+        let globalRatingsCache = []; // NEW: Powers the user search cards
+        let activeCategoryFilter = 'All'; 
+        let activeSearchQuery = "";
+        let activeSortMode = 'recent';
+
+        function showSystemNotification(msg) {
+            const toast = document.getElementById('toastNotificationAlert');
+            document.getElementById('toastAlertMessage').textContent = msg;
+            toast.classList.remove('-translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-20', 'opacity-0');
+            }, 2200);
+        }
+
+        async function fetchActiveMarketplaceFeed() {
+            // FIX: Dynamic API Base Routing adapts seamlessly across changing network environments
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/products`);
+                const result = await response.json();
+                
+                if (!response.ok || result.error) return;
+                localProductsCache = result;
+                
+                try {
+                    const rRes = await fetch(`${API_BASE}/api/ratings`);
+                    if (rRes.ok) globalRatingsCache = await rRes.json();
+                } catch(e) {}
+
+                try {
+                    const ordersRes = await fetch(`${API_BASE}/api/orders`);
+                    if (ordersRes.ok) localOrdersCache = await ordersRes.json();
+                } catch(e) {}
+
+                updateFilteredFeed();
+
+            } catch (error) { console.error(error); }
+        }
+
+        function toggleSortMenu() {
+            const menu = document.getElementById('dashboardSortMenu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            }
+        }
+
+        function triggerFeedSort(mode, label) {
+            activeSortMode = mode;
+            
+            // Re-style buttons to highlight active selection
+            const btns = document.querySelectorAll('.sort-option-btn');
+            btns.forEach(btn => {
+                if (btn.textContent.trim() === label) {
+                    btn.className = "text-left px-4 py-2.5 text-xs font-bold font-sans-subtitle rounded-[14px] outline-none transition-colors bg-white text-neutral-900 shadow-sm sort-option-btn";
+                } else {
+                    btn.className = "text-left px-4 py-2.5 text-xs font-bold font-sans-subtitle rounded-[14px] outline-none transition-colors text-neutral-500 hover:bg-white/60 sort-option-btn";
+                }
+            });
+
+            toggleSortMenu(); // Collapse dropdown menu automatically
+            updateFilteredFeed();
+        }
+
+        function toggleCategoryFilter(btnElement, categoryName) {
+            if (activeCategoryFilter === categoryName) return; // Prevent deselecting into a null state
+
+            activeCategoryFilter = categoryName;
+
+            document.querySelectorAll('.dash-cat-btn').forEach(btn => {
+                btn.className = "w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all dash-cat-btn";
+                const sisterText = btn.nextElementSibling;
+                if(sisterText) sisterText.className = "text-[10px] font-medium text-neutral-400 transition-colors";
+            });
+
+            btnElement.className = "w-12 h-12 bg-neutral-950 text-white rounded-[16px] flex items-center justify-center shadow-sm outline-none transition-all dash-cat-btn";
+            const activeText = btnElement.nextElementSibling;
+            if(activeText) activeText.className = "text-[10px] font-bold text-neutral-950 transition-colors";
+            
+            updateFilteredFeed();
+        }
+
+        function updateFilteredFeed() {
+            let compiledList = localProductsCache || [];
+            let liveOrders = localOrdersCache || [];
+
+            // User Search Logic
+            const usersSection = document.getElementById('usersSearchSection');
+            const usersGrid = document.getElementById('usersSearchGrid');
+            
+            if (activeSearchQuery && String(activeSearchQuery).trim() !== "") {
+                const term = String(activeSearchQuery).toLowerCase().trim();
+                let matchingUsers = [];
+                let seenUserIds = new Set();
+                
+                // Extract unique matching users (Removed self-hide restriction)
+                compiledList.forEach(p => {
+                    const sellerName = String(p.seller_name || ""); 
+                    if (!seenUserIds.has(p.seller_id) && sellerName.toLowerCase().includes(term)) {
+                        seenUserIds.add(p.seller_id);
+                        matchingUsers.push({
+                            id: p.seller_id,
+                            name: p.seller_name,
+                            avatar: p.seller_avatar,
+                            school: p.seller_school
+                        });
+                    }
+                });
+
+                if (matchingUsers.length > 0) {
+                    let usersHtml = "";
+                    matchingUsers.forEach(u => {
+                        const sellerRatings = globalRatingsCache.filter(r => String(r.seller_id) === String(u.id));
+                        let ratingDisplay = '<span class="text-neutral-400 font-medium">New</span>';
+                        if (sellerRatings.length > 0) {
+                            const avg = (sellerRatings.reduce((acc, curr) => acc + parseInt(curr.rating), 0) / sellerRatings.length).toFixed(1);
+                            ratingDisplay = `<i class="ri-star-fill text-yellow-400 text-[11px]"></i> <span class="text-neutral-900">${avg}</span> <span class="text-neutral-400 font-medium ml-0.5">(${sellerRatings.length})</span>`;
+                        }
+
+                        const cleanInitial = String(u.name || "U").charAt(0).toUpperCase();
+                        const fbHtml = `<span class="text-white font-bold text-xs">${cleanInitial}</span>`;
+                        
+                        let avatarHtml = fbHtml; 
+                        const safeAvatar = String(u.avatar || "");
+                        
+                        if (safeAvatar.trim() !== "" && !(safeAvatar.startsWith('data:image') && safeAvatar.length < 500)) {
+                            avatarHtml = `<img src="${safeAvatar}" class="w-full h-full object-cover" onerror='this.outerHTML=${JSON.stringify(fbHtml)}' />`;
+                        }
+
+                        usersHtml += `
+                        <div onclick="window.location.href='seller.html?id=${u.id}'" class="flex items-center gap-3 p-3 bg-white border border-neutral-200/50 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.01)] cursor-pointer hover:border-neutral-300 transition-all text-left active:scale-[0.98]">
+                            <div class="w-10 h-10 bg-neutral-950 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden shrink-0 border border-neutral-100">
+                                ${avatarHtml}
+                            </div>
+                            <div>
+                                <h4 class="text-neutral-950 text-xs font-bold leading-tight">${safeText(String(u.name || 'Campus User'))}</h4>
+                                <div class="flex items-center gap-1 text-[10px] font-bold mt-0.5">
+                                    ${ratingDisplay}
+                                </div>
+                                <p class="text-neutral-400 text-[10px] font-medium mt-0.5 flex items-center gap-1"><i class="ri-bank-line text-[10px]"></i> ${safeText(String(u.school || 'University'))}</p>
+                            </div>
+                        </div>`;
+                    });
+                    
+                    if (usersGrid) usersGrid.innerHTML = usersHtml;
+                    if (usersSection) {
+                        usersSection.classList.remove('hidden');
+                        usersSection.classList.add('flex');
+                    }
+                } else {
+                    if (usersSection) {
+                        usersSection.classList.add('hidden');
+                        usersSection.classList.remove('flex');
+                    }
+                }
+            } else {
+                if (usersSection) {
+                    usersSection.classList.add('hidden');
+                    usersSection.classList.remove('flex');
+                }
+            }
+
+            // Step 1: Base Visibility Filters - Bulletproof Canceled Item Restoration
+            compiledList = compiledList.filter(item => {
+                // 1. Hide the user's own items
+                if (String(item.seller_id) === String(currentUserId)) return false;
+                
+                // 2. Hide items explicitly marked as sold or reserved in the main product database
+                if (item.status === 'sold' || item.status === 'reserved') return false;
+                
+                // 3. Live Transaction Check: Hide ONLY if someone is actively buying or has bought it.
+                // By exclusively targeting active states, 'canceled' and 'inquiry' orders automatically bypass this block and return to the public feed!
+                const hasActivePurchase = liveOrders.some(log => 
+                    parseInt(log.product_id) === parseInt(item.id) && 
+                    (log.status === 'pending' || log.status === 'Ready for Delivery' || log.status === 'completed')
+                );
+                
+                return !hasActivePurchase;
+            });
+
+            // Step 2: Category Toggles
+            if (activeCategoryFilter && activeCategoryFilter !== 'All') {
+                compiledList = compiledList.filter(item => {
+                    const cat = String(item.category || 'Other');
+                    if (activeCategoryFilter === 'Dorm') return cat.includes('Dorm');
+                    return cat.toLowerCase() === String(activeCategoryFilter).toLowerCase();
+                });
+            }
+
+            // Step 3: Search Bar Text Matching
+            if (activeSearchQuery && String(activeSearchQuery).trim() !== "") {
+                const term = String(activeSearchQuery).toLowerCase().trim();
+                compiledList = compiledList.filter(item => {
+                    const title = String(item.title || "");
+                    const desc = String(item.description || "");
+                    const sName = String(item.seller_name || "");
+                    
+                    return title.toLowerCase().includes(term) ||
+                           desc.toLowerCase().includes(term) ||
+                           sName.toLowerCase().includes(term);
+                });
+            }
+
+            // Step 4: Dropdown Matrix Sort
+            if (activeSortMode === 'priceAsc') {
+                compiledList.sort((a, b) => parseFloat(a.price || 0) - parseFloat(b.price || 0));
+            } else if (activeSortMode === 'priceDesc') {
+                compiledList.sort((a, b) => parseFloat(b.price || 0) - parseFloat(a.price || 0));
+            } else {
+                compiledList.sort((a, b) => parseInt(b.id || 0) - parseInt(a.id || 0)); 
+            }
+
+            renderFeedGrid(compiledList);
+        }
+
+        function renderFeedGrid(result) {
+            const feedMount = document.getElementById('feedGridMountingPoint');
+            if (!feedMount) return;
+
+            if (!Array.isArray(result) || result.length === 0) {
+                feedMount.innerHTML = `
+                    <div class="w-full bg-white border border-neutral-200/50 rounded-[24px] py-14 px-4 flex flex-col items-center justify-center text-center shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+                        <div class="w-12 h-12 rounded-2xl bg-[#F9F9FB] border border-neutral-200/50 flex items-center justify-center text-neutral-400 mb-3 shadow-inner">
+                            <i class="ri-box-3-line text-xl"></i>
+                        </div>
+                        <h4 class="text-neutral-900 text-sm font-bold tracking-tight mb-1">No items found</h4>
+                        <p class="text-neutral-400 text-xs font-medium max-w-[200px]">There are no active products listed in this category right now.</p>
+                    </div>`;
+                return;
+            }
+
+            let gridHtml = `<div class="grid grid-cols-2 gap-3.5">`;
+            result.forEach(item => {
+                gridHtml += `
+                    <div onclick="openProductViewer(${item.id})" class="bg-white border border-neutral-100/70 rounded-[28px] overflow-hidden shadow-sm flex flex-col justify-between p-2 cursor-pointer hover:scale-[1.01] transition-transform">
+                        <div class="w-full h-32 bg-[#F2F2F7] rounded-[22px] overflow-hidden relative">
+                            <img src="${item.image_url || 'assets/catalog/placeholder.png'}" class="w-full h-full object-cover" onerror="this.src='assets/catalog/placeholder.png'" />
+                        </div>
+                        <div class="pt-2.5 pb-1.5 px-1.5 text-left space-y-0.5">
+                            <div class="flex items-center justify-between gap-1">
+                                <h4 class="text-neutral-900 text-xs font-bold tracking-tight truncate flex-1">${safeText(item.title)}</h4>
+                                <span class="text-[7px] font-bold uppercase tracking-wider bg-neutral-100 px-1.5 py-0.5 rounded-full text-neutral-500 font-sans-subtitle tracking-wider shrink-0">${item.item_condition || 'Good'}</span>
+                            </div>
+                            <p class="text-[9px] text-neutral-400 font-semibold truncate">by ${safeText(item.seller_name || 'Vendor')}</p>
+                            <p class="text-neutral-950 font-bold text-xs pt-0.5">₱${parseFloat(item.price).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                        </div>
+                    </div>`;
+            });
+            gridHtml += `</div>`;
+            feedMount.innerHTML = gridHtml;
+        }
+
+        function openProductViewer(productId) {
+            const item = localProductsCache.find(p => parseInt(p.id) === parseInt(productId));
+            if (!item) return;
+            activeFocusProduct = item;
+
+            document.getElementById('modalProductImage').src = item.image_url || 'assets/catalog/placeholder.png';
+            document.getElementById('modalProductTitle').textContent = item.title;
+            document.getElementById('modalProductPrice').textContent = '₱' + parseFloat(item.price).toFixed(2);
+            document.getElementById('modalProductLocation').innerHTML = `<i class="ri-map-pin-line mr-1 text-neutral-400 text-sm"></i>` + (item.campus || 'Main Campus');
+            document.getElementById('modalProductCondition').textContent = item.item_condition || 'Good';
+            document.getElementById('modalProductDescription').textContent = item.description || 'No description supplied.';
+            
+            document.getElementById('modalProductCategory').textContent = item.category || 'Other';
+
+            // ---------------------------------------------------------
+            // 1. Synchronize Heart Icon State
+            // ---------------------------------------------------------
+            let activeWishlist = JSON.parse(localStorage.getItem('zellr_wishlist') || '[]');
+            const isSaved = activeWishlist.some(id => parseInt(id) === parseInt(item.id));
+            const heartIcon = document.getElementById('wishlistHeartIcon');
+            
+            if (isSaved) {
+                heartIcon.className = "ri-heart-fill text-red-500 text-lg transition-colors";
+            } else {
+                heartIcon.className = "ri-heart-line text-lg transition-colors";
+            }
+
+            // ---------------------------------------------------------
+            // 2. Fetch Live Seller Profile Data
+            // ---------------------------------------------------------
+            let computedSellerName = item.seller_name || "Campus User";
+            let computedSellerSchool = item.seller_school || item.campus || "Polytechnic University";
+            let computedSellerAvatar = item.seller_avatar || "";
+
+            if (String(item.seller_id) === String(currentUserId)) {
+                const primaryProfile = localStorage.getItem('zellr_user_profile');
+                if (primaryProfile) {
+                    try {
+                        let parsedUser = JSON.parse(primaryProfile);
+                        // UPGRADE: Combines split first/last variables cleanly or falls back to legacy mapping
+                        if (parsedUser.firstName || parsedUser.lastName) {
+                            computedSellerName = `${parsedUser.firstName || ''} ${parsedUser.lastName || ''}`.trim();
+                        } else if (parsedUser.name) {
+                            computedSellerName = parsedUser.name;
+                        }
+                        if (parsedUser.school) computedSellerSchool = parsedUser.school;
+                        if (parsedUser.avatar) computedSellerAvatar = parsedUser.avatar;
+                    } catch(e) {}
+                }
+            }
+
+            document.getElementById('modalSellerName').textContent = computedSellerName;
+            document.getElementById('modalSellerSchool').textContent = computedSellerSchool;
+
+            const modalAvatarBox = document.getElementById('modalSellerAvatar').parentNode;
+            const initialLetter = computedSellerName.trim().charAt(0).toUpperCase();
+            const fallbackHTML = `<div id="modalSellerAvatar" class="w-full h-full bg-neutral-950 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider">${initialLetter}</div>`;
+            
+            if (computedSellerAvatar) {
+                modalAvatarBox.innerHTML = `<img id="modalSellerAvatar" src="${computedSellerAvatar}" class="w-full h-full object-cover" onerror='this.outerHTML=${JSON.stringify(fallbackHTML)}' />`;
+            } else {
+                modalAvatarBox.innerHTML = fallbackHTML;
+            }
+
+            // ---------------------------------------------------------
+            // 3. Fetch Live Aggregate Seller Rating
+            // ---------------------------------------------------------
+            const ratingContainer = document.getElementById('modalSellerRatingDisplay');
+            if (ratingContainer) {
+                ratingContainer.innerHTML = `<span class="text-neutral-300 font-medium">Loading...</span>`;
+                fetch('http://localhost:3000/api/ratings')
+                    .then(res => res.json())
+                    .then(allRatings => {
+                        const sellerRatings = allRatings.filter(r => String(r.seller_id) === String(item.seller_id));
+                        if (sellerRatings.length === 0) {
+                            ratingContainer.innerHTML = `<span class="text-neutral-400 font-medium text-[10px]">Not rated yet</span>`;
+                        } else {
+                            const sum = sellerRatings.reduce((acc, curr) => acc + parseInt(curr.rating), 0);
+                            const avg = (sum / sellerRatings.length).toFixed(1);
+                            ratingContainer.innerHTML = `
+                                <i class="ri-star-fill text-yellow-400 text-[13px]"></i>
+                                <span class="text-neutral-900">${avg}</span>
+                                <span class="text-neutral-400 font-medium ml-0.5">(${sellerRatings.length})</span>
+                            `;
+                        }
+                    })
+                    .catch(e => {
+                        ratingContainer.innerHTML = `<span class="text-neutral-400 font-medium text-[10px]">Not rated yet</span>`;
+                    });
+            }
+
+            // ---------------------------------------------------------
+            // 4. Live Database-Exclusive Meta Extraction
+            // ---------------------------------------------------------
+            const isTradeable = (item.open_to_trades === 1 || item.open_to_trades === true || item.open_to_trades === "true");
+            document.getElementById('modalProductTrading').textContent = isTradeable ? "Open to Trades" : "No Trades Allowed";
+            
+            const payCanvas = document.getElementById('modalProductPayments');
+            payCanvas.innerHTML = "";
+            
+            let methodsToRender = ["Cash Payment"];
+            if (item.payment_methods) {
+                try {
+                    methodsToRender = JSON.parse(item.payment_methods);
+                } catch (e) {
+                    methodsToRender = item.payment_methods.split(',').map(s => s.trim());
+                }
+            }
+            
+            methodsToRender.forEach(m => {
+                let iconClass = "ri-money-cash-line";
+                if (m.toLowerCase().includes("gcash")) iconClass = "ri-smartphone-line";
+                if (m.includes("Credit Card")) iconClass = "ri-bank-card-line";
+                if (m.includes("Debit Card")) iconClass = "ri-bank-card-2-line";
+                if (m.includes("Bank Transfer")) iconClass = "ri-bank-line";
+
+                payCanvas.innerHTML += `
+                    <span class="px-3.5 py-2.5 bg-white border border-neutral-200/60 text-neutral-800 font-bold text-[11px] rounded-xl flex items-center gap-2 shadow-[0_2px_4px_rgba(0,0,0,0.01)]">
+                        <i class="${iconClass} text-neutral-400 text-base"></i> ${safeText(m)}
+                    </span>`;
+            });
+
+            toggleDetailsModal(true);
+        }
+
+        function toggleDetailsModal(show) {
+            const wrapper = document.getElementById('productDetailsModal');
+            const drawer = wrapper ? wrapper.querySelector('div') : null;
+            if (wrapper && drawer) {
+                if (show) {
+                    wrapper.classList.remove('pointer-events-none', 'opacity-0');
+                    wrapper.classList.add('opacity-100');
+                    drawer.classList.remove('translate-y-full');
+                } else {
+                    wrapper.classList.add('pointer-events-none', 'opacity-0');
+                    wrapper.classList.remove('opacity-100');
+                    drawer.classList.add('translate-y-full');
+                }
+            }
+        }
+
+        // NEW: Acts exactly like Add to Cart, pulling data directly from the active modal focus
+        function toggleWishlistState() {
+            if (!activeFocusProduct) return;
+            
+            let activeWishlist = JSON.parse(localStorage.getItem('zellr_wishlist') || '[]');
+            const isSaved = activeWishlist.some(id => parseInt(id) === parseInt(activeFocusProduct.id));
+            const heartIcon = document.getElementById('wishlistHeartIcon');
+            
+            if (isSaved) {
+                // Remove from Wishlist
+                activeWishlist = activeWishlist.filter(id => parseInt(id) !== parseInt(activeFocusProduct.id));
+                showSystemNotification("Removed from Wishlist");
+                heartIcon.className = "ri-heart-line text-lg transition-colors"; // Switch to empty heart
+            } else {
+                // Add to Wishlist
+                activeWishlist.push(parseInt(activeFocusProduct.id));
+                showSystemNotification("Added to Wishlist");
+                heartIcon.className = "ri-heart-fill text-red-500 text-lg transition-colors"; // Switch to red heart
+            }
+            
+            localStorage.setItem('zellr_wishlist', JSON.stringify(activeWishlist));
+        }
+
+        function executeAddToCartWorkflow() {
+            if (!activeFocusProduct) return;
+            let cart = JSON.parse(localStorage.getItem('zellr_cart_basket') || '[]');
+            if (!cart.some(c => parseInt(c.id) === parseInt(activeFocusProduct.id))) {
+                cart.push(activeFocusProduct);
+                localStorage.setItem('zellr_cart_basket', JSON.stringify(cart));
+            }
+            toggleDetailsModal(false);
+            showSystemNotification("Item added to Cart Bag");
+        }
+
+        function executePurchaseWorkflow() {
+            if (!activeFocusProduct) return;
+            
+            if (String(activeFocusProduct.seller_id) === String(currentUserId)) {
+                launchCustomWarningModal("Self-Purchase Blocked", "You cannot purchase an item that you listed on your own campus storefront.");
+                return;
+            }
+
+            const modal = document.getElementById('dashboardPurchaseConfirmModal');
+            const commitBtn = document.getElementById('dashboardFinalConfirmCommitBtn');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+
+            // Bind the actual backend submission process to the confirm click trigger event
+            commitBtn.onclick = async function() {
+                closeDashboardConfirmModal();
+                await commitPurchaseToDatabaseLogEngine();
+            };
+        }
+
+        function closeDashboardConfirmModal() {
+            const modal = document.getElementById('dashboardPurchaseConfirmModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+        }
+
+        // UPGRADE: Extracted database logging execution pipeline 
+        async function commitPurchaseToDatabaseLogEngine() {
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+
+            const currentProfile = localStorage.getItem('zellr_user_profile');
+            let customerId = currentUserId;
+            if (currentProfile) {
+                try {
+                    let parsedUser = JSON.parse(currentProfile);
+                    if (parsedUser.id) customerId = parseInt(parsedUser.id);
+                } catch(e) {}
+            }
+
+            try {
+                // 1. SMART ORDER CREATION: Bypass Database Unique Constraints
+                let existingOrders = [];
+                const checkRes = await fetch('http://localhost:3000/api/orders');
+                if (checkRes.ok) existingOrders = await checkRes.json();
+
+                // Check if a previous canceled order or inquiry already exists to prevent duplicate row crashes
+                const priorOrder = existingOrders.find(o => 
+                    parseInt(o.product_id) === parseInt(activeFocusProduct.id) && 
+                    parseInt(o.buyer_id) === parseInt(customerId)
+                );
+
+                let generatedOrderId = null;
+
+                if (priorOrder) {
+                    // UPDATE existing row instead of POSTing a duplicate
+                    generatedOrderId = priorOrder.id;
+                    const updateRes = await fetch(`http://localhost:3000/api/orders/${generatedOrderId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'pending' })
+                    });
+                    if (!updateRes.ok) throw new Error("Failed to restore canceled order to pending.");
+                } else {
+                    // CREATE brand new row
+                    const orderResponse = await fetch('http://localhost:3000/api/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            product_id: activeFocusProduct.id,
+                            buyer_id: customerId,
+                            seller_id: activeFocusProduct.seller_id,
+                            status: 'pending'
+                        })
+                    });
+                    const orderResult = await orderResponse.json();
+                    if (!orderResponse.ok) throw new Error(orderResult.error || "Fulfillment generation failure.");
+                    generatedOrderId = orderResult.order_id || orderResult.insertId || orderResult.id;
+                }
+
+                // 2. Dispatch the automated message
+                await fetch('http://localhost:3000/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_id: generatedOrderId,
+                        sender_id: customerId,
+                        receiver_id: activeFocusProduct.seller_id,
+                        message_text: `SYSTEM NOTICE: I just bought your item listing "${activeFocusProduct.title}" for ₱${parseFloat(activeFocusProduct.price).toFixed(2)}. Let's coordinate delivery meetup context variables!`
+                    })
+                });
+
+                toggleDetailsModal(false);
+                window.location.href = 'messages.html';
+            } catch (err) {
+                console.error(err);
+                alert("Failed to process purchase. Please try again.");
+            }
+        }
+
+        async function initializeChatSession() {
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : window.location.origin;
+            if (!activeFocusProduct) return;
+            
+            if (String(activeFocusProduct.seller_id) === String(currentUserId)) {
+                launchCustomWarningModal("Action Restricted", "You cannot initiate an inquiry chat thread with your own item listing.");
+                return;
+            }
+
+            try {
+                // SMART ORDER CREATION: Prevent duplicate inquiries from crashing
+                let existingOrders = [];
+                const checkRes = await fetch('http://localhost:3000/api/orders');
+                if (checkRes.ok) existingOrders = await checkRes.json();
+
+                const priorOrder = existingOrders.find(o => 
+                    parseInt(o.product_id) === parseInt(activeFocusProduct.id) && 
+                    parseInt(o.buyer_id) === parseInt(currentUserId)
+                );
+
+                let generatedOrderId = null;
+                let isNewContext = false;
+
+                if (priorOrder) {
+                    generatedOrderId = priorOrder.id;
+                    // If it was explicitly canceled before, wake it up as an inquiry
+                    if (priorOrder.status === 'canceled') {
+                        await fetch(`http://localhost:3000/api/orders/${generatedOrderId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ status: 'inquiry' })
+                        });
+                        isNewContext = true;
+                    }
+                } else {
+                    const orderResponse = await fetch('http://localhost:3000/api/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            product_id: activeFocusProduct.id,
+                            buyer_id: currentUserId,
+                            seller_id: activeFocusProduct.seller_id,
+                            status: 'inquiry'
+                        })
+                    });
+                    
+                    const orderResult = await orderResponse.json();
+                    if (!orderResponse.ok) throw new Error(orderResult.error || "Failed to establish a channel block.");
+
+                    generatedOrderId = orderResult.order_id || orderResult.insertId || orderResult.id;
+                    if (orderResult.message !== "Order context already established.") {
+                        isNewContext = true;
+                    }
+                }
+
+                if (isNewContext) {
+                    await fetch('http://localhost:3000/api/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            order_id: generatedOrderId,
+                            sender_id: currentUserId,
+                            receiver_id: activeFocusProduct.seller_id,
+                            message_text: `SYSTEM NOTICE: Inquiry thread opened regarding item: "${activeFocusProduct.title}".`
+                        })
+                    });
+                }
+
+                window.location.href = `messages.html?open_order_id=${generatedOrderId}`;
+            } catch (err) {
+                console.error(err);
+                alert("Failed to initiate chat session.");
+            }
+        }
+
+        window.onload = function() {
+            const cachedProfile = localStorage.getItem('zellr_user_profile');
+            if (cachedProfile) {
+                try {
+                    const user = JSON.parse(cachedProfile);
+                    if (user && user.id) currentUserId = user.id;
+                    
+                    // UPGRADE: Instantly binds the clean database-level first_name with a safe first-word fallback
+                    if (user) {
+                        let displayName = "Campus User";
+                        if (user.firstName) {
+                            displayName = user.firstName;
+                        } else if (user.name) {
+                            displayName = user.name.trim().split(/\s+/)[0];
+                        }
+                        document.getElementById('welcomeUserName').textContent = displayName;
+                    }
+                } catch(e) {}
+            }
+            
+            const searchInput = document.getElementById('dashboardSearchInput');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    activeSearchQuery = e.target.value;
+                    updateFilteredFeed();
+                });
+            }
+
+            fetchActiveMarketplaceFeed();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "zellr-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "tailwind:watch": "node_modules\\.bin\\tailwindcss.cmd -i ./public/src/input.css -o ./public/dist/output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "google-auth-library": "^10.9.0",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.6",
+    "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.3.2"
+  }
+}

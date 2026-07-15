@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zellr | Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="assets/zellr-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .font-sans-premium {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-serif-logo {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: -0.01em;
+        }
+        .font-sans-subtitle {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* SOLID PURE CSS SPOTLIGHT BEAM ANIMATION */
+        @keyframes spotlightBreathe {
+            0%, 100% {
+                opacity: 0.35;
+                transform: scaleX(1.0) translateY(0px);
+            }
+            50% {
+                opacity: 0.65;
+                transform: scaleX(1.20) translateY(2px);
+            }
+        }
+        .premium-spotlight-beam {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 420px;
+            pointer-events: none;
+            z-index: 10;
+            filter: blur(28px);
+            will-change: opacity, transform;
+            animation: spotlightBreathe 6s ease-in-out infinite;
+            background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 55%, rgba(0, 0, 0, 0) 100__);
+        }
+
+        /* Vector Text Shadow Ambient Breathing Pulse */
+        @keyframes textVectorBloom {
+            0%, 100% {
+                text-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+            }
+        }
+        .logo-text-glow {
+            animation: textVectorBloom 5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-black flex justify-center items-center min-h-screen p-4 font-sans-premium">
+
+    <div class="w-[390px] h-[844px] bg-black rounded-[48px] shadow-[0_30px_70px_-15px_rgba(0,0,0,1)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
+        
+        <div class="premium-spotlight-beam"></div>
+        
+        <div class="flex-1 flex flex-col items-center justify-center text-center z-20 relative pt-20">
+            <div class="flex flex-col items-center">
+                <h1 class="text-[66px] font-bold text-white font-serif-logo leading-none logo-text-glow select-none">
+                    Zellr
+                </h1>
+                <p class="text-[10.5px] uppercase tracking-[0.24em] font-bold text-neutral-400 mt-2.5 font-sans-subtitle">
+                    CAMPUS MARKETPLACE
+                </p>
+            </div>
+            
+            <p class="text-neutral-400 text-[14px] font-normal max-w-[275px] mt-12 leading-relaxed tracking-wide">
+                Buy and sell textbooks, electronics, and student essentials securely within your verified university network.
+            </p>
+        </div>
+
+        <div class="w-full space-y-4 pb-12 z-20 px-8">
+            <button onclick="window.location.href='login.html'" class="w-full bg-white hover:bg-neutral-200 text-black font-bold text-[15px] tracking-wide py-4 rounded-2xl shadow-[0_0_25px_rgba(255,255,255,0.12)] transition-all duration-300 active:scale-[0.98] outline-none">
+                Login
+            </button>
+
+            <button onclick="window.location.href='register.html'" class="w-full bg-neutral-950 hover:bg-neutral-900 text-neutral-200 font-semibold text-[15px] tracking-wide py-4 rounded-2xl border border-neutral-800/80 transition-all duration-300 active:scale-[0.98] outline-none">
+                Create a new account
+            </button>
+        </div>
+
+    </div>
+
+</body>
+</html>

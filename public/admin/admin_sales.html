@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const token = localStorage.getItem('zellr_session_token');
+            const profile = localStorage.getItem('zellr_user_profile');
+            if (!token || !profile) { window.location.replace('../login.html'); return; }
+            try { if (String(JSON.parse(profile).role).toLowerCase().trim() !== 'admin') window.location.replace('../dashboard.html'); } catch(e) { window.location.replace('../login.html'); }
+        })();
+    </script>
+    <title>Zellr Admin | Sales Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="../assets/zellr-logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    <style>
+        .font-sans-premium { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-sans-subtitle { font-family: 'Montserrat', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
+
+    <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
+        
+        <div id="admin-header" class="z-30"></div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-5 pt-24 px-4">
+            <div class="px-1 text-left">
+                <p class="text-neutral-400 text-[10px] font-bold uppercase tracking-wider font-sans-subtitle">Sales & Revenue</p>
+                <h2 class="text-neutral-950 text-xl font-bold tracking-tight mt-0.5">Sales Summary</h2>
+            </div>
+
+            <div class="w-full bg-white border border-neutral-200/50 rounded-3xl p-5 shadow-sm text-left space-y-4">
+                <div>
+                    <p class="text-neutral-400 text-[9px] font-bold uppercase tracking-wider font-sans-subtitle">Total Sales</p>
+                    <p id="ledgerGrossVolume" class="text-neutral-950 text-3xl font-bold tracking-tight mt-0.5">₱0.00</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 border-t border-neutral-100 pt-3.5">
+                    <div>
+                        <p class="text-neutral-400 text-[8.5px] font-bold uppercase tracking-wider font-sans-subtitle">Transaction Fees (3%)</p>
+                        <p id="ledgerCommissions" class="text-emerald-600 text-base font-bold mt-0.5">₱0.00</p>
+                    </div>
+                    <div>
+                        <p class="text-neutral-400 text-[8.5px] font-bold uppercase tracking-wider font-sans-subtitle">Total Orders</p>
+                        <p id="ledgerClosedCount" class="text-neutral-950 text-base font-bold mt-0.5">0 Trades</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2.5">
+                <p class="text-neutral-400 text-[10px] font-bold tracking-wider uppercase font-sans-subtitle pl-1 text-left">Completed Orders</p>
+                <div id="adminSalesAuditFeed" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <div id="admin-sidebar-container" data-active="sales" class="absolute inset-0 pointer-events-none z-50"></div>
+    </div>
+
+    <script src="admin_layout.js"></script>
+    <script>
+        async function compilePlatformSalesLedger() {
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
+            let orders = [];
+
+            try {
+                const res = await fetch(`${API_BASE}/api/orders`);
+                if (res.ok) orders = await res.json();
+            } catch(e) { console.error(e); }
+
+            const completedTransactions = orders.filter(o => String(o.status).toLowerCase() === 'completed');
+
+            let grossRevenue = 0;
+            completedTransactions.forEach(o => { grossRevenue += parseFloat(o.product_price || 0); });
+
+            let estimatedCommissions = grossRevenue * 0.03;
+
+            document.getElementById('ledgerGrossVolume').textContent = '₱' + grossRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('ledgerCommissions').textContent = '₱' + estimatedCommissions.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('ledgerClosedCount').textContent = `${completedTransactions.length} ${completedTransactions.length === 1 ? 'Order' : 'Orders'}`;
+
+            const auditContainer = document.getElementById('adminSalesAuditFeed');
+            if (completedTransactions.length === 0) {
+                // UI REFACTOR ENHANCEMENT: High-fidelity empty state display cards block
+                auditContainer.innerHTML = `
+                    <div class="w-full bg-white border border-neutral-200/40 rounded-[24px] py-14 px-4 flex flex-col items-center justify-center text-center space-y-3 shadow-sm">
+                        <div class="w-10 h-10 rounded-xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400"><i class="ri-coins-line text-lg"></i></div>
+                        <div class="space-y-0.5">
+                            <h4 class="text-neutral-900 text-xs font-bold tracking-tight">No Financial Transactions</h4>
+                            <p class="text-neutral-400 text-[10px] font-medium max-w-[180px] mx-auto">No closed sales invoices have been recorded on the system database.</p>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            let html = "";
+            completedTransactions.forEach(log => {
+                // REFACTOR ENHANCEMENT: Parse date strings cleanly into premium localized variables
+                const timestamp = log.created_at ? new Date(log.created_at).toLocaleString('en-US', {
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : 'Recent Transaction';
+
+                html += `
+                    <div class="bg-white border border-neutral-200/50 p-3.5 rounded-2xl flex flex-col gap-2 shadow-sm text-left select-none text-xs">
+                        <div class="flex justify-between items-center border-b border-neutral-100 pb-1.5">
+                            <span class="text-neutral-400 text-[10px] font-bold flex items-center gap-1"><i class="ri-calendar-line text-sm"></i> ${timestamp}</span>
+                            <span class="text-neutral-950 font-bold shrink-0">₱${parseFloat(log.product_price || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="space-y-0.5 font-medium text-neutral-500 text-[11px]">
+                            <p class="truncate"><b class="text-neutral-700">Product:</b> ${log.product_title}</p>
+                            <p class="truncate"><b class="text-neutral-700">Seller:</b> ${log.seller_name} (ID: ${log.seller_id})</p>
+                            <p class="truncate"><b class="text-neutral-700">Buyer:</b> ${log.buyer_name} (ID: ${log.buyer_id})</p>
+                        </div>
+                    </div>`;
+            });
+
+            auditContainer.innerHTML = html;
+        }
+
+        window.onload = compilePlatformSalesLedger;
+    </script>
+</body>
+</html>
