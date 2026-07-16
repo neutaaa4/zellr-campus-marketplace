@@ -180,9 +180,10 @@ exports.registerUser = async (req, res) => {
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        const [result] = await db.query(
-            'INSERT INTO users (first_name, last_name, email, password_hash, status, role) VALUES (?, ?, ?, ?, "Active", "User")',
-            [firstName.trim(), lastName.trim(), email, passwordHash]
+        // SURGICAL FIX: Flipped string wrappers to pass single-quoted string literals ('Active', 'User') to MySQL
+        await db.query(
+            "INSERT INTO users (first_name, last_name, email, password_hash, status, role) VALUES (?, ?, ?, ?, 'Active', 'User')",
+            [first_name, last_name, email, passwordHash]
         );
 
         return res.status(201).json({ 
