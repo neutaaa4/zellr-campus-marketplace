@@ -187,11 +187,6 @@
 
     <script src="js/layout.js"></script>
     <script>
-        // GLOBAL CONFIGURATION: Unified endpoint routing base matrix for cross-origin production requests
-        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-            ? 'http://localhost:3000' 
-            : 'https://zellr-backend-engine.onrender.com';
-        
         // NEW: Shimmer Skeleton Animation Loader Controller for Saved Items Track
         function displayCartSkeletonLoader() {
             document.getElementById('cartCanvasListContainer').innerHTML = `

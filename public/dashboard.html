@@ -344,9 +344,6 @@
         }
 
         async function fetchActiveMarketplaceFeed() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const response = await fetch(`${API_BASE}/api/products`);
@@ -635,10 +632,6 @@
             if (ratingContainer) {
                 ratingContainer.innerHTML = `<span class="text-neutral-300 font-medium">Loading...</span>`;
                 
-                // SURGICAL FIX: Injects dynamic environment checking to prevent cross-origin lookup dropouts
-                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3000' 
-                    : 'https://zellr-backend-engine.onrender.com';
 
                 fetch(`${API_BASE}/api/ratings`)
                     .then(res => res.json())
@@ -787,10 +780,6 @@
         }
 
         async function commitPurchaseToDatabaseLogEngine() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             const currentProfile = localStorage.getItem('zellr_user_profile');
             let customerId = currentUserId;
             if (currentProfile) {
@@ -857,9 +846,6 @@
         }
 
         async function initializeChatSession() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
             if (!activeFocusProduct) return;
             
             if (String(activeFocusProduct.seller_id) === String(currentUserId)) {

@@ -255,11 +255,6 @@
     </div>
 
     <script>
-        // GLOBAL CONFIGURATION: Single, unified base URL routing configuration for cloud environments
-        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-            ? 'http://localhost:3000' 
-            : 'https://zellr-backend-engine.onrender.com';
-
         let sellerProductsCache = [];
         let activeFocusProduct = null;
         let currentUserId = 3;

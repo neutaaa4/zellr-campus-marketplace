@@ -576,11 +576,6 @@
 
     <script src="js/layout.js"></script>
     <script>
-        // GLOBAL CONFIGURATION: Unified environment base URL route matrix for production scalability
-        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-            ? 'http://localhost:3000' 
-            : 'https://zellr-backend-engine.onrender.com';
-
         let loggedInUserId = (function() {
             try {
                 const cached = localStorage.getItem('zellr_user_profile');
@@ -1536,9 +1531,11 @@
 
                 const isIncomingTab = currentOrdersTabState === 'incoming';
 
+                // PREMIUM TWO-TIER STACK: Decouples action triggers to separate card levels, maximizing text container space bounds on mobile chassis
                 html += `
-                    <div class="bg-white border border-neutral-200/60 p-3.5 rounded-2xl flex items-center justify-between gap-3 shadow-[0_2px_8px_rgba(0,0,0,0.01)] text-left">
-                        <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                    <div class="bg-white border border-neutral-200/60 p-3.5 rounded-2xl flex flex-col shadow-[0_2px_8px_rgba(0,0,0,0.01)] text-left">
+                        
+                        <div class="flex items-start gap-3.5 min-w-0">
                             
                             <div class="relative w-12 h-12 shrink-0 select-none bg-neutral-100 rounded-xl border border-neutral-200 flex items-center justify-center">
                                 <i class="ri-image-line text-neutral-300 text-xl absolute"></i>
@@ -1550,40 +1547,42 @@
                             </div>
                             
                             <div class="min-w-0 flex-1 space-y-0.5">
-                                <h4 class="text-neutral-950 text-xs font-bold truncate leading-tight">${safeText(safeTitleText)}</h4>
-                                <p class="text-[10px] text-neutral-400 font-medium truncate">Buyer: <span class="text-neutral-700 font-semibold">${safeText(log.buyer_name || 'Campus User')}</span></p>
-                                <div class="flex items-center gap-1.5 pt-0.5">
-                                    <span class="text-[8px] tracking-wider font-bold px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-500 uppercase font-sans-subtitle">${log.status}</span>
-                                    <span class="text-[10px] font-bold text-neutral-950">₱${parseFloat(safePriceValue).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                                <div class="flex items-start justify-between gap-3">
+                                    <h4 class="text-neutral-950 text-xs font-bold truncate flex-1 leading-tight pt-0.5">${safeText(safeTitleText)}</h4>
+                                    <span class="text-neutral-950 font-bold text-xs shrink-0 tracking-tight">₱${parseFloat(safePriceValue).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                                </div>
+                                <p class="text-[10px] text-neutral-400 font-medium truncate mt-0.5">Buyer: <span class="text-neutral-700 font-semibold">${safeText(log.buyer_name || 'Campus User')}</span></p>
+                                <div class="pt-1">
+                                    <span class="text-[8px] tracking-wider font-bold px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-500 uppercase font-sans-subtitle inline-block align-middle">${log.status}</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="shrink-0 flex flex-col items-end gap-1.5 pl-1">
+                        <div class="mt-3 pt-2.5 border-t border-neutral-100 flex items-center justify-end gap-2 w-full">
                             ${isIncomingTab && log.status === 'pending' ? `
-                                <button type="button" onclick="updateOrderStatusAction(${log.id}, 'Ready for Delivery')" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white text-[10px] font-bold px-3 py-2 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95">
+                                <button type="button" onclick="updateOrderStatusAction(${log.id}, 'Ready for Delivery')" class="bg-neutral-950 hover:bg-neutral-900 text-white text-[10px] font-bold px-3.5 py-2 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95">
                                     Mark Ready
                                 </button>
-                                <button type="button" onclick="confirmCancelOrder(${log.id}, ${log.product_id}, ${log.buyer_id})" class="w-full bg-white hover:bg-red-50 text-red-500 border border-red-100 text-[10px] font-bold px-3 py-2 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95">
+                                <button type="button" onclick="confirmCancelOrder(${log.id}, ${log.product_id}, ${log.buyer_id})" class="bg-white hover:bg-red-50 text-red-500 border border-red-100 text-[10px] font-bold px-3.5 py-2 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95">
                                     Cancel Order
                                 </button>
                             ` : `
                                 ${log.status === 'Ready for Delivery' ? `
-                                    <div class="flex items-center gap-1.5 px-3 py-2 bg-amber-50 rounded-xl border border-amber-100/50 select-none">
+                                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-xl border border-amber-100/50 select-none flex-1 mr-auto">
                                         <i class="ri-time-fill text-amber-500 text-sm animate-pulse"></i>
-                                        <span class="text-[9px] font-bold text-amber-700 tracking-wide uppercase">Awaiting Pickup</span>
+                                        <span class="text-[8px] font-bold text-amber-700 tracking-wide uppercase mt-0.5">Awaiting Pickup</span>
                                     </div>
-                                    <button type="button" onclick="confirmCancelOrder(${log.id}, ${log.product_id}, ${log.buyer_id})" class="w-full bg-white hover:bg-red-50 text-red-500 border border-red-100 text-[10px] font-bold px-3 py-2 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95">
-                                        Cancel Order
+                                    <button type="button" onclick="confirmCancelOrder(${log.id}, ${log.product_id}, ${log.buyer_id})" class="bg-white hover:bg-red-50 text-red-500 border border-red-100 text-[10px] font-bold px-3 py-1.5 rounded-xl transition-all shadow-sm outline-none whitespace-nowrap active:scale-95 shrink-0">
+                                        Cancel
                                     </button>
                                 ` : `
                                     ${log.status === 'completed' ? `
-                                        <div class="flex items-center gap-1.5 px-3 py-2 bg-green-50 rounded-xl border border-green-100/50 select-none">
+                                        <div class="flex items-center justify-center gap-1.5 px-3 py-2 bg-green-50 rounded-xl border border-green-100/50 select-none w-full">
                                             <i class="ri-checkbox-circle-fill text-green-500 text-sm"></i>
                                             <span class="text-[9px] font-bold text-green-700 tracking-wide uppercase">Delivered</span>
                                         </div>
                                     ` : `
-                                        <div class="flex items-center gap-1.5 px-3 py-2 bg-red-50 rounded-xl border border-red-100/50 select-none">
+                                        <div class="flex items-center justify-center gap-1.5 px-3 py-2 bg-red-50 rounded-xl border border-red-100/50 select-none w-full">
                                             <i class="ri-close-circle-fill text-red-500 text-sm"></i>
                                             <span class="text-[9px] font-bold text-red-700 tracking-wide uppercase">Canceled</span>
                                         </div>

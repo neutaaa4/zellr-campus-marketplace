@@ -1,5 +1,10 @@
 // public/js/layout.js
 
+// GLOBAL CONFIGURATION: Centralized routing matrix ensures shared layout headers talk directly to Render
+const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000' 
+    : 'https://zellr-backend-engine.onrender.com';
+
 // UPGRADE: Added a dynamic absolute badge marker over the top navigation button link
 const headerTemplate = `
     <div class="absolute top-4 inset-x-5 z-30">
@@ -81,12 +86,6 @@ async function syncGlobalHeaderNotificationBadge() {
             if (user && user.id) sessionUserId = parseInt(user.id);
         } catch(e) {}
     }
-
-    // FIX: Dynamic host mapping applied to background polling interval logic
-    const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-        ? 'http://localhost:3000' 
-        : window.location.origin;
-
     try {
         const response = await fetch(`${API_BASE}/api/messages`);
         if (!response.ok) return;
