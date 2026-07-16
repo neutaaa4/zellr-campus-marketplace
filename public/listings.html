@@ -67,7 +67,7 @@
         
         <div id="app-header" class="z-30"></div>
 
-        <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-5 pt-24">
+        <div id="listingsScrollBody" class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-5 pt-24">
             
             <div class="px-4">
                 <div class="w-full bg-white border border-neutral-200/50 rounded-[32px] p-5 shadow-[0_8px_25px_rgba(0,0,0,0.02)] space-y-4">
@@ -160,11 +160,15 @@
 
         </div>
 
-        <div id="sellProductModal" onclick="triggerDiscardConfirmation('sell')" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-4 transform translate-y-full transition-transform duration-300 modal-drawer border-t border-neutral-200/60">
-                <div class="flex items-center justify-between pb-2 border-b border-neutral-200/60">
-                    <h3 class="text-neutral-950 text-lg font-bold tracking-tight">List Item For Sale</h3>
-                    <button type="button" onclick="triggerDiscardConfirmation('sell')" class="w-8 h-8 rounded-full bg-[#EDEDF2] flex items-center justify-center text-neutral-600 outline-none"><i class="ri-close-line text-lg"></i></button>
+        <div id="sellProductModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-4 transform translate-y-full transition-transform duration-300 relative flex flex-col">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="triggerDiscardConfirmation('sell')" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    <h3 class="text-neutral-900 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">List Item For Sale</h3>
+                    <div class="w-10 h-10"></div>
                 </div>
                 
                 <form id="sellItemForm" novalidate class="space-y-4 text-left">
@@ -270,11 +274,15 @@
             </div>
         </div>
 
-        <div id="productDetailsModal" onclick="triggerDiscardConfirmation('edit')" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-4 transform translate-y-full transition-transform duration-300 modal-drawer border-t border-neutral-200/60">
-                <div class="flex items-center justify-between pb-2 border-b border-neutral-200/60">
-                    <h3 class="text-neutral-950 text-lg font-bold tracking-tight">Edit Product Details</h3>
-                    <button type="button" onclick="triggerDiscardConfirmation('edit')" class="w-8 h-8 rounded-full bg-[#EDEDF2] flex items-center justify-center text-neutral-600 outline-none"><i class="ri-close-line text-lg"></i></button>
+        <div id="productDetailsModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-4 transform translate-y-full transition-transform duration-300 relative flex flex-col">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="triggerDiscardConfirmation('edit')" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    <h3 class="text-neutral-900 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">Edit Product Details</h3>
+                    <div class="w-10 h-10"></div>
                 </div>
                 
                 <form id="editItemForm" novalidate class="space-y-4 text-left">
@@ -378,51 +386,54 @@
             </div>
         </div>
 
-        <div id="listedProductDetailsModal" onclick="toggleDetailsModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar transform translate-y-full transition-transform duration-300 border-t border-neutral-200/40 relative">
+        <div id="listedProductDetailsModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-6 transform translate-y-full transition-transform duration-300 relative flex flex-col">
                 
-                <div class="absolute top-4 right-4 flex items-center gap-2 z-40">
-                    <button id="viewModalEditBtn" class="w-9 h-9 bg-white/90 backdrop-blur-md border border-neutral-200/40 rounded-full flex items-center justify-center text-neutral-700 shadow-md hover:text-neutral-950 transition-all outline-none">
-                        <i class="ri-edit-line text-sm"></i>
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="toggleDetailsModal(false)" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
                     </button>
-                    <button id="viewModalDeleteBtn" class="w-9 h-9 bg-white/90 backdrop-blur-md border border-neutral-200/40 rounded-full flex items-center justify-center text-red-500 shadow-md hover:bg-red-50 transition-all outline-none">
-                        <i class="ri-delete-bin-line text-sm"></i>
-                    </button>
-                    <button onclick="toggleDetailsModal(false)" class="w-9 h-9 bg-white/90 backdrop-blur-md border border-neutral-200/40 rounded-full flex items-center justify-center text-neutral-700 shadow-md hover:text-neutral-950 transition-all outline-none">
-                        <i class="ri-close-line text-base"></i>
-                    </button>
+                    <h3 class="text-neutral-900 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">My Listing Details</h3>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button id="viewModalEditBtn" class="w-10 h-10 bg-white border border-neutral-200 rounded-full flex items-center justify-center text-neutral-700 shadow-sm hover:text-neutral-950 hover:bg-neutral-50 transition-all outline-none">
+                            <i class="ri-edit-line text-sm"></i>
+                        </button>
+                        <button id="viewModalDeleteBtn" class="w-10 h-10 bg-white border border-neutral-200 rounded-full flex items-center justify-center text-red-500 shadow-sm hover:bg-red-50 transition-all outline-none">
+                            <i class="ri-delete-bin-line text-sm"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner">
+                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner shrink-0">
                     <img id="viewModalProductImage" src="" class="w-full h-full object-cover transition-opacity duration-200" />
                     <div id="viewModalSoldBadgeOverlay" class="absolute inset-0 bg-black/10 flex items-center justify-center hidden">
                         <span class="bg-neutral-950 text-white font-bold text-[10px] tracking-widest uppercase px-4 py-2 rounded-full shadow-lg font-sans-subtitle">SOLD</span>
                     </div>
                 </div>
 
-                <div class="space-y-2 text-left pt-3">
+                <div class="space-y-2 text-left pt-1">
                     <div class="flex items-center justify-between">
                         <span id="viewModalProductCondition" class="bg-neutral-950 text-white font-bold text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full font-sans-subtitle">Good</span>
                         <span id="viewModalProductPrice" class="text-neutral-950 text-xl font-bold">₱0.00</span>
                     </div>
-                    <h3 id="viewModalProductTitle" class="text-neutral-950 text-lg font-bold tracking-tight pt-1">Product Title</h3>
-                    <p id="viewModalProductLocation" class="text-neutral-400 text-xs font-medium flex items-center gap-1"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span class="mt-0.5">PUP Taguig</span></p>
+                    <h3 id="viewModalProductTitle" class="text-neutral-950 text-lg font-bold tracking-tight pt-1 leading-snug">Product Title</h3>
+                    <p id="viewModalProductLocation" class="text-neutral-400 text-xs font-medium flex items-center gap-1.5"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span class="mt-0.5">PUP Taguig</span></p>
                 </div>
 
-                <div class="text-left space-y-2 pt-2">
+                <div class="text-left space-y-1.5">
                     <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Description</h4>
-                    <p id="viewModalProductDescription" class="text-neutral-600 text-xs font-medium leading-relaxed bg-white border border-neutral-200/50 p-4 rounded-2xl max-h-24 overflow-y-auto no-scrollbar shadow-[0_2px_8px_rgba(0,0,0,0.01)]">Specifications</p>
+                    <p id="viewModalProductDescription" class="text-neutral-600 text-xs font-medium leading-relaxed bg-white border border-neutral-200/50 p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.01)]">Specifications</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 text-left pt-2">
-                    <div class="space-y-1">
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <div class="space-y-1.5">
                         <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Category</h4>
                         <div class="bg-white border border-neutral-200/60 px-4 py-3 rounded-xl text-neutral-800 text-xs font-bold truncate flex items-center gap-2 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
                             <i class="ri-folder-open-line text-neutral-400 text-base"></i>
                             <span id="viewModalProductCategory" class="mt-0.5">Electronics</span>
                         </div>
                     </div>
-                    <div class="space-y-1">
+                    <div class="space-y-1.5">
                         <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Trading Mode</h4>
                         <div class="bg-white border border-neutral-200/60 px-4 py-3 rounded-xl text-neutral-800 text-xs font-bold truncate flex items-center gap-2 shadow-[0_2px_5px_rgba(0,0,0,0.01)]">
                             <i class="ri-arrow-left-right-line text-neutral-400 text-base"></i>
@@ -431,14 +442,14 @@
                     </div>
                 </div>
 
-                <div class="text-left space-y-2 pt-2 pb-1">
+                <div class="text-left space-y-1.5 pb-1">
                     <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Accepted Payment Methods</h4>
-                    <div id="viewModalProductPayments" class="flex flex-wrap gap-2 pt-0.5">
+                    <div id="viewModalProductPayments" class="flex flex-wrap gap-2">
                         <span class="px-3.5 py-2.5 bg-white border border-neutral-200/60 text-neutral-800 font-bold text-[11px] rounded-xl flex items-center gap-2 shadow-[0_2px_4px_rgba(0,0,0,0.01)]"><i class="ri-money-cash-line text-neutral-400 text-base"></i> Cash Payment</span>
                     </div>
                 </div>
 
-                <div id="viewModalBuyerSectionBlock" class="hidden text-left space-y-2 pt-2 border-t border-neutral-200/60 mt-4">
+                <div id="viewModalBuyerSectionBlock" class="hidden text-left space-y-2 pt-2 border-t border-neutral-200/60 mt-4 pb-4">
                     <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Acquired By Buyer</h4>
                     <div class="flex items-center justify-between p-4 bg-white border border-neutral-200/40 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.01)]">
                         <div class="flex items-center gap-3 text-left">
@@ -456,9 +467,17 @@
             </div>
         </div>
 
-        <div id="analyticsProductModal" onclick="toggleAnalyticsModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 space-y-5 transform translate-y-full transition-transform duration-300 modal-drawer border-t border-neutral-200/60">
-                <div class="flex items-center gap-3 pb-2 border-b border-neutral-200/60"><button type="button" onclick="toggleAnalyticsModal(false)" class="w-8 h-8 rounded-full bg-[#EDEDF2] flex items-center justify-center text-neutral-950"><i class="ri-arrow-left-line font-bold"></i></button><h3 class="text-neutral-950 text-lg font-bold tracking-tight">Sales Dashboard</h3></div>
+        <div id="analyticsProductModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-5 transform translate-y-full transition-transform duration-300 relative flex flex-col">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="toggleAnalyticsModal(false)" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    <h3 class="text-neutral-900 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">Sales Dashboard</h3>
+                    <div class="w-10 h-10"></div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-white border border-neutral-200/40 p-4 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] space-y-2 text-left">
                         <p class="text-neutral-400 text-[10px] font-bold uppercase tracking-wider font-sans-subtitle">Today</p>
@@ -525,33 +544,31 @@
             </div>
         </div>
 
-        <!-- NEW: Product Ratings Viewer Modal (Safely tucked INSIDE the mobile container) -->
-        <div id="productRatingsViewerModal" onclick="closeRatingsViewer()" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-[70] hidden flex-col justify-end transition-all opacity-0 pointer-events-none">
-            <div onclick="event.stopPropagation()" class="bg-white w-full rounded-t-[32px] flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-6 space-y-4 max-h-[80%]">
-                <div class="flex items-center justify-between border-b border-neutral-100 pb-3">
-                    <div>
-                        <h3 class="text-neutral-950 text-[17px] font-bold tracking-tight">Customer Ratings</h3>
-                        <p id="ratingsModalProductTitle" class="text-[11px] font-medium text-neutral-400 mt-0.5 truncate max-w-[200px]">Product Title</p>
-                    </div>
-                    <button type="button" onclick="closeRatingsViewer()" class="w-8 h-8 bg-neutral-100 hover:bg-neutral-200 rounded-full flex items-center justify-center text-neutral-600 transition-colors outline-none shrink-0 active:scale-95">
-                        <i class="ri-close-line text-lg"></i>
+        <div id="productRatingsViewerModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-4 transform translate-y-full transition-transform duration-300 relative flex flex-col">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-100 shrink-0 select-none">
+                    <button type="button" onclick="closeRatingsViewer()" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
                     </button>
+                    <div>
+                        <h3 class="text-neutral-950 text-[15px] font-bold tracking-tight">Customer Ratings</h3>
+                        <p id="ratingsModalProductTitle" class="text-[10px] font-medium text-neutral-400 mt-0.5 truncate max-w-[180px]">Product Title</p>
+                    </div>
+                    <div class="w-10 h-10"></div>
                 </div>
                 
                 <div id="ratingsModalFeed" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-6">
-                    <!-- Reviews injected here via Javascript -->
-                </div>
+                    </div>
             </div>
         </div>
 
-        <!-- Single, clean sidebar container fixed to the absolute front layer -->
         <div id="sidebar-container" data-active="listing" class="absolute inset-0 pointer-events-none z-[100]"></div>
         
-    </div> <!-- This successfully closes the Main Mobile App Wrapper -->
+    </div>
 
     <script src="js/layout.js"></script>
     <script>
-        // UPGRADE: Dynamically initializes the session identifier from local storage immediately at startup
         let loggedInUserId = (function() {
             try {
                 const cached = localStorage.getItem('zellr_user_profile');
@@ -567,16 +584,13 @@
         let sellUploadedPhotos = [];
         let editUploadedPhotos = []; 
 
-        // Core Image Cropper Native Interaction State Handlers
         let cropperOriginalImageInstance = null;
         let cropperActiveTargetMode = null; 
         
-        // Precise Floating Point Coordinate Memory Matrices
         let cropperInternalZoomState = 1.0;
         let cropperInternalPanXState = 0;
         let cropperInternalPanYState = 0;
         
-        // Drag Tracking Context Lifecycles
         let cropperIsCurrentlyDragging = false;
         let cropperLastDragPointerX = 0;
         let cropperLastDragPointerY = 0;
@@ -584,7 +598,6 @@
         let currentOrdersTabState = 'incoming';
         let currentListingsTabState = 'active';
         
-        // NEW: Caches for order/rating lookups
         let activeOrdersCache = [];  
         let activeRatingsCache = [];
 
@@ -682,7 +695,6 @@
             cropperOriginalImageInstance = imageElement;
             cropperActiveTargetMode = mode;
 
-            // Reset interaction tracking frames cleanly
             cropperInternalZoomState = 1.0;
             cropperInternalPanXState = 0;
             cropperInternalPanYState = 0;
@@ -706,18 +718,15 @@
         }
 
         function bindDirectWorkspaceInteractionEvents(canvas) {
-            // Remove previous trailing event traces safely before rebinding
             canvas.onmousedown = null;
             canvas.onmousemove = null;
             window.onmouseup = null;
             canvas.onwheel = null;
 
-            // Support Mobile/Touch Drag Actions natively
             canvas.ontouchstart = null;
             canvas.ontouchmove = null;
             canvas.ontouchend = null;
 
-            // 1. DRAG START POINTER INTERCEPTION
             const startDragAction = (clientX, clientY) => {
                 cropperIsCurrentlyDragging = true;
                 cropperLastDragPointerX = clientX;
@@ -727,7 +736,6 @@
             canvas.onmousedown = (e) => { e.preventDefault(); startDragAction(e.clientX, e.clientY); };
             canvas.ontouchstart = (e) => { if(e.touches.length === 1) startDragAction(e.touches[0].clientX, e.touches[0].clientY); };
 
-            // 2. MOVE MOVEMENT DELTA VECTOR RE-CALCULATION
             const moveDragAction = (clientX, clientY) => {
                 if (!cropperIsCurrentlyDragging || !cropperOriginalImageInstance) return;
                 
@@ -735,7 +743,7 @@
                 const deltaY = clientY - cropperLastDragPointerY;
 
                 cropperInternalPanXState += deltaX;
-                cropperInternalPanYState -= deltaY; // Sync inverted alignment metrics across mouse vectors
+                cropperInternalPanYState -= deltaY; 
 
                 cropperLastDragPointerX = clientX;
                 cropperLastDragPointerY = clientY;
@@ -746,14 +754,12 @@
             canvas.onmousemove = (e) => { if(cropperIsCurrentlyDragging) moveDragAction(e.clientX, e.clientY); };
             canvas.ontouchmove = (e) => { if(cropperIsCurrentlyDragging && e.touches.length === 1) { e.preventDefault(); moveDragAction(e.touches[0].clientX, e.touches[0].clientY); } };
 
-            // 3. RELEASE CYCLE CLOSURE CLOSES LIFECYCLE
             window.onmouseup = () => { cropperIsCurrentlyDragging = false; };
             canvas.ontouchend = () => { cropperIsCurrentlyDragging = false; };
 
-            // 4. MOUSE WHEEL SCROLL SCALING EMULATION INTERCEPTOR
             canvas.onwheel = (e) => {
                 e.preventDefault();
-                const zoomFactorDelta = e.deltaY * -0.0015; // Fine-tune zooming tracking speeds
+                const zoomFactorDelta = e.deltaY * -0.0015; 
                 cropperInternalZoomState = Math.min(Math.max(1.0, cropperInternalZoomState + zoomFactorDelta), 4.0);
                 redrawCropperWorkspacePreview();
             };
@@ -834,7 +840,6 @@
             renderWidth *= cropperInternalZoomState;
             renderHeight *= cropperInternalZoomState;
 
-            // Map interaction coordinate offsets accurately across dynamic canvas scales
             const scaleMultiplierFactor = finalCanvas.width / workspace.width;
             const x = (finalCanvas.width - renderWidth) / 2 + (cropperInternalPanXState * scaleMultiplierFactor);
             const y = (finalCanvas.height - renderHeight) / 2 - (cropperInternalPanYState * scaleMultiplierFactor);
@@ -884,9 +889,12 @@
             if (currentDropdown) currentDropdown.classList.toggle('hidden');
         }
 
+        // SURGICAL REFACTOR: Connects scroll boundary controls for sell pipeline
         function toggleSellModal(show) {
             const wrapper = document.getElementById('sellProductModal');
-            const drawer = wrapper ? wrapper.querySelector('.modal-drawer') : null;
+            const drawer = wrapper ? wrapper.querySelector('div') : null;
+            const mainScroll = document.getElementById('listingsScrollBody');
+            
             if (wrapper && drawer) {
                 if (show) {
                     const form = document.getElementById('sellItemForm');
@@ -894,7 +902,6 @@
                         form.reset();
                         form.querySelectorAll('[required]').forEach(f => f.classList.remove('!border-red-500', '!bg-red-50'));
                         
-                        // UPGRADE: Auto-extract school details and manage onboarding hints
                         try {
                             const cachedProfile = localStorage.getItem('zellr_user_profile');
                             if (cachedProfile) {
@@ -919,20 +926,28 @@
                     wrapper.classList.remove('pointer-events-none', 'opacity-0');
                     wrapper.classList.add('opacity-100');
                     drawer.classList.remove('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-y-auto');
+                        mainScroll.classList.add('overflow-hidden');
+                    }
                 } else {
                     wrapper.classList.add('pointer-events-none', 'opacity-0');
                     wrapper.classList.remove('opacity-100');
                     drawer.classList.add('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-hidden');
+                        mainScroll.classList.add('overflow-y-auto');
+                    }
                 }
             }
         }
 
-        // 2. LIVE DATABASE MODAL: Eradicated local storage bug to properly generate the "SOLD" overlay and Buyer Context window
         async function openListedProductViewer(productId) {
             const item = localProductsCache.find(p => parseInt(p.id) === parseInt(productId));
             if (!item) return;
 
-            // Load actual rows dynamically instead of querying dead browser storage caches
             let liveOrders = [];
             try {
                 const response = await fetch('http://localhost:3000/api/orders');
@@ -984,19 +999,13 @@
                 if (modalBuyerSectionBlock) modalBuyerSectionBlock.classList.add('hidden');
             }
 
-            // ---------------------------------------------------------
-            // LIVE DATABASE META EXTRACTION
-            // ---------------------------------------------------------
-            
-            // 1. Trading Mode Extraction
             const isTradeable = (item.open_to_trades === 1 || item.open_to_trades === true || item.open_to_trades === "true");
             document.getElementById('viewModalProductTrading').textContent = isTradeable ? "Open to Trades" : "No Trades Allowed";
             
-            // 2. Payment Methods Extraction
             const payCanvas = document.getElementById('viewModalProductPayments');
             payCanvas.innerHTML = "";
             
-            let methodsToRender = ["Cash Payment"]; // Fallback
+            let methodsToRender = ["Cash Payment"]; 
             if (item.payment_methods) {
                 try {
                     methodsToRender = JSON.parse(item.payment_methods);
@@ -1039,26 +1048,41 @@
             toggleDetailsModal(true);
         }
 
+        // SURGICAL REFACTOR: Direct coordinate maps details modal for catalog view
         function toggleDetailsModal(show) {
             const wrapper = document.getElementById('listedProductDetailsModal');
             const drawer = wrapper ? wrapper.querySelector('div') : null;
+            const mainScroll = document.getElementById('listingsScrollBody');
+
             if (wrapper && drawer) {
                 if (show) {
                     wrapper.classList.remove('pointer-events-none', 'opacity-0');
                     wrapper.classList.add('opacity-100');
                     drawer.classList.remove('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-y-auto');
+                        mainScroll.classList.add('overflow-hidden');
+                    }
                 } else {
                     wrapper.classList.add('pointer-events-none', 'opacity-0');
                     wrapper.classList.remove('opacity-100');
                     drawer.classList.add('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-hidden');
+                        mainScroll.classList.add('overflow-y-auto');
+                    }
                 }
             }
         }
 
+        // SURGICAL REFACTOR: Coordinates background overflow bounds for editor
         function toggleEditModal(show) {
-            // FIX: Map target query accurately to 'productDetailsModal' to resolve the unresponsive click block
             const wrapper = document.getElementById('productDetailsModal');
-            const drawer = wrapper ? wrapper.querySelector('.modal-drawer') : null;
+            const drawer = wrapper ? wrapper.querySelector('div') : null;
+            const mainScroll = document.getElementById('listingsScrollBody');
+
             if (wrapper && drawer) {
                 if (show) {
                     const form = document.getElementById('editItemForm');
@@ -1066,10 +1090,20 @@
                     wrapper.classList.remove('pointer-events-none', 'opacity-0');
                     wrapper.classList.add('opacity-100');
                     drawer.classList.remove('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-y-auto');
+                        mainScroll.classList.add('overflow-hidden');
+                    }
                 } else {
                     wrapper.classList.add('pointer-events-none', 'opacity-0');
                     wrapper.classList.remove('opacity-100');
                     drawer.classList.add('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-hidden');
+                        mainScroll.classList.add('overflow-y-auto');
+                    }
                 }
             }
         }
@@ -1095,21 +1129,32 @@
             );
         }
 
-        function toggleEditProfileModal(show) {}
-
+        // SURGICAL REFACTOR: Isolates overflow layers on sales analyzer initialization
         function toggleAnalyticsModal(show) {
             const wrapper = document.getElementById('analyticsProductModal');
-            const drawer = wrapper ? wrapper.querySelector('.modal-drawer') : null;
+            const drawer = wrapper ? wrapper.querySelector('div') : null;
+            const mainScroll = document.getElementById('listingsScrollBody');
+
             if (wrapper && drawer) {
                 if (show) {
                     wrapper.classList.remove('pointer-events-none', 'opacity-0');
                     wrapper.classList.add('opacity-100');
                     drawer.classList.remove('translate-y-full');
                     loadSalesAnalytics();
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-y-auto');
+                        mainScroll.classList.add('overflow-hidden');
+                    }
                 } else {
                     wrapper.classList.add('pointer-events-none', 'opacity-0');
                     wrapper.classList.remove('opacity-100');
                     drawer.classList.add('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-hidden');
+                        mainScroll.classList.add('overflow-y-auto');
+                    }
                 }
             }
         }
@@ -1186,7 +1231,6 @@
         }
 
         async function synchroniseMerchantStorefront() {
-            // FIX: Dynamic API Base Routing ensures absolute stability across testing networks
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
                 : window.location.origin;
@@ -1203,7 +1247,6 @@
                     if (ratRes.ok) activeRatingsCache = await ratRes.json();
                 } catch(e) {}
 
-                // NEW: Update Global Seller Rating Badge in the Header
                 const myRatings = activeRatingsCache.filter(r => String(r.seller_id) === String(loggedInUserId));
                 const ratingContainer = document.getElementById('merchantOverallRatingDisplay');
                 if (ratingContainer) {
@@ -1225,7 +1268,6 @@
             }
         }
 
-        // 1. ROBUST CATALOG SORTING: Scans all records securely using .some()
         async function processAndRenderCatalogListings() {
             const catalogWrapper = document.getElementById('catalogListingWrapper');
             if (!catalogWrapper) return;
@@ -1251,12 +1293,10 @@
             const sellerProducts = localProductsCache.filter(item => String(item.seller_id) === String(loggedInUserId));
 
             let processedSellerProducts = sellerProducts.map(item => {
-                // Find all authentic transaction records associated with this specific product
                 const validOrders = liveOrders.filter(log => parseInt(log.product_id) === parseInt(item.id) && log.status !== 'inquiry');
                 
                 let derivedStatus = 'active';
                 
-                // Guarantee completion mapping regardless of database return sequence
                 if (item.status === 'sold' || validOrders.some(log => log.status === 'completed')) {
                     derivedStatus = 'sold';
                 } else if (validOrders.some(log => log.status === 'pending' || log.status === 'Ready for Delivery')) {
@@ -1334,6 +1374,7 @@
             renderOrdersTrackingPipeline();
         }
 
+        // SURGICAL REFACTOR: Integrates ratings screen with body-overflow locks
         function openRatingsViewer() {
             document.getElementById('ratingsModalProductTitle').textContent = "All Store Reviews";
             
@@ -1396,28 +1437,38 @@
 
             const modal = document.getElementById('productRatingsViewerModal');
             const content = modal.querySelector('div');
+            const mainScroll = document.getElementById('listingsScrollBody');
             
             modal.classList.remove('hidden', 'pointer-events-none');
             modal.classList.add('flex');
             setTimeout(() => {
                 modal.classList.add('opacity-100');
                 content.classList.remove('translate-y-full');
+                if (mainScroll) {
+                    mainScroll.classList.remove('overflow-y-auto');
+                    mainScroll.classList.add('overflow-hidden');
+                }
             }, 10);
         }
 
+        // SURGICAL REFACTOR: Connects scroll boundary controls for reviews close trigger
         function closeRatingsViewer() {
             const modal = document.getElementById('productRatingsViewerModal');
             const content = modal.querySelector('div');
+            const mainScroll = document.getElementById('listingsScrollBody');
             
             modal.classList.remove('opacity-100');
             content.classList.add('translate-y-full');
             setTimeout(() => {
                 modal.classList.add('hidden', 'pointer-events-none');
                 modal.classList.remove('flex');
+                if (mainScroll) {
+                    mainScroll.classList.remove('overflow-hidden');
+                    mainScroll.classList.add('overflow-y-auto');
+                }
             }, 300);
         }
 
-        // 3. ENHANCED LAYOUT: Deploys stylized text-label badges next to icons on the Orders timeline
         async function renderOrdersTrackingPipeline() {
             const wrapper = document.getElementById('incomingOrdersTrackWrapper');
             if (!wrapper) return;
@@ -1431,12 +1482,11 @@
                 const response = await fetch(`${API_BASE}/api/orders`);
                 if (response.ok) liveOrders = await response.json();
             } catch (err) {
-                console.error("Could not trace orders stream from database query nodes:", err);
+                console.error("Could not trace orders stream:", err);
             }
 
             let mine = liveOrders.filter(log => String(log.seller_id) === String(loggedInUserId));
 
-            // DATA-TYPE STRICTNESS UPGRADE: Isolate canceled logs cleanly into their own display filter state
             let filteredOrders = mine.filter(log => {
                 const normalizedStatus = String(log.status).toLowerCase().trim();
                 
@@ -1446,7 +1496,6 @@
                 if (currentOrdersTabState === 'completed') {
                     return normalizedStatus === 'completed';
                 }
-                // Incoming filter covers active negotiation lifecycles
                 return normalizedStatus === 'pending' || normalizedStatus === 'ready for delivery';
             });
 
@@ -1466,7 +1515,6 @@
 
             let html = "";
             filteredOrders.forEach(log => {
-                // NEW: Manually cross-reference the cache because the backend drops product data on canceled orders
                 const matchedProduct = localProductsCache.find(p => parseInt(p.id) === parseInt(log.product_id)) || {};
                 
                 const safeTitleText = log.product_title || log.title || matchedProduct.title || 'Marketplace Item';
@@ -1547,16 +1595,13 @@
                     ? 'http://localhost:3000' 
                     : window.location.origin;
 
-                // 1. We must fetch the actual order details first so we have the IDs for the message!
                 let liveOrders = [];
                 const ordersRes = await fetch(`${API_BASE}/api/orders`);
                 if (ordersRes.ok) liveOrders = await ordersRes.json();
                 
-                // Find the specific log object safely
                 const matchedLog = liveOrders.find(o => parseInt(o.id) === parseInt(orderId));
                 if (!matchedLog) throw new Error("Order tracking log mismatch.");
 
-                // 2. Execute the actual status mutation
                 const reconstructedOrderPayload = { ...matchedLog, status: nextStatus };
 
                 await fetch(`${API_BASE}/api/orders/${orderId}`, {
@@ -1565,14 +1610,13 @@
                     body: JSON.stringify(reconstructedOrderPayload)
                 });
 
-                // 3. Dispatch the milestone notice using the matchedLog context
                 await fetch(`${API_BASE}/api/messages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         order_id: orderId,
-                        sender_id: matchedLog.seller_id, // Safely extracted from database row
-                        receiver_id: matchedLog.buyer_id, // Safely extracted from database row
+                        sender_id: matchedLog.seller_id, 
+                        receiver_id: matchedLog.buyer_id, 
                         message_text: `SYSTEM NOTICE: The merchant has marked the item "${matchedLog.product_title || 'your listed item'}" as Ready for Delivery! Prepare to meet at the campus drop-off spot.`
                     })
                 });
@@ -1583,21 +1627,19 @@
             }
         }
 
-        let pendingCancelData = null; // Store data temporarily
+        let pendingCancelData = null; 
 
-        // Trigger the modal using your custom premium confirmation system
         function confirmCancelOrder(orderId, productId, buyerId) {
             pendingCancelData = { orderId, productId, buyerId };
             
             triggerPremiumConfirmation(
                 "Cancel Order", 
                 "Are you sure you want to cancel this order? The item will be returned to the public marketplace and the buyer will be notified.", 
-                true, // This 'true' automatically makes the confirm button red (Destructive)
+                true, 
                 executeCancelOrder
             );
         }
 
-        // NEW: Cancellation Engine (executed after confirmation)
         async function executeCancelOrder() {
             if (!pendingCancelData) return;
             const { orderId, productId, buyerId } = pendingCancelData;
@@ -1607,7 +1649,6 @@
                 : window.location.origin;
 
             try {
-                // 1. Terminate the active order state
                 const orderRes = await fetch(`${API_BASE}/api/orders/${orderId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -1615,7 +1656,6 @@
                 });
                 if (!orderRes.ok) throw new Error("Cancel failed");
 
-                // 2. Re-list the product publicly (PREVENT DATA WIPE)
                 const cachedItem = localProductsCache.find(p => parseInt(p.id) === parseInt(productId));
                 let productPayload = { status: 'active' }; 
 
@@ -1649,7 +1689,6 @@
                     body: JSON.stringify(productPayload)
                 });
 
-                // 3. Drop official notice in chat thread
                 await fetch(`${API_BASE}/api/messages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1666,12 +1705,10 @@
                 
             } catch (err) {
                 console.error(err);
-                // FIX: Replaced native browser alert with uniform premium overlay confirmation modal
                 triggerPremiumConfirmation("Operation Failed", "Failed to finalize cancellation due to a server sync error.", true, null);
             }
         }
 
-        // FIXED SALES ANALYTICS LOGIC ENGINE: Resolves total metrics directly using active SQL orders dataset
         async function loadSalesAnalytics() {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
@@ -1698,28 +1735,6 @@
             document.getElementById('salesTotalCountLabel').textContent = `${mine.length} ${mine.length === 1 ? 'listing' : 'listings'} total`;
         }
 
-        window.onload = function() {
-            const cachedProfile = localStorage.getItem('zellr_user_profile');
-            if (cachedProfile) {
-                try {
-                    const user = JSON.parse(cachedProfile);
-                    if (user && user.id) loggedInUserId = parseInt(user.id);
-                    
-                    // UPGRADE: Matches dashboard schema preferences by focusing greeting text strictly on the user's first name
-                    if (user) {
-                        let displayName = "Campus User";
-                        if (user.firstName) {
-                            displayName = user.firstName;
-                        } else if (user.name) {
-                            displayName = user.name.trim().split(/\s+/)[0];
-                        }
-                        document.getElementById('sellerHubUserName').textContent = displayName;
-                    }
-                } catch(e) { console.error("Cached session missing.", e); }
-            }
-            synchroniseMerchantStorefront();
-        };
-
         document.getElementById('sellItemForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const form = event.target;
@@ -1745,7 +1760,6 @@
             if (payDebit) methods.push("Debit Card");
             if (payBank) methods.push("Bank Transfer");
 
-            // CONSTRAINT UPGRADE: Aborts item generation logic if payment arrays map completely empty
             if (methods.length === 0) {
                 triggerPremiumConfirmation("Payment Method Required", "Please check at least one accepted financial channel option to receive student transactions.", true, null);
                 return;
@@ -1766,8 +1780,8 @@
                         item_condition: formData.get('item_condition'),
                         description: formData.get('description'),
                         image_url: sellUploadedPhotos[0],
-                        open_to_trades: openToTrades, // NEW: Directly mapped to API
-                        payment_methods: methods      // NEW: Directly mapped to API
+                        open_to_trades: openToTrades, 
+                        payment_methods: methods      
                     };
 
                     const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
@@ -1782,8 +1796,6 @@
                         });
                         const result = await response.json();
                         if (!response.ok || result.error) throw new Error(result.error || 'Write error.');
-
-                        // LOCAL STORAGE OVERRIDE DELETED HERE
 
                         form.reset();
                         sellUploadedPhotos = [];
@@ -1821,7 +1833,6 @@
             if (payDebit) methods.push("Debit Card");
             if (payBank) methods.push("Bank Transfer");
 
-            // CONSTRAINT UPGRADE: Blocks form updates if all checkboxes are unselected
             if (methods.length === 0) {
                 triggerPremiumConfirmation("Payment Method Required", "You must select at least one transactional option for this catalog item profile.", true, null);
                 return;
@@ -1842,8 +1853,8 @@
                         item_condition: formData.get('item_condition'),
                         description: formData.get('description'),
                         image_url: editUploadedPhotos[0],
-                        open_to_trades: openToTrades, // NEW: Directly mapped to API
-                        payment_methods: methods      // NEW: Directly mapped to API
+                        open_to_trades: openToTrades, 
+                        payment_methods: methods      
                     };
 
                     const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
@@ -1859,8 +1870,6 @@
                         const result = await response.json();
                         if (!response.ok || result.error) throw new Error(result.error || 'Update failed.');
 
-                        // LOCAL STORAGE OVERRIDE DELETED HERE
-
                         toggleEditModal(false);
                         await synchroniseMerchantStorefront();
                     } catch (error) {
@@ -1870,6 +1879,7 @@
             );
         });
 
+        // REFACTORED: Single, consolidated high-performance onload cycle block
         window.onload = function() {
             const cachedProfile = localStorage.getItem('zellr_user_profile');
             if (cachedProfile) {
@@ -1877,7 +1887,6 @@
                     const user = JSON.parse(cachedProfile);
                     if (user && user.id) loggedInUserId = parseInt(user.id);
                     
-                    // UPGRADE: Matches dashboard schema preferences by focusing greeting text strictly on the user's first name
                     if (user) {
                         let displayName = "Campus User";
                         if (user.firstName) {

@@ -41,7 +41,7 @@
         
         <div id="app-header" class="z-30"></div>
 
-        <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-4 pt-24 px-4">
+        <div id="cartScrollBody" class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-4 pt-24 px-4">
             
             <div class="px-1 pt-1 flex items-center justify-between pb-2">
                 <div class="space-y-0.5 text-left flex flex-col gap-0.5">
@@ -60,16 +60,19 @@
             <div id="cartCanvasListContainer" class="space-y-3.5 pb-8"></div>
         </div>
 
-        <div id="productDetailsModal" onclick="toggleDetailsModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-6 transform translate-y-full transition-transform duration-300 border-t border-neutral-200/40 relative">
+        <div id="productDetailsModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-6 transform translate-y-full transition-transform duration-300 relative flex flex-col">
                 
-                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner mt-2">
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="toggleDetailsModal(false)" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    <h3 class="text-neutral-900 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">Saved Item Preview</h3>
+                    <div class="w-10 h-10"></div>
+                </div>
+
+                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner shrink-0">
                     <img id="modalProductImage" src="" class="w-full h-full object-cover" />
-                    <div class="absolute top-4 right-4 flex items-center gap-2 z-30">
-                        <button type="button" onclick="toggleDetailsModal(false)" class="w-9 h-9 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-500 hover:text-neutral-950 shadow-md transition-colors outline-none">
-                            <i class="ri-close-line text-xl"></i>
-                        </button>
-                    </div>
                 </div>
 
                 <div class="space-y-2 text-left pt-1">
@@ -78,7 +81,7 @@
                         <span id="modalProductPrice" class="text-neutral-950 text-xl font-bold tracking-tight">₱0.00</span>
                     </div>
                     <h3 id="modalProductTitle" class="text-neutral-950 text-lg font-bold tracking-tight pt-1 leading-snug">Item Title</h3>
-                    <p id="modalProductLocation" class="text-neutral-400 text-xs font-medium flex items-center gap-1.5"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span id="modalProductLocationText" class="mt-0.5">PUP Taguig</span></p>
+                    <p class="text-neutral-400 text-xs font-medium flex items-center gap-1.5"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span id="modalProductLocationText" class="mt-0.5">PUP Taguig</span></p>
                 </div>
 
                 <div class="text-left space-y-1.5">
@@ -116,18 +119,16 @@
                         </div>
                         <div>
                             <h4 id="modalSellerName" class="text-neutral-950 text-xs font-bold leading-tight">Seller Name</h4>
-                            
                             <div id="modalSellerRatingDisplay" class="flex items-center gap-1 text-[10px] font-bold mt-0.5">
                                 <span class="text-neutral-400 font-medium">Loading...</span>
                             </div>
-                            
                             <p id="modalSellerSchool" class="text-neutral-400 text-[10px] font-medium mt-0.5">University</p>
                         </div>
                     </div>
                     <button type="button" onclick="initializeChatSession()" class="text-neutral-950 hover:text-neutral-600 font-bold text-xs flex items-center gap-1.5 px-3.5 py-2.5 bg-[#EDEDF2] rounded-xl shadow-sm outline-none transition-colors"><i class="ri-chat-3-line text-sm"></i> Contact</button>
                 </div>
 
-                <div id="modalProductActionButtonsArea" class="grid grid-cols-2 gap-4 pt-1"></div>
+                <div id="modalProductActionButtonsArea" class="grid grid-cols-2 gap-4 pt-1 pb-4 shrink-0"></div>
             </div>
         </div>
 
@@ -187,21 +188,41 @@
     <script src="js/layout.js"></script>
     <script>
         
-        // NEW: Routes the user to the profile based on the active item in focus
+        // NEW: Shimmer Skeleton Animation Loader Controller for Saved Items Track
+        function displayCartSkeletonLoader() {
+            document.getElementById('cartCanvasListContainer').innerHTML = `
+                <div class="space-y-3.5 w-full">
+                    ${Array(3).fill(`
+                        <div class="animate-pulse bg-white border border-neutral-200/40 rounded-2xl p-3.5 space-y-3.5 shadow-sm text-left">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-14 h-14 rounded-xl bg-neutral-200/70 shrink-0"></div>
+                                <div class="flex-1 space-y-2 min-w-0">
+                                    <div class="h-3.5 bg-neutral-200/80 rounded-full w-2/3"></div>
+                                    <div class="h-2.5 bg-neutral-200/50 rounded-full w-1/3"></div>
+                                    <div class="h-3 bg-neutral-200/60 rounded-full w-1/4 pt-0.5"></div>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-neutral-100 shrink-0"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 pt-0.5">
+                                <div class="h-8 bg-neutral-200/60 rounded-xl w-full"></div>
+                                <div class="h-8 bg-neutral-200/80 rounded-xl w-full"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+        }
+
         function routeToSellerProfile() {
             if (!activeFocusProduct || !activeFocusProduct.seller_id) return;
             window.location.href = `seller.html?id=${activeFocusProduct.seller_id}`;
         }
 
-        // ---------------------------------------------------------
-        // ITEM REMOVAL MODAL ENGINE
-        // ---------------------------------------------------------
         let pendingRemoveItemId = null;
         let pendingRemoveSource = null;
 
         function openRemoveConfirmationModal(itemId, source) {
             pendingRemoveItemId = itemId;
-            pendingRemoveSource = source; // 'cart' or 'wishlist'
+            pendingRemoveSource = source; 
             
             const modal = document.getElementById('cartRemoveConfirmationModal');
             modal.classList.remove('hidden');
@@ -227,19 +248,18 @@
                 let cart = JSON.parse(localStorage.getItem('zellr_cart_basket') || '[]');
                 cart = cart.filter(c => parseInt(c.id) !== parseInt(pendingRemoveItemId));
                 localStorage.setItem('zellr_cart_basket', JSON.stringify(cart));
-                showToastNotification("Item removed from Bag"); // FIX: Corrected function name
+                showToastNotification("Item removed from Bag"); 
             } else if (pendingRemoveSource === 'wishlist') {
                 let wish = JSON.parse(localStorage.getItem('zellr_wishlist') || '[]');
                 wish = wish.filter(id => parseInt(id) !== parseInt(pendingRemoveItemId));
                 localStorage.setItem('zellr_wishlist', JSON.stringify(wish));
-                showToastNotification("Item removed from Wishlist"); // FIX: Corrected function name
+                showToastNotification("Item removed from Wishlist"); 
             }
 
             closeRemoveConfirmationModal();
-            synchronizeCartAndWishlistsEngine(); // Immediately refresh the UI layout
+            synchronizeCartAndWishlistsEngine(); 
         }
 
-        // GLOBAL IDENTITY LOG MATRIX
         let currentUserId = (function() {
             try {
                 const cached = localStorage.getItem('zellr_user_profile');
@@ -300,6 +320,8 @@
                 bagBtn.className = "px-3.5 py-1.5 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none flex items-center justify-center gap-1.5 relative whitespace-nowrap";
             }
 
+            // Trigger animation instantly during the context filter navigation change
+            displayCartSkeletonLoader();
             synchronizeCartAndWishlistsEngine();
         }
 
@@ -330,13 +352,9 @@
                 if (!Array.isArray(bagItems)) bagItems = [];
             } catch(e) { bagItems = []; }
 
-            // ---------------------------------------------------------
-            // UNIFIED WISHLIST EXTRACTION LOGIC
-            // ---------------------------------------------------------
             try {
                 const rawWish = localStorage.getItem('zellr_wishlist');
                 const wishIds = rawWish ? JSON.parse(rawWish) : [];
-                // Map the primitive IDs into temporary objects so the rest of the cart layout logic doesn't crash
                 wishlistItems = Array.isArray(wishIds) ? wishIds.map(id => ({ id: id })) : [];
             } catch(e) { wishlistItems = []; }
 
@@ -344,17 +362,14 @@
                 const initialBagLen = bagItems.length;
                 const initialWishLen = wishlistItems.length;
 
-                // STRICT SYNC: Only keep items that actually exist in the live database array
                 bagItems = bagItems.filter(localItem => localItem && localItem.id && globalLiveProductsCache.some(live => parseInt(live.id) === parseInt(localItem.id)))
                                    .map(localItem => globalLiveProductsCache.find(p => parseInt(p.id) === parseInt(localItem.id)));
                 
                 wishlistItems = wishlistItems.filter(localItem => localItem && localItem.id && globalLiveProductsCache.some(live => parseInt(live.id) === parseInt(localItem.id)))
                                              .map(localItem => globalLiveProductsCache.find(p => parseInt(p.id) === parseInt(localItem.id)));
                 
-                // If lengths changed, it means an item was permanently deleted by a seller.
                 if (bagItems.length !== initialBagLen) localStorage.setItem('zellr_cart_basket', JSON.stringify(bagItems));
                 if (wishlistItems.length !== initialWishLen) {
-                    // Map back to primitive IDs for the dashboard standard format
                     const validWishIds = wishlistItems.map(item => parseInt(item.id));
                     localStorage.setItem('zellr_wishlist', JSON.stringify(validWishIds));
                 }
@@ -364,7 +379,6 @@
             document.getElementById('globalItemsCounterBadge').textContent = `${processingDataset.length} ${processingDataset.length === 1 ? 'Item' : 'Items'}`;
 
             if (processingDataset.length === 0) {
-                // NEW: Dynamic empty state text 
                 const emptyText = currentCartTabState === 'bag' ? 'Your Cart is Empty' : 'Your Wishlist is Empty';
                 container.innerHTML = `
                     <div class="w-full bg-white border border-neutral-200/30 rounded-[32px] py-16 px-4 flex flex-col items-center justify-center text-center space-y-4 shadow-sm mt-4">
@@ -392,7 +406,6 @@
                 const parsedPrice = parseFloat(item.price || 0);
 
                 if (currentCartTabState === 'bag') {
-                    // NEW: Shopping Bag direct single-buy layouts with independent Buy Now modules
                     htmlCanvasOutput += `
                         <div class="bg-white border ${isAlreadyBoughtByOther ? 'border-neutral-200/40 opacity-70 bg-neutral-50/50' : 'border-neutral-200/50'} rounded-2xl p-3.5 space-y-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.01)] text-left">
                             <div class="flex items-center gap-3.5">
@@ -469,7 +482,6 @@
                 localStorage.setItem('zellr_cart_basket', JSON.stringify(items));
             } else {
                 let items = JSON.parse(localStorage.getItem('zellr_wishlist') || '[]');
-                // Filter out standard primitive IDs
                 items = items.filter(wishId => parseInt(wishId) !== parseInt(id));
                 localStorage.setItem('zellr_wishlist', JSON.stringify(items));
             }
@@ -489,7 +501,6 @@
                 localStorage.setItem('zellr_cart_basket', JSON.stringify(cart));
             }
 
-            // Target primitive IDs to clear them out of the wishlist array
             wishlist = wishlist.filter(wishId => parseInt(wishId) !== parseInt(productId));
             localStorage.setItem('zellr_wishlist', JSON.stringify(wishlist));
 
@@ -497,7 +508,6 @@
             synchronizeCartAndWishlistsEngine();
         }
 
-        // UPGRADE: Relational Single-Buy processor verifying live market states dynamically
         function quickBuyNowFromBasket(productId, listType) {
             const item = globalLiveProductsCache.find(p => parseInt(p.id) === parseInt(productId));
             if (!item) return;
@@ -602,9 +612,6 @@
             document.getElementById('modalProductDescription').textContent = item.description || 'No descriptive text provided.';
             document.getElementById('modalProductCategory').textContent = item.category || 'Other';
 
-            // ---------------------------------------------------------
-            // LIVE SELLER PROFILE & RATING EXTRACTION
-            // ---------------------------------------------------------
             let computedSellerName = item.seller_name || "Campus User";
             let computedSellerSchool = item.seller_school || item.campus || "Polytechnic University";
             let computedSellerAvatar = item.seller_avatar || "";
@@ -662,30 +669,17 @@
                     });
             }
 
-            // Dynamically fetch trading and payment meta tags
-            let metaMap = JSON.parse(localStorage.getItem('zellr_custom_meta_tags') || '{}');
-            let meta = metaMap[String(item.id)] || metaMap[item.title] || { methods: ["Cash Payment"], openToTrades: true };
-
-            // Secure boolean checking
-            // ---------------------------------------------------------
-            // NEW: Database-Exclusive Meta Extraction
-            // ---------------------------------------------------------
-            
-            // 1. Trading Mode
             const isTradeable = (item.open_to_trades === 1 || item.open_to_trades === true || item.open_to_trades === "true");
             document.getElementById('modalProductTrading').textContent = isTradeable ? "Open to Trades" : "No Trades Allowed";
             
-            // 2. Payment Methods
             const payCanvas = document.getElementById('modalProductPayments');
             payCanvas.innerHTML = "";
             
-            let methodsToRender = ["Cash Payment"]; // Fallback
+            let methodsToRender = ["Cash Payment"]; 
             if (item.payment_methods) {
                 try {
-                    // Try parsing if stored as JSON array '["GCash", "Bank Transfer"]'
                     methodsToRender = JSON.parse(item.payment_methods);
                 } catch (e) {
-                    // Fallback if stored as comma string 'GCash, Bank Transfer'
                     methodsToRender = item.payment_methods.split(',').map(s => s.trim());
                 }
             }
@@ -710,9 +704,9 @@
 
             const actionBox = document.getElementById('modalProductActionButtonsArea');
             if (parseInt(item.seller_id) === currentUserId) {
-                actionBox.innerHTML = `<div class="col-span-2 text-center text-xs font-bold py-3.5 bg-neutral-100 text-neutral-400 rounded-2xl">YOUR PRODUCT LISTING</div>`;
+                actionBox.innerHTML = `<div class="col-span-2 text-center text-xs font-bold py-3.5 bg-neutral-100 text-neutral-400 rounded-2xl font-sans-subtitle">YOUR PRODUCT LISTING</div>`;
             } else if (isSold) {
-                actionBox.innerHTML = `<div class="col-span-2 text-center text-xs font-bold py-3.5 bg-neutral-100 text-neutral-400 rounded-2xl">SOLD OUT</div>`;
+                actionBox.innerHTML = `<div class="col-span-2 text-center text-xs font-bold py-3.5 bg-neutral-100 text-neutral-400 rounded-2xl font-sans-subtitle">SOLD OUT</div>`;
             } else {
                 if (listType === 'bag') {
                     actionBox.innerHTML = `
@@ -728,29 +722,44 @@
             toggleDetailsModal(true);
         }
 
+        // SURGICAL REFACTOR: Integrates dynamic layout scroll body parameters
         function toggleDetailsModal(show) {
             const wrapper = document.getElementById('productDetailsModal');
             const drawer = wrapper ? wrapper.querySelector('div') : null;
-            if (!wrapper || !drawer) return;
-            if (show) {
-                wrapper.classList.remove('pointer-events-none');
-                wrapper.classList.remove('opacity-0');
-                drawer.classList.remove('translate-y-full');
-            } else {
-                wrapper.classList.add('pointer-events-none');
-                wrapper.classList.add('opacity-0');
-                drawer.classList.add('translate-y-full');
+            const mainScroll = document.getElementById('cartScrollBody');
+
+            if (wrapper && drawer) {
+                if (show) {
+                    wrapper.classList.remove('pointer-events-none', 'opacity-0');
+                    wrapper.classList.add('opacity-100');
+                    drawer.classList.remove('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-y-auto');
+                        mainScroll.classList.add('overflow-hidden');
+                    }
+                } else {
+                    wrapper.classList.add('pointer-events-none', 'opacity-0');
+                    wrapper.classList.remove('opacity-100');
+                    drawer.classList.add('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-hidden');
+                        mainScroll.classList.add('overflow-y-auto');
+                    }
+                }
             }
         }
 
-        window.onload = async function() {
-            await synchronizeCartAndWishlistsEngine();
-            setInterval(synchronizeCartAndWishlistsEngine, 6000);
+        window.onload = function() {
+            // Trigger animation placeholders instantly upon startup layer load
+            displayCartSkeletonLoader();
+            
+            synchronizeCartAndWishlistsEngine().then(() => {
+                setInterval(synchronizeCartAndWishlistsEngine, 6000);
+            });
         };
 
-        // ---------------------------------------------------------
-        // LIVE MESSENGER PIPELINE ROUTING
-        // ---------------------------------------------------------
         async function initializeChatSession() {
             if (!activeFocusProduct) return;
             
@@ -780,13 +789,11 @@
 
                 const generatedOrderId = orderResult.order_id || orderResult.insertId || orderResult.id;
 
-                // CHRONOLOGICAL BUBBLING UPGRADE: Dynamically set notice context depending on thread existence
                 let dynamicNoticeText = `SYSTEM NOTICE: Inquiry thread opened regarding item: "${activeFocusProduct.title}".`;
                 if (orderResult.message === "Order context already established.") {
                     dynamicNoticeText = `SYSTEM NOTICE: Buyer is reviewing this saved item from their Cart/Wishlist options.`;
                 }
 
-                // Always push an active record entry to update the timestamp so it bubbles up to the top of the inbox
                 await fetch(`${API_BASE}/api/messages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -798,7 +805,6 @@
                     })
                 });
 
-                // Redirect straight to the chat UI and pop the specific conversation drawer
                 window.location.href = `messages.html?open_order_id=${generatedOrderId}`;
             } catch (err) {
                 console.error("Chat session initialization failure:", err);

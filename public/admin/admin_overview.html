@@ -55,7 +55,6 @@
 
             <div class="w-full bg-white border border-neutral-200/50 rounded-[28px] p-5 shadow-sm flex flex-col items-center">
                 <p class="w-full text-[10px] font-bold text-neutral-400 uppercase tracking-wider font-sans-subtitle text-left mb-2">Listing status</p>
-                <!-- DYNAMIC WRAPPER: Replaces empty canvas chart with a clean status placeholder -->
                 <div id="chartContainerCanvasWrapper" class="w-full h-44 relative flex items-center justify-center">
                     <canvas id="productInventoryPieChart"></canvas>
                 </div>
@@ -70,7 +69,34 @@
 
             <div class="space-y-2.5">
                 <p class="text-neutral-400 text-[10px] font-bold tracking-wider uppercase font-sans-subtitle pl-1 text-left">All Listings</p>
-                <div id="adminProductTableFeed" class="space-y-2"></div>
+                <div id="adminProductTableFeed" class="space-y-2">
+                    <div class="animate-pulse bg-white border border-neutral-200/40 rounded-2xl p-3 flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <div class="w-10 h-10 bg-neutral-200/70 rounded-xl shrink-0"></div>
+                            <div class="min-w-0 flex-1 space-y-2">
+                                <div class="h-3 bg-neutral-200/80 rounded-full w-1/2"></div>
+                                <div class="h-2 bg-neutral-200/50 rounded-full w-1/4"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2 flex flex-col items-end shrink-0">
+                            <div class="h-3.5 bg-neutral-200/80 rounded-full w-12"></div>
+                            <div class="h-2.5 bg-neutral-200/40 rounded w-10"></div>
+                        </div>
+                    </div>
+                    <div class="animate-pulse bg-white border border-neutral-200/40 rounded-2xl p-3 flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                            <div class="w-10 h-10 bg-neutral-200/70 rounded-xl shrink-0"></div>
+                            <div class="min-w-0 flex-1 space-y-2">
+                                <div class="h-3 bg-neutral-200/80 rounded-full w-2/5"></div>
+                                <div class="h-2 bg-neutral-200/50 rounded-full w-1/5"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2 flex flex-col items-end shrink-0">
+                            <div class="h-3.5 bg-neutral-200/80 rounded-full w-14"></div>
+                            <div class="h-2.5 bg-neutral-200/40 rounded w-10"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -138,7 +164,6 @@
 
             const chartWrapper = document.getElementById('chartContainerCanvasWrapper');
 
-            // INTENTIONAL EMPTY STATE: Replaces the blank chart with a clean placeholder
             if (totalActive === 0 && totalSold === 0 && totalCanceled === 0) {
                 chartWrapper.innerHTML = `
                     <div class="flex flex-col items-center justify-center text-center space-y-2 py-4">

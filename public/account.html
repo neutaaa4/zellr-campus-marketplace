@@ -14,14 +14,11 @@
         })();
     </script>
     <title>Zellr | Profile Settings</title>
-    <!-- Tailwind Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Premium Font Suite Import -->
-     <link rel="icon" type="image/png" href="assets/zellr-logo.png">
+    <link rel="icon" type="image/png" href="assets/zellr-logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Premium Flawless Icon Font Suite -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
     
     <style>
@@ -35,22 +32,17 @@
 </head>
 <body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
 
-    <!-- Premium Mobile Sandbox Container -->
     <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
         
-        <!-- Standard Integrated Top Floating Header Node Anchor -->
         <div id="app-header" class="z-30"></div>
 
-        <!-- MAIN SCROLLABLE DASHBOARD VIEWPORT PANEL -->
-        <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-6 pt-24 px-4 flex flex-col">
+        <div id="accountScrollBody" class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-6 pt-24 px-4 flex flex-col">
             
             <div class="px-1 pt-1">
-                <h2 class="text-neutral-950 text-xl font-bold tracking-tight text-left">Account</h2>
+                <h2 class="text-neutral-950 textxl font-bold tracking-tight text-left">Account</h2>
             </div>
 
-            <!-- ENHANCED USER IDENTITY ID CARD BLOCK (WITH LIVE AVATAR AND SCHOOL DISCOVERY LOOKUPS) -->
             <div class="bg-white p-5 border border-neutral-200/50 rounded-[28px] shadow-[0_4px_20px_rgba(0,0,0,0.01)] text-center space-y-3.5 mx-0.5 relative">
-                <!-- Profile Avatar Circle Frame Frame -->
                 <div class="w-20 h-20 bg-neutral-950 text-white rounded-full mx-auto flex items-center justify-center relative shadow-md overflow-hidden border border-neutral-200/60">
                     <img id="profileAvatarDisplay" src="" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden'); document.getElementById('profileAvatarIconFallback').classList.remove('hidden');" />
                     <i id="profileAvatarIconFallback" class="ri-user-3-line text-2xl"></i>
@@ -71,7 +63,6 @@
                     </p>
                 </div>
 
-                <!-- Minimalist Control Management Trigger Button link -->
                 <div class="pt-1">
                     <button onclick="toggleEditProfileModal(true)" class="text-[11px] font-bold text-neutral-700 bg-neutral-100 hover:bg-neutral-200/80 px-4 py-2 rounded-xl transition-colors outline-none flex items-center gap-1.5 mx-auto shadow-sm">
                         <i class="ri-edit-2-line text-xs"></i>
@@ -80,12 +71,10 @@
                 </div>
             </div>
 
-            <!-- PURCHASES TRACKING LEDGER CANVAS PIPELINE -->
             <div class="space-y-3 px-0.5">
                 <div class="flex items-center justify-between">
                     <h3 class="text-neutral-900 text-[15px] font-bold tracking-tight text-left">Your Purchases</h3>
                     
-                    <!-- New Interactive Pipeline Filter System -->
                     <div class="flex bg-neutral-100 p-0.5 rounded-xl text-[10px] font-bold font-sans-subtitle shadow-sm">
                         <button type="button" onclick="switchPurchasesDisplayFilter('to receive')" id="purchasesTabReceiveBtn" class="px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none">To Receive</button>
                         <button type="button" onclick="switchPurchasesDisplayFilter('completed')" id="purchasesTabCompletedBtn" class="px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none">Completed</button>
@@ -107,12 +96,15 @@
             </div>
         </div> 
         
-        <div id="editProfileModal" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-[110] opacity-0 pointer-events-none transition-opacity duration-300 flex items-end" onclick="toggleEditProfileModal(false)">
-            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-5 transform translate-y-full transition-transform duration-300 border-t border-neutral-200/60 modal-drawer">
+        <div id="editProfileModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-5 transform translate-y-full transition-transform duration-300 relative flex flex-col">
                 
-                <div class="flex items-center justify-between pb-2 border-b border-neutral-200/60">
-                    <h3 class="text-neutral-950 text-lg font-bold tracking-tight">Edit Profile Info</h3>
-                    <button type="button" onclick="toggleEditProfileModal(false)" class="w-8 h-8 rounded-full bg-[#EDEDF2] flex items-center justify-center text-neutral-600 outline-none"><i class="ri-close-line text-lg"></i></button>
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="toggleEditProfileModal(false)" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    <h3 class="text-neutral-950 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">Edit Profile Info</h3>
+                    <div class="w-10 h-10"></div>
                 </div>
                 
                 <form id="editProfileForm" novalidate class="space-y-4 text-left">
@@ -171,22 +163,21 @@
             </div>
         </div>
 
-        <div id="sidebar-container" data-active="profile" class="absolute inset-0 pointer-events-none z-50"></div>
-
-    <div id="sellerRatingModal" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-[70] hidden flex-col justify-end transition-all opacity-0 pointer-events-none">
-            <div class="bg-white w-full rounded-t-[32px] flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-6 space-y-5" id="sellerRatingModalContent">
+        <div id="sellerRatingModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-5 transform translate-y-full transition-transform duration-300 relative flex flex-col" id="sellerRatingModalContent">
                 
-                <div class="flex items-center justify-between border-b border-neutral-100 pb-3">
-                    <div>
-                        <h3 class="text-neutral-950 text-[17px] font-bold tracking-tight">Rate Seller</h3>
-                        <p class="text-[11px] font-medium text-neutral-400 mt-0.5">How was your transaction with <span id="ratingSellerName" class="font-bold text-neutral-700">Seller</span>?</p>
-                    </div>
-                    <button type="button" onclick="closeRatingModal()" class="w-8 h-8 bg-neutral-100 hover:bg-neutral-200 rounded-full flex items-center justify-center text-neutral-600 transition-colors outline-none shrink-0">
-                        <i class="ri-close-line text-lg"></i>
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-100 shrink-0 select-none">
+                    <button type="button" onclick="closeRatingModal()" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
                     </button>
+                    <div>
+                        <h3 class="text-neutral-950 text-[16px] font-bold tracking-tight">Rate Seller</h3>
+                        <p class="text-[10px] font-medium text-neutral-400 mt-0.5">How was your transaction with <span id="ratingSellerName" class="font-bold text-neutral-700">Seller</span>?</p>
+                    </div>
+                    <div class="w-10 h-10"></div>
                 </div>
 
-                <div class="flex items-center justify-center gap-2 py-2">
+                <div class="flex items-center justify-center gap-2 py-2 shrink-0">
                     <i id="starIcon-1" onclick="setRating(1)" class="ri-star-line text-3xl text-neutral-300 cursor-pointer transition-colors active:scale-95"></i>
                     <i id="starIcon-2" onclick="setRating(2)" class="ri-star-line text-3xl text-neutral-300 cursor-pointer transition-colors active:scale-95"></i>
                     <i id="starIcon-3" onclick="setRating(3)" class="ri-star-line text-3xl text-neutral-300 cursor-pointer transition-colors active:scale-95"></i>
@@ -194,25 +185,76 @@
                     <i id="starIcon-5" onclick="setRating(5)" class="ri-star-line text-3xl text-neutral-300 cursor-pointer transition-colors active:scale-95"></i>
                 </div>
 
-                <div>
-                    <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Review (Optional)</label>
-                    <textarea id="ratingComment" rows="3" placeholder="Leave a review for other students..." class="w-full bg-[#F9F9FB] border border-neutral-200/80 text-neutral-900 text-xs font-medium px-4 py-3 rounded-xl mt-1 outline-none focus:border-neutral-950 transition-colors resize-none"></textarea>
+                <div class="flex-1 space-y-4">
+                    <div class="text-left">
+                        <label class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Review (Optional)</label>
+                        <textarea id="ratingComment" rows="4" placeholder="Leave a review for other students..." class="w-full bg-white border border-neutral-200 text-neutral-900 text-xs font-medium px-4 py-3 rounded-xl mt-1 outline-none focus:border-neutral-950 transition-colors resize-none"></textarea>
+                    </div>
                 </div>
 
-                <div class="pt-2 pb-4">
+                <div class="pt-2 pb-4 shrink-0">
                     <button type="button" onclick="submitSellerRating()" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-bold py-3.5 rounded-xl text-xs tracking-wider shadow-md transition-colors outline-none">SUBMIT RATING</button>
                 </div>
             </div>
         </div>
 
-    </div> <div id="toastNotificationAlert" class="absolute top-6 mx-auto bg-neutral-950/95 border border-white/10 text-white px-5 py-3 rounded-full text-xs font-semibold shadow-2xl tracking-wide z-[200] transform -translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
+        <div id="viewPurchasedProductModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div id="viewPurchasedProductModalContent" class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-6 transform translate-y-full transition-transform duration-300 relative flex flex-col">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="closePurchasedProductViewer()" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    <h3 class="text-neutral-900 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">Purchase Details</h3>
+                    <div class="w-10 h-10"></div>
+                </div>
+                
+                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner shrink-0">
+                    <img id="viewPurchasedProductImage" src="" class="w-full h-full object-cover" />
+                </div>
+
+                <div class="space-y-2 text-left pt-1">
+                    <div class="flex items-center justify-between">
+                        <span id="viewPurchasedProductCondition" class="bg-neutral-950 text-white font-bold text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full font-sans-subtitle">Good</span>
+                        <span id="viewPurchasedProductPrice" class="text-neutral-950 text-xl font-bold tracking-tight">₱0.00</span>
+                    </div>
+                    <h3 id="viewPurchasedProductTitle" class="text-neutral-950 text-lg font-bold tracking-tight pt-1 leading-snug">Product Title</h3>
+                    <p class="text-neutral-400 text-xs font-medium flex items-center gap-1.5"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span id="viewPurchasedProductLocation" class="mt-0.5">University</span></p>
+                </div>
+
+                <div class="text-left space-y-1.5">
+                    <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Description</h4>
+                    <p id="viewPurchasedProductDescription" class="text-neutral-600 text-xs font-medium leading-relaxed bg-white border border-neutral-200/60 p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.01)]">Specifications</p>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-white border border-neutral-200/50 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.01)] pb-4">
+                    <div class="flex items-center gap-3 text-left p-1 rounded-xl">
+                        <div id="viewPurchasedProductSellerAvatar" class="w-10 h-10 bg-neutral-950 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden shrink-0 border border-neutral-100">
+                            <i class="ri-user-line text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 id="viewPurchasedProductSellerName" class="text-neutral-950 text-xs font-bold leading-tight">Seller Name</h4>
+                            <div id="viewPurchasedProductSellerRating" class="flex items-center gap-1 text-[10px] font-bold mt-0.5">
+                                <span class="text-neutral-400 font-medium">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="viewPurchasedProductContactBtn" class="text-neutral-950 hover:text-neutral-600 font-bold text-xs flex items-center gap-1.5 px-3.5 py-2.5 bg-[#EDEDF2] rounded-xl shadow-sm outline-none transition-colors"><i class="ri-chat-3-line text-sm"></i> Message</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="sidebar-container" data-active="profile" class="absolute inset-0 pointer-events-none z-50"></div>
+
+    </div>
+
+    <div id="toastNotificationAlert" class="absolute top-6 mx-auto bg-neutral-950/95 border border-white/10 text-white px-5 py-3 rounded-full text-xs font-semibold shadow-2xl tracking-wide z-[200] transform -translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
         <i class="ri-checkbox-circle-fill text-green-400 text-sm"></i>
         <span id="toastAlertMessage">Changes committed cleanly!</span>
     </div>
 
     <script src="js/layout.js"></script>
     <script>
-        // --- GLOBAL SESSION & STATE MANAGEMENT MATRICES ---
         let loggedInUserId = (function() {
             try {
                 const cached = localStorage.getItem('zellr_user_profile');
@@ -228,7 +270,6 @@
         let activeRatingOrderId = null;
         let activeRatingSellerId = null;
 
-        // Core Profile Image Cropper Native Interaction State Handlers
         let cropperOriginalImageInstance = null;
         let cropperInternalZoomState = 1.0;
         let cropperInternalPanXState = 0;
@@ -240,7 +281,9 @@
         let uploadedAvatarBase64String = null;
         let currentPurchasesTabState = 'to receive';
 
-        // --- UTILITY TOOLS & SAFETY ESCAPES ---
+        let activeOrdersCache = [];  
+        let activeRatingsCache = [];
+
         function safeText(str) {
             if (!str) return '';
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
@@ -257,7 +300,6 @@
             }, 2200);
         }
 
-        // --- SELLER RATING SYSTEM LOGIC ---
         function setRating(val) {
             currentRatingValue = val;
             updateStarUI(val);
@@ -276,6 +318,7 @@
             }
         }
 
+        // REFACTORED: Direct full screen view transitions for seller feedback wizard
         function openRatingModal(orderId, sellerId, sellerName) {
             activeRatingOrderId = orderId;
             activeRatingSellerId = sellerId;
@@ -287,27 +330,35 @@
 
             const modal = document.getElementById('sellerRatingModal');
             const content = document.getElementById('sellerRatingModalContent');
+            const mainScroll = document.getElementById('accountScrollBody');
             
-            modal.classList.remove('hidden', 'pointer-events-none');
-            modal.classList.add('flex');
-            
-            setTimeout(() => {
+            if (modal && content) {
+                modal.classList.remove('pointer-events-none', 'opacity-0');
                 modal.classList.add('opacity-100');
                 content.classList.remove('translate-y-full');
-            }, 10);
+                
+                if (mainScroll) {
+                    mainScroll.classList.remove('overflow-y-auto');
+                    mainScroll.classList.add('overflow-hidden');
+                }
+            }
         }
 
         function closeRatingModal() {
             const modal = document.getElementById('sellerRatingModal');
             const content = document.getElementById('sellerRatingModalContent');
+            const mainScroll = document.getElementById('accountScrollBody');
             
-            modal.classList.remove('opacity-100');
-            content.classList.add('translate-y-full');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden', 'pointer-events-none');
-                modal.classList.remove('flex');
-            }, 300);
+            if (modal && content) {
+                modal.classList.add('pointer-events-none', 'opacity-0');
+                modal.classList.remove('opacity-100');
+                content.classList.add('translate-y-full');
+                
+                if (mainScroll) {
+                    mainScroll.classList.remove('overflow-hidden');
+                    mainScroll.classList.add('overflow-y-auto');
+                }
+            }
         }
 
         async function submitSellerRating() {
@@ -375,89 +426,98 @@
             }
         }
 
-        // --- BUYER LEDGER VIEWERS & FILTERS ---
-        async function openCompletedProductViewer(productId, orderId) {
+        // REFACTORED: Unified sub-page viewer transitions for completed historical tokens
+        function openCompletedProductViewer(productId, orderId) {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
                 : window.location.origin;
 
             let allProducts = [];
-            try {
-                const productsRes = await fetch(`${API_BASE}/api/products`);
-                if (productsRes.ok) allProducts = await productsRes.json();
-            } catch (err) {}
+            fetch(`${API_BASE}/api/products`)
+                .then(res => res.json())
+                .then(allProducts => {
+                    const matchedProduct = allProducts.find(p => parseInt(p.id) === parseInt(productId));
+                    if (!matchedProduct) return;
 
-            const matchedProduct = allProducts.find(p => parseInt(p.id) === parseInt(productId));
-            if (!matchedProduct) return;
+                    document.getElementById('viewPurchasedProductImage').src = matchedProduct.image_url || 'assets/catalog/placeholder.png';
+                    document.getElementById('viewPurchasedProductTitle').textContent = matchedProduct.title;
+                    document.getElementById('viewPurchasedProductPrice').textContent = '₱' + parseFloat(matchedProduct.price || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+                    document.getElementById('viewPurchasedProductLocation').textContent = matchedProduct.campus || 'Main Campus';
+                    document.getElementById('viewPurchasedProductCondition').textContent = matchedProduct.item_condition || 'Good';
+                    document.getElementById('viewPurchasedProductDescription').textContent = matchedProduct.description || 'No description supplied.';
+                    document.getElementById('viewPurchasedProductSellerName').textContent = matchedProduct.seller_name || 'Merchant';
+                    
+                    const avatarBox = document.getElementById('viewPurchasedProductSellerAvatar');
+                    const initial = (matchedProduct.seller_name || "M").charAt(0).toUpperCase();
+                    if (matchedProduct.seller_avatar) {
+                        avatarBox.innerHTML = `<img src="${matchedProduct.seller_avatar}" class="w-full h-full object-cover" onerror="this.outerHTML='${initial}'" />`;
+                    } else {
+                        avatarBox.innerHTML = initial;
+                    }
 
-            document.getElementById('viewPurchasedProductImage').src = matchedProduct.image_url || 'assets/catalog/placeholder.png';
-            document.getElementById('viewPurchasedProductTitle').textContent = matchedProduct.title;
-            document.getElementById('viewPurchasedProductPrice').textContent = '₱' + parseFloat(matchedProduct.price || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
-            document.getElementById('viewPurchasedProductLocation').textContent = matchedProduct.campus || 'Main Campus';
-            document.getElementById('viewPurchasedProductCondition').textContent = matchedProduct.item_condition || 'Good';
-            document.getElementById('viewPurchasedProductDescription').textContent = matchedProduct.description || 'No description supplied.';
-            document.getElementById('viewPurchasedProductSellerName').textContent = matchedProduct.seller_name || 'Merchant';
-            
-            const avatarBox = document.getElementById('viewPurchasedProductSellerAvatar');
-            const initial = (matchedProduct.seller_name || "M").charAt(0).toUpperCase();
-            if (matchedProduct.seller_avatar) {
-                avatarBox.innerHTML = `<img src="${matchedProduct.seller_avatar}" class="w-full h-full object-cover" onerror="this.outerHTML='${initial}'" />`;
-            } else {
-                avatarBox.innerHTML = initial;
-            }
+                    const ratingContainer = document.getElementById('viewPurchasedProductSellerRating');
+                    if (ratingContainer) {
+                        ratingContainer.innerHTML = `<span class="text-neutral-300 font-medium">Loading...</span>`;
+                        fetch(`${API_BASE}/api/ratings`)
+                            .then(res => res.json())
+                            .then(allRatings => {
+                                const sellerRatings = allRatings.filter(r => String(r.seller_id) === String(matchedProduct.seller_id));
+                                
+                                if (sellerRatings.length === 0) {
+                                    ratingContainer.innerHTML = `<span class="text-neutral-400 font-medium">Not rated yet</span>`;
+                                } else {
+                                    const sum = sellerRatings.reduce((acc, curr) => acc + parseInt(curr.rating), 0);
+                                    const avg = (sum / sellerRatings.length).toFixed(1);
+                                    ratingContainer.innerHTML = `
+                                        <i class="ri-star-fill text-yellow-400 text-xs"></i>
+                                        <span class="text-neutral-900">${avg}</span>
+                                        <span class="text-neutral-400 font-medium ml-0.5">(${sellerRatings.length})</span>
+                                    `;
+                                }
+                            })
+                            .catch(e => {
+                                ratingContainer.innerHTML = `<span class="text-neutral-400 font-medium">Not rated yet</span>`;
+                            });
+                    }
 
-            const ratingContainer = document.getElementById('viewPurchasedProductSellerRating');
-            if (ratingContainer) {
-                ratingContainer.innerHTML = `<span class="text-neutral-300 font-medium">Loading...</span>`;
-                try {
-                    const ratingsRes = await fetch(`${API_BASE}/api/ratings`);
-                    if (ratingsRes.ok) {
-                        const allRatings = await ratingsRes.json();
-                        const sellerRatings = allRatings.filter(r => String(r.seller_id) === String(matchedProduct.seller_id));
+                    const contactBtn = document.getElementById('viewPurchasedProductContactBtn');
+                    contactBtn.onclick = function() {
+                        window.location.href = `messages.html?open_order_id=${orderId}`;
+                    };
+
+                    const modal = document.getElementById('viewPurchasedProductModal');
+                    const content = document.getElementById('viewPurchasedProductModalContent');
+                    const mainScroll = document.getElementById('accountScrollBody');
+                    
+                    if (modal && content) {
+                        modal.classList.remove('pointer-events-none', 'opacity-0');
+                        modal.classList.add('opacity-100');
+                        content.classList.remove('translate-y-full');
                         
-                        if (sellerRatings.length === 0) {
-                            ratingContainer.innerHTML = `<span class="text-neutral-400 font-medium">Not rated yet</span>`;
-                        } else {
-                            const sum = sellerRatings.reduce((acc, curr) => acc + parseInt(curr.rating), 0);
-                            const avg = (sum / sellerRatings.length).toFixed(1);
-                            ratingContainer.innerHTML = `
-                                <i class="ri-star-fill text-yellow-400 text-xs"></i>
-                                <span class="text-neutral-900">${avg}</span>
-                                <span class="text-neutral-400 font-medium ml-0.5">(${sellerRatings.length})</span>
-                            `;
+                        if (mainScroll) {
+                            mainScroll.classList.remove('overflow-y-auto');
+                            mainScroll.classList.add('overflow-hidden');
                         }
                     }
-                } catch (e) {
-                    ratingContainer.innerHTML = `<span class="text-neutral-400 font-medium">Not rated yet</span>`;
-                }
-            }
-
-            const contactBtn = document.getElementById('viewPurchasedProductContactBtn');
-            contactBtn.onclick = function() {
-                window.location.href = `messages.html?open_order_id=${orderId}`;
-            };
-
-            const modal = document.getElementById('viewPurchasedProductModal');
-            const content = document.getElementById('viewPurchasedProductModalContent');
-            
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('translate-y-full');
-            }, 10);
+                })
+                .catch(err => console.error(err));
         }
 
         function closePurchasedProductViewer() {
             const modal = document.getElementById('viewPurchasedProductModal');
             const content = document.getElementById('viewPurchasedProductModalContent');
-            modal.classList.add('opacity-0');
-            content.classList.add('translate-y-full');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
+            const mainScroll = document.getElementById('accountScrollBody');
+            
+            if (modal && content) {
+                modal.classList.add('pointer-events-none', 'opacity-0');
+                modal.classList.remove('opacity-100');
+                content.classList.add('translate-y-full');
+                
+                if (mainScroll) {
+                    mainScroll.classList.remove('overflow-hidden');
+                    mainScroll.classList.add('overflow-y-auto');
+                }
+            }
         }
 
         function switchPurchasesDisplayFilter(tabMode) {
@@ -558,10 +618,12 @@
             container.innerHTML = html;
         }
 
-        // --- NATIVE IMAGE CROPPER CONTROL ENGINE ---
+        // SURGICAL REFACTOR: Coordinates overflow layers for profile setup wizard
         function toggleEditProfileModal(show) {
             const wrapper = document.getElementById('editProfileModal');
-            const drawer = wrapper ? wrapper.querySelector('.modal-drawer') : null;
+            const drawer = wrapper ? wrapper.querySelector('div') : null;
+            const mainScroll = document.getElementById('accountScrollBody');
+            
             if (wrapper && drawer) {
                 if (show) {
                     const currentName = document.getElementById('profileNameDisplay').textContent;
@@ -578,17 +640,26 @@
                         document.getElementById('avatarFormIconFallback').classList.remove('hidden');
                     }
                     
-                    // FIX: Explicitly capture and declare the profile form element node to eliminate ReferenceError crashes
                     const form = document.getElementById('editProfileForm');
                     if(form) form.querySelectorAll('[required]').forEach(f => f.classList.remove('!border-red-500', '!bg-red-50'));
                     
                     wrapper.classList.remove('pointer-events-none', 'opacity-0');
                     wrapper.classList.add('opacity-100');
                     drawer.classList.remove('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-y-auto');
+                        mainScroll.classList.add('overflow-hidden');
+                    }
                 } else {
                     wrapper.classList.add('pointer-events-none', 'opacity-0');
                     wrapper.classList.remove('opacity-100');
                     drawer.classList.add('translate-y-full');
+
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-hidden');
+                        mainScroll.classList.add('overflow-y-auto');
+                    }
                 }
             }
         }
@@ -755,7 +826,6 @@
             closeCropperModalWorkflow();
         }
 
-        // --- BACKEND DATABASE INTERACTION ENGAGEMENT LAYERS ---
         document.getElementById('editProfileForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             
@@ -796,7 +866,6 @@
                     avatar_url: uploadedAvatarBase64String || userObj.avatar || ""
                 };
 
-                // FIX: Point directly to the verified backend auth profile route to eradicate the red 404 console error entirely
                 const response = await fetch(`${API_BASE}/api/auth/profile/${userObj.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },

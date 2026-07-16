@@ -14,14 +14,11 @@
         })();
     </script>
     <title>Zellr | Messages</title>
-    <!-- Tailwind Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Premium Font Suite Import -->
-    <link rel="icon" type="image/png" href="assets/zellr-logo.png">
+    <link rel="icon" type="image/png" href="assets/zellr-logo.png">    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Premium Flawless Icon Font Suite -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
     
     <style>
@@ -35,26 +32,20 @@
 </head>
 <body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
 
-    <!-- Premium Mobile Sandbox Container -->
     <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
         
-        <!-- Standard Integrated Top Floating Header Node Anchor -->
         <div id="app-header" class="z-30"></div>
 
-        <!-- MAIN VIEW PORT A: SCROLLABLE INBOX LIST STREAMS -->
         <div id="inboxListViewContainer" class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-4 pt-24 px-4">
             <div class="px-1 pt-1 flex items-center justify-between">
                 <div class="space-y-0.5 text-left flex flex-col gap-0.5">
                     <div class="flex items-center gap-2">
-                        <h2 class="text-neutral-950 text-xl font-bold tracking-tight">Messages</h2>
-                        <!-- Global Unread Badge Indicator -->
+                        <h2 class="text-neutral-950 textxl font-bold tracking-tight">Messages</h2>
                         <span id="globalUnreadBadgeIndicator" class="hidden bg-red-500 text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center">0</span>
                     </div>
-                    <!-- Relocated dynamic item counter badge node description -->
                     <p class="text-[9px] font-bold text-neutral-400 uppercase tracking-wider font-sans-subtitle" id="totalInboxThreadsBadge">0 Channels</p>
                 </div>
 
-                <!-- UPGRADE: Tab Filter Navigation Layout featuring Embedded Notification Badges -->
                 <div class="flex bg-neutral-100 p-0.5 rounded-xl text-[10px] font-bold font-sans-subtitle shadow-sm select-none shrink-0">
                     <button type="button" onclick="switchMessagesDisplayFilter('active')" id="messagesTabActiveBtn" class="px-3.5 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none flex items-center gap-1.5 relative whitespace-nowrap">
                         <span>Active</span>
@@ -67,7 +58,6 @@
                 </div>
             </div>
 
-            <!-- Thread List Target Mounting Wrapper Canvas -->
             <div id="inboxThreadsWrapperCanvas" class="space-y-3">
                 <div class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-14 px-4 flex flex-col items-center justify-center text-center space-y-3.5 shadow-sm">
                     <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
@@ -81,7 +71,6 @@
             </div>
         </div>
 
-        <!-- MAIN VIEW PORT B: DETAILED ACTIVE FOCVERSATION WINDOW SCREEN OVERLAY -->
         <div id="activeChatFocusedViewOverlay" class="absolute inset-0 bg-[#F9F9FB] z-40 hidden flex flex-col pt-0">
             <div class="sticky top-0 bg-white border-b border-neutral-100 px-4 pt-6 pb-3 flex flex-col gap-2.5 z-40 shadow-[0_2px_10px_rgba(0,0,0,0.01)] text-left">
                 <div class="flex items-center gap-3">
@@ -128,11 +117,9 @@
             </form>
         </div>
 
-        <!-- UPGRADE: High-Fidelity Premium Product Details Preview Drawer for Chat Interface -->
         <div id="chatProductDetailsModal" onclick="toggleChatProductModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 hidden flex-col justify-end transition-all opacity-0">
             <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-6 transform translate-y-full transition-transform duration-300 border-t border-neutral-200/40 relative">
                 
-                <!-- Product Image Canvas with Absolute Controls Overlay -->
                 <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner mt-2">
                     <img id="chatModalProductImage" src="" class="w-full h-full object-cover" />
                     
@@ -177,8 +164,7 @@
                 <div class="text-left space-y-1.5">
                     <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Accepted Payment Methods</h4>
                     <div id="chatModalProductPayments" class="flex flex-wrap gap-2">
-                        <!-- Dynamic payment methods get injected down here -->
-                    </div>
+                        </div>
                 </div>
 
                 <div id="chatModalActionButtonsWrapper" class="grid grid-cols-2 gap-4 pt-1">
@@ -219,15 +205,38 @@
             </div>
         </div>
 
+        <div id="toastNotificationAlert" class="absolute top-6 mx-auto bg-neutral-950/95 border border-white/10 text-white px-5 py-3 rounded-full text-xs font-semibold shadow-2xl tracking-wide z-[200] transform -translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
+            <i class="ri-checkbox-circle-fill text-green-400 text-sm"></i>
+            <span id="toastAlertMessage">Item action fired cleaners!</span>
+        </div>
+
         <div id="sidebar-container" data-active="chat" class="absolute inset-0 pointer-events-none z-50"></div>
     </div>
 
     <script src="js/layout.js"></script>
     <script>
-        // NEW GLOBAL FILTER STATE TRACKER
         let currentMessagesTabState = 'active';
 
-        // NEW: Pulls the hidden counterpart ID input parameter to route securely to the seller profile
+        // NEW: High-Fidelity Channel Shimmer Skeleton Loader Controller
+        function displayInboxSkeletonLoader() {
+            document.getElementById('inboxThreadsWrapperCanvas').innerHTML = `
+                <div class="space-y-3 w-full">
+                    ${Array(4).fill(`
+                        <div class="animate-pulse bg-white border border-neutral-200/40 rounded-2xl p-3.5 flex items-center gap-3 shadow-[0_2px_6px_rgba(0,0,0,0.01)] text-left">
+                            <div class="w-10 h-10 rounded-full bg-neutral-200/70 shrink-0"></div>
+                            <div class="flex-1 space-y-2 min-w-0">
+                                <div class="flex justify-between items-center gap-4">
+                                    <div class="h-3 bg-neutral-200/80 rounded-full w-1/3"></div>
+                                    <div class="h-2.5 bg-neutral-200/50 rounded-full w-12 shrink-0"></div>
+                                </div>
+                                <div class="h-2.5 bg-neutral-200/60 rounded-full w-3/4"></div>
+                                <div class="h-2 bg-neutral-200/40 rounded-full w-1/2 pt-0.5"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+        }
+
         function routeToCounterpartProfile() {
             const counterpartId = document.getElementById('chatActiveFocusReceiverId').value;
             if (counterpartId) {
@@ -246,6 +255,8 @@
                 ? 'px-3.5 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none flex items-center justify-center gap-1.5 relative whitespace-nowrap' 
                 : 'px-3.5 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none flex items-center justify-center gap-1.5 relative whitespace-nowrap';
             
+            // Trigger animation instantly during the context filtering transition
+            displayInboxSkeletonLoader();
             compileFulfillmentConversations();
         }
 
@@ -254,7 +265,6 @@
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        // FIX: Renamed variable to perfectly isolate it from layout.js collisions
         let messengerActiveUserId = (function() {
             try {
                 const cached = localStorage.getItem('zellr_user_profile');
@@ -269,7 +279,6 @@
         let globalProductsCache = [];
 
         function getAccountProfilesMatrixLookup(order) {
-            // FIX: Repointed this logic check to use the isolated messenger variable
             const isCurrentSessionSeller = parseInt(order.seller_id) === messengerActiveUserId;
             const counterpartId = isCurrentSessionSeller ? order.buyer_id : order.seller_id;
             const counterpartName = isCurrentSessionSeller ? order.buyer_name : order.seller_name;
@@ -309,6 +318,22 @@
             }, 200);
         }
 
+        // NEW: Native notification bindings prevent internal alignment crash conditions
+        function showToastNotification(msg) {
+            const toast = document.getElementById('toastNotificationAlert');
+            document.getElementById('toastAlertMessage').textContent = msg;
+            toast.classList.remove('-translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-20', 'opacity-0');
+            }, 2200);
+        }
+
+        function showSystemNotification(msg) {
+            showToastNotification(msg);
+        }
+
         async function compileFulfillmentConversations() {
             const threadCanvas = document.getElementById('inboxThreadsWrapperCanvas');
             if (!threadCanvas) return;
@@ -322,7 +347,6 @@
                 } catch(e) {}
             }
 
-            // FIX: Dynamic API Base Routing ensures seamless transition to external testing IPs
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
                 : window.location.origin;
@@ -362,7 +386,6 @@
 
             let clearedThreadsMap = {};
             try {
-                // FIX: User-Specific Local Storage Key ensures Buyer and Seller have strictly independent read states!
                 clearedThreadsMap = JSON.parse(localStorage.getItem(`zellr_cleared_system_messages_${sessionUserId}`) || '{}');
             } catch(e) {}
 
@@ -464,20 +487,16 @@
                 return;
             }
 
-            // DYNAMIC ACTIVITY BUBBLING ENGINE: Calculate recency metrics for each thread channel
             relevantOrders.forEach(order => {
                 let matchMessages = chatLogs.filter(c => parseInt(c.order_id) === parseInt(order.id));
                 if (matchMessages.length > 0) {
-                    // Chat logs are loaded chronologically (ASC), so the last element is always the latest activity
                     const lastMsg = matchMessages[matchMessages.length - 1];
                     order.lastActivity = lastMsg.created_at ? new Date(lastMsg.created_at).getTime() : 0;
                 } else {
-                    // Fallback to order ID if no chat messages exist yet
                     order.lastActivity = parseInt(order.id);
                 }
             });
 
-            // Sort descendingly so the highest timestamp (most recent activity) floats to the top
             relevantOrders.sort((a, b) => b.lastActivity - a.lastActivity);
 
             let threadsHtml = "";
@@ -501,9 +520,7 @@
                 }
 
                 const initialLetter = profile.name.charAt(0).toUpperCase();
-
                 const fallbackHTML = `<div class="w-full h-full bg-neutral-950 text-white flex items-center justify-center font-bold text-xs uppercase tracking-wider">${initialLetter}</div>`;
-
                 const avatarAssetLayout = profile.avatar ? 
                     `<img src="${profile.avatar}" class="w-full h-full object-cover" onerror='this.outerHTML=${JSON.stringify(fallbackHTML)}' />` : 
                     fallbackHTML;
@@ -737,7 +754,6 @@
                         localStorage.setItem('zellr_cart_basket', JSON.stringify(cart));
                     }
                     toggleChatProductModal(false);
-                    // FIX: Point to the correct notification element to eliminate the Reference Error crash
                     showSystemNotification("Item added to Cart Bag");
                 };
 
@@ -872,7 +888,6 @@
 
             if (activeMessages.length > 0) {
                 try {
-                    // FORCE SYNC: Bind the cleared status strictly to the message array length
                     let clearedThreadsMap = JSON.parse(localStorage.getItem(`zellr_cleared_system_messages_${sessionUserId}`) || '{}');
                     clearedThreadsMap[orderId] = activeMessages.length;
                     localStorage.setItem(`zellr_cleared_system_messages_${sessionUserId}`, JSON.stringify(clearedThreadsMap));
@@ -974,7 +989,7 @@
 
         function closeActiveFocusedDialogue() {
             document.getElementById('activeChatFocusedViewOverlay').classList.add('hidden');
-            document.getElementById('chatActiveFocusOrderId').value = ""; // FIX: Clear the focus ID to stop the interval from overlapping!
+            document.getElementById('chatActiveFocusOrderId').value = ""; 
             compileFulfillmentConversations(); 
         }
 
@@ -998,7 +1013,6 @@
                 message_text: messageText
             };
 
-            // FIX: Environment-aware routing applied along with your premium UI error modal
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
                 : window.location.origin;
@@ -1025,6 +1039,9 @@
                 : window.location.origin;
 
             SampleActiveSessionUserDetection();
+            
+            // TRIGGER SHIMMER FEEDBACK PLACEHOLDERS INSTANTLY BEFORE NETWORK OPERATIONS
+            displayInboxSkeletonLoader();
             
             try {
                 const liveData = await fetch(`${API_BASE}/api/products`);

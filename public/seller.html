@@ -42,7 +42,7 @@
             <div class="w-10 h-10"></div> 
         </div>
 
-        <div class="flex-1 overflow-y-auto no-scrollbar pb-10">
+        <div id="sellerScrollBody" class="flex-1 overflow-y-auto no-scrollbar pb-10">
             
             <div class="bg-white px-6 pt-6 pb-8 border-b border-neutral-200/40 flex flex-col items-center text-center">
                 <div id="sellerAvatarContainer" class="w-24 h-24 rounded-[32px] bg-neutral-950 text-white flex items-center justify-center font-bold text-3xl shadow-lg overflow-hidden shrink-0 mb-4 border-4 border-white">
@@ -130,24 +130,42 @@
                 </div>
 
                 <div id="sellerProductsGrid" class="grid grid-cols-2 gap-3.5">
-                    <!-- Products injected here -->
+                    <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[24px] p-2.5 flex flex-col justify-between shadow-sm">
+                        <div class="w-full aspect-square bg-neutral-200/70 rounded-2xl mb-3"></div>
+                        <div class="px-1.5 space-y-2 pb-1 text-left">
+                            <div class="h-2.5 bg-neutral-200/80 rounded-full w-2/3"></div>
+                            <div class="h-3 bg-neutral-200/80 rounded-full w-5/6"></div>
+                            <div class="h-3.5 bg-neutral-200/50 rounded-full w-1/3 mt-2"></div>
+                        </div>
+                    </div>
+                    <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[24px] p-2.5 flex flex-col justify-between shadow-sm">
+                        <div class="w-full aspect-square bg-neutral-200/70 rounded-2xl mb-3"></div>
+                        <div class="px-1.5 space-y-2 pb-1 text-left">
+                            <div class="h-2.5 bg-neutral-200/80 rounded-full w-1/2"></div>
+                            <div class="h-3 bg-neutral-200/80 rounded-full w-11/12"></div>
+                            <div class="h-3.5 bg-neutral-200/50 rounded-full w-1/4 mt-2"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-        <div id="productDetailsModal" onclick="toggleDetailsModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 hidden flex-col justify-end transition-all opacity-0 pointer-events-none">
-            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-6 transform translate-y-full transition-transform duration-300 border-t border-neutral-200/40 relative">
+        </div>
+
+        <div id="productDetailsModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-6 transform translate-y-full transition-transform duration-300 relative flex flex-col">
                 
-                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner mt-2">
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="toggleDetailsModal(false)" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    <h3 class="text-neutral-900 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">Item Details</h3>
+                    <button type="button" onclick="toggleWishlistState()" class="w-10 h-10 bg-white border border-neutral-200 rounded-full flex items-center justify-center text-neutral-400 hover:text-red-500 shadow-sm transition-all outline-none">
+                        <i id="wishlistHeartIcon" class="ri-heart-line text-base transition-colors"></i>
+                    </button>
+                </div>
+
+                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner shrink-0">
                     <img id="modalProductImage" src="" class="w-full h-full object-cover" />
-                    
-                    <div class="absolute top-4 right-4 flex items-center gap-2 z-30">
-                        <button type="button" onclick="toggleWishlistState()" class="w-9 h-9 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-500 hover:text-red-500 shadow-md transition-colors outline-none">
-                            <i id="wishlistHeartIcon" class="ri-heart-line text-lg transition-colors"></i>
-                        </button>
-                        <button type="button" onclick="toggleDetailsModal(false)" class="w-9 h-9 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-500 hover:text-neutral-950 shadow-md transition-colors outline-none">
-                            <i class="ri-close-line text-xl"></i>
-                        </button>
-                    </div>
                 </div>
 
                 <div class="space-y-2 text-left pt-1">
@@ -186,9 +204,13 @@
                     <div id="modalProductPayments" class="flex flex-wrap gap-2"></div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 pt-1">
-                    <button type="button" onclick="executeAddToCartWorkflow()" class="bg-[#EDEDF2] hover:bg-[#E4E4E9] text-neutral-950 py-4 rounded-2xl text-xs font-bold transition-all outline-none flex items-center justify-center gap-2 shadow-sm"><i class="ri-shopping-bag-3-line text-base shrink-0"></i> <span>Add to Cart</span></button>
-                    <button type="button" onclick="openPurchaseConfirmationModal()" class="bg-neutral-950 hover:bg-neutral-900 text-white py-4 rounded-2xl text-xs font-bold tracking-wider shadow-md transition-all outline-none flex items-center justify-center"><span>Buy Now</span></button>
+                <div class="grid grid-cols-2 gap-4 pt-1 pb-4 shrink-0">
+                    <button type="button" onclick="executeAddToCartWorkflow()" class="bg-[#EDEDF2] hover:bg-[#E4E4E9] text-neutral-950 py-4 rounded-2xl text-xs font-bold transition-all outline-none flex items-center justify-center gap-2 shadow-sm">
+                        <i class="ri-shopping-bag-3-line text-base shrink-0"></i> <span>Add to Cart</span>
+                    </button>
+                    <button type="button" onclick="openPurchaseConfirmationModal()" class="bg-neutral-950 hover:bg-neutral-900 text-white py-4 rounded-2xl text-xs font-bold tracking-wider shadow-md transition-all outline-none flex items-center justify-center">
+                        <span>Buy Now</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -236,6 +258,27 @@
         let currentUserId = 3;
         let activeSellerCategoryFilter = 'All'; // Set default to 'All'
 
+        // NEW LOADING ANIMATION CONTROLLER FOR SELLER CATEGORY CHANNELS
+        function displaySellerSkeletonLoader() {
+            document.getElementById('sellerProductsGrid').innerHTML = `
+                <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[24px] p-2.5 flex flex-col justify-between shadow-sm">
+                    <div class="w-full aspect-square bg-neutral-200/70 rounded-2xl mb-3"></div>
+                    <div class="px-1.5 space-y-2 pb-1 text-left">
+                        <div class="h-2.5 bg-neutral-200/80 rounded-full w-2/3"></div>
+                        <div class="h-3 bg-neutral-200/80 rounded-full w-5/6"></div>
+                        <div class="h-3.5 bg-neutral-200/50 rounded-full w-1/3 mt-2"></div>
+                    </div>
+                </div>
+                <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[24px] p-2.5 flex flex-col justify-between shadow-sm">
+                    <div class="w-full aspect-square bg-neutral-200/70 rounded-2xl mb-3"></div>
+                    <div class="px-1.5 space-y-2 pb-1 text-left">
+                        <div class="h-2.5 bg-neutral-200/80 rounded-full w-1/2"></div>
+                        <div class="h-3 bg-neutral-200/80 rounded-full w-11/12"></div>
+                        <div class="h-3.5 bg-neutral-200/50 rounded-full w-1/4 mt-2"></div>
+                    </div>
+                </div>`;
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const targetSellerId = urlParams.get('id');
 
@@ -243,6 +286,9 @@
             if (activeSellerCategoryFilter === categoryName) return; // Prevent toggling off
 
             activeSellerCategoryFilter = categoryName;
+            
+            // TRIGGER SHIMMER SKELETONS INSTANTLY BEFORE RUNNING CLIENT-SIDE RENDER LOOP
+            displaySellerSkeletonLoader();
 
             document.querySelectorAll('.seller-category-btn').forEach(btn => {
                 btn.className = "seller-category-btn w-12 h-12 bg-[#F9F9FB] hover:bg-neutral-50 border border-neutral-200/60 rounded-[16px] flex items-center justify-center text-neutral-700 shadow-sm outline-none transition-all";
@@ -280,7 +326,7 @@
                 if (profileRes.ok) {
                     let p = await profileRes.json();
                     
-                    // UPGRADE: Combines separate columns cleanly with an automatic fallback to the mapped full string
+                    // COMBINES SEPARATE USER VARIABLES CLEANLY
                     let derivedName = "Campus User";
                     if (p.first_name || p.last_name) {
                         derivedName = `${p.first_name || ''} ${p.last_name || ''}`.trim();
@@ -452,9 +498,9 @@
             const isSaved = activeWishlist.some(id => parseInt(id) === parseInt(item.id));
             const heartIcon = document.getElementById('wishlistHeartIcon');
             if (isSaved) {
-                heartIcon.className = "ri-heart-fill text-red-500 text-lg transition-colors";
+                heartIcon.className = "ri-heart-fill text-red-500 text-base transition-colors";
             } else {
-                heartIcon.className = "ri-heart-line text-lg transition-colors";
+                heartIcon.className = "ri-heart-line text-base transition-colors";
             }
 
             const isTradeable = (item.open_to_trades === 1 || item.open_to_trades === true || item.open_to_trades === "true");
@@ -478,26 +524,32 @@
             toggleDetailsModal(true);
         }
 
+        // SURGICAL REFACTOR: Implemented high-performance transition mapping with background scroll lock
         function toggleDetailsModal(show) {
             const wrapper = document.getElementById('productDetailsModal');
             const drawer = wrapper ? wrapper.querySelector('div') : null;
-            if (!wrapper || !drawer) return;
-            if (show) {
-                wrapper.classList.remove('hidden');
-                wrapper.classList.add('flex');
-                wrapper.classList.remove('pointer-events-none');
-                setTimeout(() => {
-                    wrapper.classList.remove('opacity-0');
+            const mainScroll = document.getElementById('sellerScrollBody'); // Targets explicit background node
+
+            if (wrapper && drawer) {
+                if (show) {
+                    wrapper.classList.remove('pointer-events-none', 'opacity-0');
+                    wrapper.classList.add('opacity-100');
                     drawer.classList.remove('translate-y-full');
-                }, 10);
-            } else {
-                wrapper.classList.add('opacity-0');
-                drawer.classList.add('translate-y-full');
-                setTimeout(() => {
-                    wrapper.classList.add('hidden');
-                    wrapper.classList.remove('flex');
-                    wrapper.classList.add('pointer-events-none');
-                }, 300);
+                    
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-y-auto');
+                        mainScroll.classList.add('overflow-hidden'); // Locks the background scroll track
+                    }
+                } else {
+                    wrapper.classList.add('pointer-events-none', 'opacity-0');
+                    wrapper.classList.remove('opacity-100');
+                    drawer.classList.add('translate-y-full');
+                    
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-hidden');
+                        mainScroll.classList.add('overflow-y-auto'); // Restores background scroll smoothly
+                    }
+                }
             }
         }
 
@@ -509,11 +561,11 @@
             if (isSaved) {
                 activeWishlist = activeWishlist.filter(id => parseInt(id) !== parseInt(activeFocusProduct.id));
                 showSystemNotification("Removed from Wishlist");
-                heartIcon.className = "ri-heart-line text-lg transition-colors";
+                heartIcon.className = "ri-heart-line text-base transition-colors";
             } else {
                 activeWishlist.push(parseInt(activeFocusProduct.id));
                 showSystemNotification("Added to Wishlist");
-                heartIcon.className = "ri-heart-fill text-red-500 text-lg transition-colors";
+                heartIcon.className = "ri-heart-fill text-red-500 text-base transition-colors";
             }
             localStorage.setItem('zellr_wishlist', JSON.stringify(activeWishlist));
         }

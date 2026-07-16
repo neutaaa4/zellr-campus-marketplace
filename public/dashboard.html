@@ -36,7 +36,7 @@
         
         <div id="app-header" class="z-30"></div>
 
-        <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-6 pt-24">
+        <div id="mainDashboardScrollBody" class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-6 pt-24">
             
             <div class="px-4">
                 <div class="w-full bg-white border border-neutral-200/50 rounded-[32px] p-5 shadow-[0_8px_25px_rgba(0,0,0,0.02)] space-y-4">
@@ -46,7 +46,6 @@
                         <p class="text-neutral-500 text-xs font-medium mt-1">What are you looking for today?</p>
                     </div>
 
-                    <!-- Integrated Search & Sort Menu Placement -->
                     <div class="space-y-2 relative">
                         <div class="relative flex items-center">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-neutral-400 pointer-events-none">
@@ -54,13 +53,11 @@
                             </span>
                             <input id="dashboardSearchInput" type="text" placeholder="Search for campus items..." class="w-full bg-[#EDEDF2] focus:bg-[#E4E4E9] text-neutral-900 placeholder-neutral-400 text-xs font-medium pl-11 pr-12 py-3 rounded-[20px] border border-transparent transition-all outline-none" />
                             
-                            <!-- Filter Toggle Button -->
                             <button onclick="toggleSortMenu()" class="absolute inset-y-0 right-1.5 flex items-center justify-center w-9 h-9 my-auto rounded-[14px] bg-[#E4E4E9] hover:bg-[#D4D4D9] text-neutral-700 transition-colors outline-none">
                                 <i class="ri-equalizer-line text-sm"></i>
                             </button>
                         </div>
 
-                        <!-- Full-Width Dropdown Menu (Hidden by default) -->
                         <div id="dashboardSortMenu" class="hidden flex-col gap-1 bg-[#EDEDF2] rounded-[20px] p-1.5 shadow-inner transition-all">
                             <button onclick="triggerFeedSort('recent', 'Most Recent')" class="text-left px-4 py-2.5 text-xs font-bold font-sans-subtitle rounded-[14px] outline-none transition-colors bg-white text-neutral-900 shadow-sm sort-option-btn">Most Recent</button>
                             <button onclick="triggerFeedSort('priceAsc', 'Price: Low to High')" class="text-left px-4 py-2.5 text-xs font-bold font-sans-subtitle rounded-[14px] outline-none transition-colors text-neutral-500 hover:bg-white/60 sort-option-btn">Price: Low to High</button>
@@ -71,7 +68,6 @@
                     <div class="space-y-2.5 pt-1">
                         <p class="text-neutral-400 text-[11px] font-bold tracking-wider uppercase font-sans-subtitle">Categories</p>
                         <div class="flex gap-3 overflow-x-auto no-scrollbar py-0.5">
-                            <!-- NEW: "All" Default Toggle -->
                             <div class="flex flex-col items-center gap-1 shrink-0">
                                 <button onclick="toggleCategoryFilter(this, 'All')" id="dashCatBtn_All" class="w-12 h-12 bg-neutral-950 text-white rounded-[16px] flex items-center justify-center shadow-sm outline-none transition-all dash-cat-btn">
                                     <i class="ri-function-line text-base"></i>
@@ -139,36 +135,61 @@
                 </div>
                 
                 <div id="feedGridMountingPoint">
-                    <div class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-14 px-4 flex flex-col items-center justify-center text-center space-y-3.5 shadow-sm">
-                        <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
-                            <i class="ri-store-2-line text-xl text-neutral-400"></i>
+                    <div class="grid grid-cols-2 gap-3.5">
+                        <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[28px] p-2 flex flex-col justify-between shadow-sm">
+                            <div class="w-full h-32 bg-neutral-200/70 rounded-[22px]"></div>
+                            <div class="pt-2.5 pb-2 px-1.5 text-left space-y-2">
+                                <div class="h-3 bg-neutral-200/80 rounded-full w-5/6"></div>
+                                <div class="h-2.5 bg-neutral-200/50 rounded-full w-1/2"></div>
+                                <div class="h-3.5 bg-neutral-200/80 rounded-full w-1/3 mt-1"></div>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <h4 class="text-neutral-900 text-sm font-bold tracking-tight">Loading listings...</h4>
-                            <p class="text-neutral-400 text-xs font-medium max-w-[210px] mx-auto">Connecting to server node feed.</p>
+                        <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[28px] p-2 flex flex-col justify-between shadow-sm">
+                            <div class="w-full h-32 bg-neutral-200/70 rounded-[22px]"></div>
+                            <div class="pt-2.5 pb-2 px-1.5 text-left space-y-2">
+                                <div class="h-3 bg-neutral-200/80 rounded-full w-4/5"></div>
+                                <div class="h-2.5 bg-neutral-200/50 rounded-full w-2/3"></div>
+                                <div class="h-3.5 bg-neutral-200/80 rounded-full w-1/4 mt-1"></div>
+                            </div>
+                        </div>
+                        <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[28px] p-2 flex flex-col justify-between shadow-sm">
+                            <div class="w-full h-32 bg-neutral-200/70 rounded-[22px]"></div>
+                            <div class="pt-2.5 pb-2 px-1.5 text-left space-y-2">
+                                <div class="h-3 bg-neutral-200/80 rounded-full w-11/12"></div>
+                                <div class="h-2.5 bg-neutral-200/50 rounded-full w-1/2"></div>
+                                <div class="h-3.5 bg-neutral-200/80 rounded-full w-2/5 mt-1"></div>
+                            </div>
+                        </div>
+                        <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[28px] p-2 flex flex-col justify-between shadow-sm">
+                            <div class="w-full h-32 bg-neutral-200/70 rounded-[22px]"></div>
+                            <div class="pt-2.5 pb-2 px-1.5 text-left space-y-2">
+                                <div class="h-3 bg-neutral-200/80 rounded-full w-3/4"></div>
+                                <div class="h-2.5 bg-neutral-200/50 rounded-full w-3/5"></div>
+                                <div class="h-3.5 bg-neutral-200/80 rounded-full w-1/3 mt-1"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
 
-        <div id="productDetailsModal" onclick="toggleDetailsModal(false)" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div onclick="event.stopPropagation()" class="w-full bg-[#F9F9FB] rounded-t-[40px] p-6 max-h-[92%] overflow-y-auto no-scrollbar space-y-6 transform translate-y-full transition-transform duration-300 border-t border-neutral-200/40 relative">
+        <div id="productDetailsModal" class="absolute inset-0 bg-[#F9F9FB] z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col">
+            <div class="w-full h-full overflow-y-auto no-scrollbar p-6 space-y-6 transform translate-y-full transition-transform duration-300 relative flex flex-col">
                 
-                <!-- Product Image Canvas with Absolute Controls Overlay -->
-                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner mt-2">
+                <div class="flex items-center justify-between pb-3 border-b border-neutral-200/60 shrink-0 select-none">
+                    <button type="button" onclick="toggleDetailsModal(false)" class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-800 shadow-sm hover:bg-neutral-50 transition-all outline-none">
+                        <i class="ri-arrow-left-line text-base font-bold"></i>
+                    </button>
+                    <h3 class="text-neutral-900 text-xs font-bold uppercase tracking-wider font-sans-subtitle mt-0.5">Item Details</h3>
+                    <button type="button" onclick="toggleWishlistState()" class="w-10 h-10 bg-white border border-neutral-200 rounded-full flex items-center justify-center text-neutral-400 hover:text-red-500 shadow-sm transition-all outline-none">
+                        <i id="wishlistHeartIcon" class="ri-heart-line text-base transition-colors"></i>
+                    </button>
+                </div>
+
+                <div class="w-full aspect-square bg-neutral-200 rounded-3xl overflow-hidden relative shadow-inner shrink-0">
                     <img id="modalProductImage" src="" class="w-full h-full object-cover" />
-                    
-                    <!-- FIX: Floating control action buttons over image canvas -->
-                    <div class="absolute top-4 right-4 flex items-center gap-2 z-30">
-                        <button type="button" onclick="toggleWishlistState()" class="w-9 h-9 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-400 hover:text-red-500 shadow-md transition-colors outline-none">
-                            <i id="wishlistHeartIcon" class="ri-heart-line text-lg transition-colors"></i>
-                        </button>
-                        <button type="button" onclick="toggleDetailsModal(false)" class="w-9 h-9 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-neutral-500 hover:text-neutral-950 shadow-md transition-colors outline-none">
-                            <i class="ri-close-line text-xl"></i>
-                        </button>
-                    </div>
                 </div>
 
                 <div class="space-y-2 text-left pt-1">
@@ -180,7 +201,6 @@
                     <p id="modalProductLocation" class="text-neutral-400 text-xs font-medium flex items-center gap-1.5"><i class="ri-map-pin-line text-neutral-400 text-sm"></i><span class="mt-0.5">PUP Taguig</span></p>
                 </div>
 
-                <!-- FIX: Fully fluid box layout that eliminates scrolling inside text box boxes -->
                 <div class="text-left space-y-1.5">
                     <h4 class="text-[10px] font-bold tracking-wider text-neutral-400 uppercase font-sans-subtitle">Product Description</h4>
                     <p id="modalProductDescription" class="text-neutral-600 text-xs font-medium leading-relaxed bg-white border border-neutral-200/60 p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.01)]">Specifications</p>
@@ -218,20 +238,22 @@
                         </div>
                         <div>
                             <h4 id="modalSellerName" class="text-neutral-950 text-xs font-bold leading-tight">Seller Name</h4>
-                            
                             <div id="modalSellerRatingDisplay" class="flex items-center gap-1 text-[10px] font-bold mt-0.5">
                                 <span class="text-neutral-400 font-medium">Loading...</span>
                             </div>
-                            
                             <p id="modalSellerSchool" class="text-neutral-400 text-[10px] font-medium mt-0.5">University</p>
                         </div>
                     </div>
                     <button type="button" onclick="initializeChatSession()" class="text-neutral-950 hover:text-neutral-600 font-bold text-xs flex items-center gap-1.5 px-3.5 py-2.5 bg-[#EDEDF2] rounded-xl shadow-sm outline-none transition-colors"><i class="ri-chat-3-line text-sm"></i> Contact</button>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 pt-1">
-                    <button type="button" onclick="executeAddToCartWorkflow()" class="bg-[#EDEDF2] hover:bg-[#E4E4E9] text-neutral-950 py-4 rounded-2xl text-xs font-bold transition-all outline-none flex items-center justify-center gap-2 shadow-sm"><i class="ri-shopping-bag-3-line text-base shrink-0"></i> <span>Add to Cart</span></button>
-                    <button type="button" onclick="executePurchaseWorkflow()" class="bg-neutral-950 hover:bg-neutral-900 text-white py-4 rounded-2xl text-xs font-bold tracking-wider shadow-md transition-all outline-none flex items-center justify-center"><span>Buy Now</span></button>
+                <div class="grid grid-cols-2 gap-4 pt-1 pb-4 shrink-0">
+                    <button type="button" onclick="executeAddToCartWorkflow()" class="bg-[#EDEDF2] hover:bg-[#E4E4E9] text-neutral-950 py-4 rounded-2xl text-xs font-bold transition-all outline-none flex items-center justify-center gap-2 shadow-sm">
+                        <i class="ri-shopping-bag-3-line text-base shrink-0"></i> <span>Add to Cart</span>
+                    </button>
+                    <button type="button" onclick="executePurchaseWorkflow()" class="bg-neutral-950 hover:bg-neutral-900 text-white py-4 rounded-2xl text-xs font-bold tracking-wider shadow-md transition-all outline-none flex items-center justify-center">
+                        <span>Buy Now</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -255,13 +277,29 @@
         </div>
     </div>
 
-    <div id="toastNotificationAlert" class="absolute top-6 mx-auto bg-neutral-950/95 border border-white/10 text-white px-5 py-3 rounded-full text-xs font-semibold shadow-2xl tracking-wide z-[200] transform -translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
+    <div id="toastNotificationAlert" class="absolute top-6 left-1/2 -translate-x-1/2 bg-neutral-950/95 border border-white/10 text-white px-5 py-3.5 rounded-full text-xs font-semibold shadow-2xl tracking-wide z-[80] transform -translate-y-25 opacity-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap">
         <i class="ri-checkbox-circle-fill text-green-400 text-sm"></i>
         <span id="toastAlertMessage">Item added cleanly!</span>
     </div>
 
     <script src="js/layout.js"></script>
     <script>
+
+        function displaySkeletonLoader() {
+            document.getElementById('feedGridMountingPoint').innerHTML = `
+                <div class="grid grid-cols-2 gap-3.5 w-full">
+                    ${Array(4).fill(`
+                        <div class="animate-pulse bg-white border border-neutral-200/40 rounded-[28px] p-2 flex flex-col justify-between shadow-sm">
+                            <div class="w-full h-32 bg-neutral-200/70 rounded-[22px]"></div>
+                            <div class="pt-2.5 pb-2 px-1.5 text-left space-y-2">
+                                <div class="h-3 bg-neutral-200/80 rounded-full w-5/6"></div>
+                                <div class="h-2.5 bg-neutral-200/50 rounded-full w-1/2"></div>
+                                <div class="h-3.5 bg-neutral-200/80 rounded-full w-1/3 mt-1"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+        }
 
         function routeToSellerProfile() {
             if (!activeFocusProduct || !activeFocusProduct.seller_id) return;
@@ -273,7 +311,6 @@
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        // UPGRADE: Instantly derives the real user context token from your active session array
         let currentUserId = (function() {
             try {
                 const cached = localStorage.getItem('zellr_user_profile');
@@ -287,8 +324,8 @@
         
         let activeFocusProduct = null;
         let localProductsCache = []; 
-        let localOrdersCache = [];    // FIX: Global cache prevents re-pollution on search/filter events
-        let globalRatingsCache = []; // NEW: Powers the user search cards
+        let localOrdersCache = [];    
+        let globalRatingsCache = []; 
         let activeCategoryFilter = 'All'; 
         let activeSearchQuery = "";
         let activeSortMode = 'recent';
@@ -305,7 +342,6 @@
         }
 
         async function fetchActiveMarketplaceFeed() {
-            // FIX: Dynamic API Base Routing adapts seamlessly across changing network environments
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
                 : window.location.origin;
@@ -346,7 +382,6 @@
         function triggerFeedSort(mode, label) {
             activeSortMode = mode;
             
-            // Re-style buttons to highlight active selection
             const btns = document.querySelectorAll('.sort-option-btn');
             btns.forEach(btn => {
                 if (btn.textContent.trim() === label) {
@@ -356,12 +391,12 @@
                 }
             });
 
-            toggleSortMenu(); // Collapse dropdown menu automatically
+            toggleSortMenu(); 
             updateFilteredFeed();
         }
 
         function toggleCategoryFilter(btnElement, categoryName) {
-            if (activeCategoryFilter === categoryName) return; // Prevent deselecting into a null state
+            if (activeCategoryFilter === categoryName) return; 
 
             activeCategoryFilter = categoryName;
 
@@ -382,7 +417,6 @@
             let compiledList = localProductsCache || [];
             let liveOrders = localOrdersCache || [];
 
-            // User Search Logic
             const usersSection = document.getElementById('usersSearchSection');
             const usersGrid = document.getElementById('usersSearchGrid');
             
@@ -391,7 +425,6 @@
                 let matchingUsers = [];
                 let seenUserIds = new Set();
                 
-                // Extract unique matching users (Removed self-hide restriction)
                 compiledList.forEach(p => {
                     const sellerName = String(p.seller_name || ""); 
                     if (!seenUserIds.has(p.seller_id) && sellerName.toLowerCase().includes(term)) {
@@ -458,16 +491,10 @@
                 }
             }
 
-            // Step 1: Base Visibility Filters - Bulletproof Canceled Item Restoration
             compiledList = compiledList.filter(item => {
-                // 1. Hide the user's own items
                 if (String(item.seller_id) === String(currentUserId)) return false;
-                
-                // 2. Hide items explicitly marked as sold or reserved in the main product database
                 if (item.status === 'sold' || item.status === 'reserved') return false;
                 
-                // 3. Live Transaction Check: Hide ONLY if someone is actively buying or has bought it.
-                // By exclusively targeting active states, 'canceled' and 'inquiry' orders automatically bypass this block and return to the public feed!
                 const hasActivePurchase = liveOrders.some(log => 
                     parseInt(log.product_id) === parseInt(item.id) && 
                     (log.status === 'pending' || log.status === 'Ready for Delivery' || log.status === 'completed')
@@ -476,7 +503,6 @@
                 return !hasActivePurchase;
             });
 
-            // Step 2: Category Toggles
             if (activeCategoryFilter && activeCategoryFilter !== 'All') {
                 compiledList = compiledList.filter(item => {
                     const cat = String(item.category || 'Other');
@@ -485,7 +511,6 @@
                 });
             }
 
-            // Step 3: Search Bar Text Matching
             if (activeSearchQuery && String(activeSearchQuery).trim() !== "") {
                 const term = String(activeSearchQuery).toLowerCase().trim();
                 compiledList = compiledList.filter(item => {
@@ -499,7 +524,6 @@
                 });
             }
 
-            // Step 4: Dropdown Matrix Sort
             if (activeSortMode === 'priceAsc') {
                 compiledList.sort((a, b) => parseFloat(a.price || 0) - parseFloat(b.price || 0));
             } else if (activeSortMode === 'priceDesc') {
@@ -562,22 +586,16 @@
             
             document.getElementById('modalProductCategory').textContent = item.category || 'Other';
 
-            // ---------------------------------------------------------
-            // 1. Synchronize Heart Icon State
-            // ---------------------------------------------------------
             let activeWishlist = JSON.parse(localStorage.getItem('zellr_wishlist') || '[]');
             const isSaved = activeWishlist.some(id => parseInt(id) === parseInt(item.id));
             const heartIcon = document.getElementById('wishlistHeartIcon');
             
             if (isSaved) {
-                heartIcon.className = "ri-heart-fill text-red-500 text-lg transition-colors";
+                heartIcon.className = "ri-heart-fill text-red-500 text-base transition-colors";
             } else {
-                heartIcon.className = "ri-heart-line text-lg transition-colors";
+                heartIcon.className = "ri-heart-line text-base transition-colors";
             }
 
-            // ---------------------------------------------------------
-            // 2. Fetch Live Seller Profile Data
-            // ---------------------------------------------------------
             let computedSellerName = item.seller_name || "Campus User";
             let computedSellerSchool = item.seller_school || item.campus || "Polytechnic University";
             let computedSellerAvatar = item.seller_avatar || "";
@@ -587,7 +605,6 @@
                 if (primaryProfile) {
                     try {
                         let parsedUser = JSON.parse(primaryProfile);
-                        // UPGRADE: Combines split first/last variables cleanly or falls back to legacy mapping
                         if (parsedUser.firstName || parsedUser.lastName) {
                             computedSellerName = `${parsedUser.firstName || ''} ${parsedUser.lastName || ''}`.trim();
                         } else if (parsedUser.name) {
@@ -612,9 +629,6 @@
                 modalAvatarBox.innerHTML = fallbackHTML;
             }
 
-            // ---------------------------------------------------------
-            // 3. Fetch Live Aggregate Seller Rating
-            // ---------------------------------------------------------
             const ratingContainer = document.getElementById('modalSellerRatingDisplay');
             if (ratingContainer) {
                 ratingContainer.innerHTML = `<span class="text-neutral-300 font-medium">Loading...</span>`;
@@ -639,9 +653,6 @@
                     });
             }
 
-            // ---------------------------------------------------------
-            // 4. Live Database-Exclusive Meta Extraction
-            // ---------------------------------------------------------
             const isTradeable = (item.open_to_trades === 1 || item.open_to_trades === true || item.open_to_trades === "true");
             document.getElementById('modalProductTrading').textContent = isTradeable ? "Open to Trades" : "No Trades Allowed";
             
@@ -676,20 +687,31 @@
         function toggleDetailsModal(show) {
             const wrapper = document.getElementById('productDetailsModal');
             const drawer = wrapper ? wrapper.querySelector('div') : null;
+            const mainScroll = document.getElementById('mainDashboardScrollBody'); 
+            
             if (wrapper && drawer) {
                 if (show) {
                     wrapper.classList.remove('pointer-events-none', 'opacity-0');
                     wrapper.classList.add('opacity-100');
                     drawer.classList.remove('translate-y-full');
+                    
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-y-auto');
+                        mainScroll.classList.add('overflow-hidden'); 
+                    }
                 } else {
                     wrapper.classList.add('pointer-events-none', 'opacity-0');
                     wrapper.classList.remove('opacity-100');
                     drawer.classList.add('translate-y-full');
+                    
+                    if (mainScroll) {
+                        mainScroll.classList.remove('overflow-hidden');
+                        mainScroll.classList.add('overflow-y-auto');
+                    }
                 }
             }
         }
 
-        // NEW: Acts exactly like Add to Cart, pulling data directly from the active modal focus
         function toggleWishlistState() {
             if (!activeFocusProduct) return;
             
@@ -698,29 +720,32 @@
             const heartIcon = document.getElementById('wishlistHeartIcon');
             
             if (isSaved) {
-                // Remove from Wishlist
                 activeWishlist = activeWishlist.filter(id => parseInt(id) !== parseInt(activeFocusProduct.id));
                 showSystemNotification("Removed from Wishlist");
-                heartIcon.className = "ri-heart-line text-lg transition-colors"; // Switch to empty heart
+                heartIcon.className = "ri-heart-line text-base transition-colors"; 
             } else {
-                // Add to Wishlist
                 activeWishlist.push(parseInt(activeFocusProduct.id));
                 showSystemNotification("Added to Wishlist");
-                heartIcon.className = "ri-heart-fill text-red-500 text-lg transition-colors"; // Switch to red heart
+                heartIcon.className = "ri-heart-fill text-red-500 text-base transition-colors"; 
             }
             
             localStorage.setItem('zellr_wishlist', JSON.stringify(activeWishlist));
         }
 
+        // REFACTORED: Validates if the item already exists in local storage to trigger the appropriate system message
         function executeAddToCartWorkflow() {
             if (!activeFocusProduct) return;
             let cart = JSON.parse(localStorage.getItem('zellr_cart_basket') || '[]');
+            
             if (!cart.some(c => parseInt(c.id) === parseInt(activeFocusProduct.id))) {
                 cart.push(activeFocusProduct);
                 localStorage.setItem('zellr_cart_basket', JSON.stringify(cart));
+                toggleDetailsModal(false);
+                showSystemNotification("Item added to Cart Bag");
+            } else {
+                toggleDetailsModal(false);
+                showSystemNotification("Item already in Cart Bag");
             }
-            toggleDetailsModal(false);
-            showSystemNotification("Item added to Cart Bag");
         }
 
         function executePurchaseWorkflow() {
@@ -738,7 +763,6 @@
             modal.classList.add('flex');
             setTimeout(() => modal.classList.remove('opacity-0'), 10);
 
-            // Bind the actual backend submission process to the confirm click trigger event
             commitBtn.onclick = async function() {
                 closeDashboardConfirmModal();
                 await commitPurchaseToDatabaseLogEngine();
@@ -754,7 +778,6 @@
             }, 200);
         }
 
-        // UPGRADE: Extracted database logging execution pipeline 
         async function commitPurchaseToDatabaseLogEngine() {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
@@ -770,12 +793,10 @@
             }
 
             try {
-                // 1. SMART ORDER CREATION: Bypass Database Unique Constraints
                 let existingOrders = [];
-                const checkRes = await fetch('http://localhost:3000/api/orders');
-                if (checkRes.ok) existingOrders = await checkRes.json();
+                const checkRes = await fetch('http://localhost:3000/api/orders'); 
+                if (checkRes.ok) existingOrders = await checkRes.json(); 
 
-                // Check if a previous canceled order or inquiry already exists to prevent duplicate row crashes
                 const priorOrder = existingOrders.find(o => 
                     parseInt(o.product_id) === parseInt(activeFocusProduct.id) && 
                     parseInt(o.buyer_id) === parseInt(customerId)
@@ -784,16 +805,14 @@
                 let generatedOrderId = null;
 
                 if (priorOrder) {
-                    // UPDATE existing row instead of POSTing a duplicate
-                    generatedOrderId = priorOrder.id;
-                    const updateRes = await fetch(`http://localhost:3000/api/orders/${generatedOrderId}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ status: 'pending' })
+                    generatedOrderId = priorOrder.id; 
+                    const updateRes = await fetch(`http://localhost:3000/api/orders/${generatedOrderId}`, { 
+                        method: 'PUT', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ status: 'pending' }) 
                     });
                     if (!updateRes.ok) throw new Error("Failed to restore canceled order to pending.");
                 } else {
-                    // CREATE brand new row
                     const orderResponse = await fetch('http://localhost:3000/api/orders', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -809,7 +828,6 @@
                     generatedOrderId = orderResult.order_id || orderResult.insertId || orderResult.id;
                 }
 
-                // 2. Dispatch the automated message
                 await fetch('http://localhost:3000/api/messages', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -841,10 +859,9 @@
             }
 
             try {
-                // SMART ORDER CREATION: Prevent duplicate inquiries from crashing
                 let existingOrders = [];
-                const checkRes = await fetch('http://localhost:3000/api/orders');
-                if (checkRes.ok) existingOrders = await checkRes.json();
+                const checkRes = await fetch('http://localhost:3000/api/orders'); 
+                if (checkRes.ok) existingOrders = await checkRes.json(); 
 
                 const priorOrder = existingOrders.find(o => 
                     parseInt(o.product_id) === parseInt(activeFocusProduct.id) && 
@@ -855,13 +872,12 @@
                 let isNewContext = false;
 
                 if (priorOrder) {
-                    generatedOrderId = priorOrder.id;
-                    // If it was explicitly canceled before, wake it up as an inquiry
+                    generatedOrderId = priorOrder.id; 
                     if (priorOrder.status === 'canceled') {
-                        await fetch(`http://localhost:3000/api/orders/${generatedOrderId}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ status: 'inquiry' })
+                        await fetch(`http://localhost:3000/api/orders/${generatedOrderId}`, { 
+                            method: 'PUT', 
+                            headers: { 'Content-Type': 'application/json' }, 
+                            body: JSON.stringify({ status: 'inquiry' }) 
                         });
                         isNewContext = true;
                     }
@@ -907,21 +923,20 @@
         }
 
         window.onload = function() {
-            const cachedProfile = localStorage.getItem('zellr_user_profile');
-            if (cachedProfile) {
+            const cachedProfile = localStorage.getItem('zellr_user_profile'); 
+            if (cachedProfile) { 
                 try {
-                    const user = JSON.parse(cachedProfile);
-                    if (user && user.id) currentUserId = user.id;
+                    const user = JSON.parse(cachedProfile); 
+                    if (user && user.id) currentUserId = user.id; 
                     
-                    // UPGRADE: Instantly binds the clean database-level first_name with a safe first-word fallback
-                    if (user) {
-                        let displayName = "Campus User";
-                        if (user.firstName) {
-                            displayName = user.firstName;
-                        } else if (user.name) {
-                            displayName = user.name.trim().split(/\s+/)[0];
+                    if (user) { 
+                        let displayName = "Campus User"; 
+                        if (user.firstName) { 
+                            displayName = user.firstName; 
+                        } else if (user.name) { 
+                            displayName = user.name.trim().split(/\s+/)[0]; 
                         }
-                        document.getElementById('welcomeUserName').textContent = displayName;
+                        document.getElementById('welcomeUserName').textContent = displayName; 
                     }
                 } catch(e) {}
             }
@@ -934,7 +949,7 @@
                 });
             }
 
-            fetchActiveMarketplaceFeed();
+            fetchActiveMarketplaceFeed(); 
         };
     </script>
 </body>
