@@ -137,6 +137,9 @@ window.toggleWebSidebar = function(open) {
     }
 };
 
+// GLOBAL SOCKET INSTANCE: Establish a single persistent background handshake thread with your backend
+let globalNotificationSocketInstance = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const headerWrapper = document.getElementById('app-header');
     const sidebarWrapper = document.getElementById('sidebar-container');
@@ -146,6 +149,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial calculate check on view instance mount
     syncGlobalHeaderNotificationBadge();
     
-    // Background execution poll loop routing every 4 seconds across application dashboards
-    setInterval(syncGlobalHeaderNotificationBadge, 4000);
+    // SURGICAL FIX: Initialize the websocket channel client layer instead of generating interval loop polling locks
+    if (typeof io !== 'undefined') {
+        globalNotificationSocketInstance = io(API_BASE);
+
+        let sessionUserId = 3;
+        const cachedProfile = localStorage.getItem('zellr_user_profile');
+        if (cachedProfile) {
+            try {
+                const user = JSON.parse(cachedProfile);
+                if (user && user.id) sessionUserId = parseInt(user.id);
+            } catch(e) {}
+        }
+
+        globalNotificationSocketInstance.on('connect', () => {
+            // Bind this tab session instance inside your backend private user room matrix
+            globalNotificationSocketInstance.emit('register_notification_agent', sessionUserId);
+        });
+
+        // Event listener intercepts mutations instantly to refresh the unread badges smoothly
+        globalNotificationSocketInstance.on('unread_inbox_mutation', () => {
+            syncGlobalHeaderNotificationBadge();
+        });
+    } else {
+        console.warn("Socket.io client script missing from viewport head context layout rows.");
+    }
 });

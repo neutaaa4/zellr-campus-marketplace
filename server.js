@@ -119,6 +119,12 @@ app.get('/api/users', async (req, res) => {
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    // SURGICAL FIX: Allow active client profiles to register a personal real-time notification listener room
+    socket.on('register_notification_agent', (userId) => {
+        socket.join(`user_notification_${userId}`);
+        console.log(`Socket ${socket.id} mapped to personal notification room user_notification_${userId}`);
+    });
+
     // Join a specific transaction/order room chat thread
     socket.on('join_room', (orderId) => {
         socket.join(`room_${orderId}`);
@@ -127,8 +133,13 @@ io.on('connection', (socket) => {
 
     // Handle sending a new message
     socket.on('send_message', (data) => {
-        // data = { order_id, sender_id, message_text }
+        // data = { order_id, sender_id, receiver_id, message_text }
         io.to(`room_${data.order_id}`).emit('receive_message', data);
+        
+        // SURGICAL FIX: Dynamically target the recipient's secure background notification channel channel block if online
+        if (data.receiver_id) {
+            io.to(`user_notification_${data.receiver_id}`).emit('unread_inbox_mutation');
+        }
     });
 
     socket.on('disconnect', () => {
