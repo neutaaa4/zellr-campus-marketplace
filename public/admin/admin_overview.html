@@ -26,10 +26,11 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
+<body class="bg-[#F9F9FB] sm:bg-neutral-950 flex justify-center items-center min-h-screen p-0 sm:p-4 font-sans-premium">
 
-    <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
-        
+    <!-- SURGICAL FIX: Optimized for full fluid sizing across mobile devices while clamping to a clean 360x800 pixel container frame on desktop viewports -->
+    <div class="w-full sm:w-[360px] h-screen sm:h-[800px] bg-[#F9F9FB] rounded-none sm:rounded-[48px] shadow-none sm:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border-none sm:border sm:border-neutral-200/40">
+            
         <div id="admin-header" class="z-30"></div>
 
         <div class="flex-1 overflow-y-auto no-scrollbar pb-10 relative z-20 space-y-5 pt-24 px-4">

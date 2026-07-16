@@ -49,10 +49,10 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-black flex justify-center items-center min-h-screen p-4 font-sans-premium">
+<body class="bg-black flex justify-center items-center min-h-screen p-0 sm:p-4 font-sans-premium">
 
-    <div class="w-[390px] h-[844px] bg-black rounded-[48px] shadow-[0_30px_70px_-15px_rgba(0,0,0,1)] overflow-hidden flex flex-col justify-between relative select-none border border-neutral-900/60">
-        
+    <div class="w-full sm:w-[360px] h-screen sm:h-[800px] bg-black rounded-none sm:rounded-[48px] shadow-none sm:shadow-[0_30px_70px_-15px_rgba(0,0,0,1)] overflow-hidden flex flex-col justify-between relative select-none border-none sm:border sm:border-neutral-900/60">
+
         <div id="successModal" class="absolute inset-0 bg-black z-40 flex flex-col items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-500">
             <div class="w-24 h-24 flex items-center justify-center">
                 <img src="assets/zellr-logo.png" alt="Zellr Logo" class="w-full h-auto object-contain invert brightness-200 animate-pulse-logo" />
@@ -194,8 +194,12 @@
 
         // Shared OAuth Handshake Pipeline Response Logic
         async function handleGoogleAuthCallback(response) {
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : 'https://zellr-campus-marketplace.vercel.app'; // <-- Swap with your live Aiven/Render Cloud domain
+
             try {
-                const res = await fetch('http://localhost:3000/api/auth/google', {
+                const res = await fetch(`${API_BASE}/api/auth/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: response.credential })
@@ -274,7 +278,7 @@
             // NEW: Dynamic API Base Routing
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-campus-marketplace.vercel.app';
 
             submitBtn.innerHTML = '<i class="p-1 border-2 border-t-transparent border-white rounded-full animate-spin"></i> Creating...';
             submitBtn.style.pointerEvents = 'none';

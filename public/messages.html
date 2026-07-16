@@ -30,10 +30,10 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-neutral-950 flex justify-center items-center min-h-screen p-4 font-sans-premium">
+<body class="bg-[#F9F9FB] sm:bg-neutral-950 flex justify-center items-center min-h-screen p-0 sm:p-4 font-sans-premium">
 
-    <div class="w-[390px] h-[844px] bg-[#F9F9FB] rounded-[48px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border border-neutral-200/40">
-        
+    <div class="w-full sm:w-[360px] h-screen sm:h-[800px] bg-[#F9F9FB] rounded-none sm:rounded-[48px] shadow-none sm:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border-none sm:border sm:border-neutral-200/40">
+
         <div id="app-header" class="z-30"></div>
 
         <div id="inboxListViewContainer" class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-4 pt-24 px-4">
@@ -205,9 +205,11 @@
             </div>
         </div>
 
-        <div id="toastNotificationAlert" class="absolute top-6 mx-auto bg-neutral-950/95 border border-white/10 text-white px-5 py-3 rounded-full text-xs font-semibold shadow-2xl tracking-wide z-[200] transform -translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
-            <i class="ri-checkbox-circle-fill text-green-400 text-sm"></i>
-            <span id="toastAlertMessage">Item action fired cleaners!</span>
+        <div class="absolute top-6 inset-x-0 flex justify-center pointer-events-none z-[200]">
+            <div id="toastNotificationAlert" class="bg-neutral-950/95 border border-white/10 text-white px-5 py-3 rounded-full text-xs font-semibold shadow-2xl tracking-wide transform -translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 whitespace-nowrap pointer-events-auto">
+                <i class="ri-checkbox-circle-fill text-green-400 text-sm"></i>
+                <span id="toastAlertMessage">Item action fired cleaners!</span>
+            </div>
         </div>
 
         <div id="sidebar-container" data-active="chat" class="absolute inset-0 pointer-events-none z-50"></div>

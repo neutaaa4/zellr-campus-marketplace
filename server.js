@@ -8,9 +8,30 @@ const cors = require('cors');
 const db = require('./config/db');
 const app = express();
 const server = http.createServer(app);
+
+// CORS Policy Matrix whitelisting explicit platform interaction blocks
+const trustedPlatformOrigins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://zellr-campus-marketplace.vercel.app"
+];
+
+const corsConfigurationSettings = {
+    origin: function (origin, callback) {
+        // Allows serverless environments and local script testing configurations
+        if (!origin || trustedPlatformOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error("Network security violation: Origin blocked by Zellr CORS Engine."));
+        }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+};
+
 const io = new Server(server, {
     cors: {
-        origin: "*", // Adjust this later once the Tailwind frontend address is locked in
+        origin: trustedPlatformOrigins,
         methods: ["GET", "POST"]
     }
 });
@@ -18,7 +39,7 @@ const io = new Server(server, {
 // ==========================================
 // 1. GLOBAL MIDDLEWARES (MUST BE FIRST)
 // ==========================================
-app.use(cors());
+app.use(cors(corsConfigurationSettings));
 
 // NEW: Required to prevent Google SSO "Continue with Google" popups from crashing
 app.use((req, res, next) => {

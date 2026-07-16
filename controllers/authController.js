@@ -35,8 +35,9 @@ exports.verifyGoogleLogin = async (req, res) => {
 
         if (!user) {
             // Brand new account: create it with decoupled structural name variables
+            // Brand new account: create it with decoupled structural name variables
             const [result] = await db.query(
-                'INSERT INTO users (google_id, first_name, last_name, email, avatar_url, status) VALUES (?, ?, ?, ?, ?, "Active")',
+                `INSERT INTO users (google_id, first_name, last_name, email, avatar_url, status) VALUES (?, ?, ?, ?, ?, 'Active')`,
                 [googleId, extractedFirstName, extractedLastName, email, avatarUrl]
             );
             const [newUserRows] = await db.query('SELECT * FROM users WHERE id = ?', [result.insertId]);
