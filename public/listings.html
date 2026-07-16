@@ -576,6 +576,11 @@
 
     <script src="js/layout.js"></script>
     <script>
+        // GLOBAL CONFIGURATION: Unified environment base URL route matrix for production scalability
+        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : 'https://zellr-backend-engine.onrender.com';
+
         let loggedInUserId = (function() {
             try {
                 const cached = localStorage.getItem('zellr_user_profile');
@@ -957,7 +962,7 @@
 
             let liveOrders = [];
             try {
-                const response = await fetch('http://localhost:3000/api/orders');
+                const response = await fetch(`${API_BASE}/api/orders`);
                 if (response.ok) liveOrders = await response.json();
             } catch(e) {}
 
@@ -1205,7 +1210,8 @@
                 true, 
                 async () => {
                     try {
-                        const response = await fetch(`http://localhost:3000/api/products/${productId}`, { method: 'DELETE' });
+                        // SURGICAL FIX: Migrated from hardcoded localhost to global dynamic API_BASE route path
+                        const response = await fetch(`${API_BASE}/api/products/${productId}`, { method: 'DELETE' });
                         const result = await response.json();
                         if (!response.ok || result.error) throw new Error(result.error || 'Failed deletion.');
                         await synchroniseMerchantStorefront();
@@ -1238,11 +1244,8 @@
         }
 
         async function synchroniseMerchantStorefront() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             try {
+                // SURGICAL FIX: Removed redundant local scoped variable definition to look up global tracking variables
                 const response = await fetch(`${API_BASE}/api/products`);
                 const allProducts = await response.json();
 
@@ -1291,7 +1294,8 @@
 
             let liveOrders = [];
             try {
-                const response = await fetch('http://localhost:3000/api/orders');
+                // SURGICAL FIX: Patched hardcoded port channel to process cloud environment values cleanly
+                const response = await fetch(`${API_BASE}/api/orders`);
                 if (response.ok) liveOrders = await response.json();
             } catch (err) {
                 console.error("Could not fetch database orders:", err);
@@ -1480,10 +1484,6 @@
             const wrapper = document.getElementById('incomingOrdersTrackWrapper');
             if (!wrapper) return;
 
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             let liveOrders = [];
             try {
                 const response = await fetch(`${API_BASE}/api/orders`);
@@ -1598,10 +1598,6 @@
 
         async function updateOrderStatusAction(orderId, nextStatus) {
             try {
-                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3000' 
-                    : 'https://zellr-backend-engine.onrender.com';
-
                 let liveOrders = [];
                 const ordersRes = await fetch(`${API_BASE}/api/orders`);
                 if (ordersRes.ok) liveOrders = await ordersRes.json();
@@ -1650,11 +1646,6 @@
         async function executeCancelOrder() {
             if (!pendingCancelData) return;
             const { orderId, productId, buyerId } = pendingCancelData;
-
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             try {
                 const orderRes = await fetch(`${API_BASE}/api/orders/${orderId}`, {
                     method: 'PUT',
@@ -1717,10 +1708,6 @@
         }
 
         async function loadSalesAnalytics() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             let liveOrders = [];
             try {
                 const response = await fetch(`${API_BASE}/api/orders`);
@@ -1791,10 +1778,6 @@
                         payment_methods: methods      
                     };
 
-                    const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                        ? 'http://localhost:3000' 
-                        : 'https://zellr-backend-engine.onrender.com';
-
                     try {
                         const response = await fetch(`${API_BASE}/api/products`, {
                             method: 'POST',
@@ -1863,10 +1846,6 @@
                         open_to_trades: openToTrades, 
                         payment_methods: methods      
                     };
-
-                    const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                        ? 'http://localhost:3000' 
-                        : 'https://zellr-backend-engine.onrender.com';
 
                     try {
                         const response = await fetch(`${API_BASE}/api/products/${productId}`, {

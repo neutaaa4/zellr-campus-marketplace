@@ -65,8 +65,12 @@
 
     <script src="admin_layout.js"></script>
     <script>
+        // GLOBAL CONFIGURATION: Centralized network route configuration matrix for live administrative auditing
+        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : 'https://zellr-backend-engine.onrender.com';
+
         async function compilePlatformSalesLedger() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://zellr-backend-engine.onrender.com';
             let orders = [];
 
             try {

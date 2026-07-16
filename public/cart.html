@@ -187,6 +187,10 @@
 
     <script src="js/layout.js"></script>
     <script>
+        // GLOBAL CONFIGURATION: Unified endpoint routing base matrix for cross-origin production requests
+        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : 'https://zellr-backend-engine.onrender.com';
         
         // NEW: Shimmer Skeleton Animation Loader Controller for Saved Items Track
         function displayCartSkeletonLoader() {
@@ -326,11 +330,8 @@
         }
 
         async function synchronizeCartAndWishlistsEngine() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             try {
+                // SURGICAL FIX: Inherits global production tracking variables directly from the top-level window layout scope
                 const ordersResponse = await fetch(`${API_BASE}/api/orders`);
                 if (ordersResponse.ok) globalDatabaseOrdersCache = await ordersResponse.json();
 
@@ -525,12 +526,7 @@
             setTimeout(() => modal.classList.remove('opacity-0'), 10);
 
             confirmBtn.onclick = async function() {
-                closePurchaseConfirmationModal();
-                
-                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3000' 
-                    : 'https://zellr-backend-engine.onrender.com';
-                
+                closePurchaseConfirmationModal();       
                 try {
                     const response = await fetch(`${API_BASE}/api/orders`);
                     const latestOrders = response.ok ? await response.json() : [];
@@ -644,9 +640,6 @@
             const ratingContainer = document.getElementById('modalSellerRatingDisplay');
             if (ratingContainer) {
                 ratingContainer.innerHTML = `<span class="text-neutral-300 font-medium">Loading...</span>`;
-                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3000' 
-                    : 'https://zellr-backend-engine.onrender.com';
 
                 fetch(`${API_BASE}/api/ratings`)
                     .then(res => res.json())
@@ -767,10 +760,6 @@
                 launchCustomWarningModal("Action Denied", "You cannot initiate an inquiry chat thread with your own item listing.");
                 return;
             }
-
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const orderResponse = await fetch(`${API_BASE}/api/orders`, {

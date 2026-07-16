@@ -104,6 +104,11 @@
 
     <script src="admin_layout.js"></script>
     <script>
+        // GLOBAL CONFIGURATION: Single, unified base URL endpoint routing configuration for admin views
+        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : 'https://zellr-backend-engine.onrender.com';
+
         let userChartInstance = null;
         let globalSellersDataset = [];
         let globalBuyersDataset = [];
@@ -173,7 +178,7 @@
         }
 
         async function computeUserRankingsEngine() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://zellr-backend-engine.onrender.com';
+            // SURGICAL FIX: Removed redundant local base URL declaration to safely pull from the top-level global settings canvas
             let products = [], orders = [], ratings = [], usersList = [];
 
             try {

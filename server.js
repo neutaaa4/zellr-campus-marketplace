@@ -22,7 +22,8 @@ const corsConfigurationSettings = {
         if (!origin || trustedPlatformOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
-            callback(new Error("Network security violation: Origin blocked by Zellr CORS Engine."));
+            // SURGICAL FIX: Natively reject cors tracking parameters without triggering internal error handling logs
+            callback(null, false);
         }
     },
     credentials: true,
@@ -32,7 +33,8 @@ const corsConfigurationSettings = {
 const io = new Server(server, {
     cors: {
         origin: trustedPlatformOrigins,
-        methods: ["GET", "POST"]
+        methods: ["GET", "POST"],
+        credentials: true // SURGICAL FIX: Aligns websocket policies perfectly with the primary Express server layer matrix
     }
 });
 

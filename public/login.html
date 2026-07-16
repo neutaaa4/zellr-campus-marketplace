@@ -181,10 +181,10 @@
                 callback: handleGoogleAuthCallback
             });
 
-            // NEW: Renders the official Canva-style inline iframe button
+            // SURGICAL FIX: Width optimization parameter mapped to 312 to eliminate layout container breakout clipping on compact screens
             google.accounts.id.renderButton(
                 document.getElementById("googleButtonContainer"),
-                { theme: "outline", size: "large", width: 342, text: "continue_with", shape: "rectangular", logo_alignment: "center" }
+                { theme: "outline", size: "large", width: 312, text: "continue_with", shape: "rectangular", logo_alignment: "center" }
             );
 
             // Optional: Automatically shows the slide-down One Tap prompt if the user hasn't closed it recently
@@ -226,6 +226,7 @@
                     }
                 } else {
                     deployInlineFeedback(data.error || 'Invalid email or password credentials.');
+                    submitBtn.innerHTML = '<span>Login</span>'; // SURGICAL FIX: Restores button control text state on API error response validation faults
                 }
             } catch (err) {
                 deployInlineFeedback('Google integration gateway timed out.');

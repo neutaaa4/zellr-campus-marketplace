@@ -182,21 +182,21 @@
                 callback: handleGoogleAuthCallback
             });
 
-            // NEW: Renders the official Canva-style inline iframe button
+            // SURGICAL FIX: Component scale width adjusted to 312 to eliminate button layout margin container blowout on mobile screens
             google.accounts.id.renderButton(
                 document.getElementById("googleButtonContainer"),
-                { theme: "outline", size: "large", width: 342, text: "continue_with", shape: "rectangular", logo_alignment: "center" }
+                { theme: "outline", size: "large", width: 312, text: "continue_with", shape: "rectangular", logo_alignment: "center" }
             );
-
             // Optional: Automatically shows the slide-down One Tap prompt if the user hasn't closed it recently
             google.accounts.id.prompt(); 
         };
 
         // Shared OAuth Handshake Pipeline Response Logic
         async function handleGoogleAuthCallback(response) {
+            // SURGICAL FIX: Production fallback address mapped to Render cloud engine to process database operations cleanly
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : 'https://zellr-campus-marketplace.vercel.app'; // <-- Swap with your live Aiven/Render Cloud domain
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const res = await fetch(`${API_BASE}/api/auth/google`, {

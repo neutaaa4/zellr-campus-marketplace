@@ -217,6 +217,11 @@
 
     <script src="js/layout.js"></script>
     <script>
+        // GLOBAL CONFIGURATION: Unified network base routing parameter for cloud database execution
+        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : 'https://zellr-backend-engine.onrender.com';
+
         let currentMessagesTabState = 'active';
 
         // NEW: High-Fidelity Channel Shimmer Skeleton Loader Controller
@@ -348,10 +353,6 @@
                     if (u && u.id) sessionUserId = parseInt(u.id);
                 } catch(e) {}
             }
-
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
 
             let trackingLogs = [];
             try {
@@ -568,7 +569,8 @@
         async function launchFocusedDialogueChannel(orderId) {
             let trackingLogs = [];
             try {
-                const response = await fetch('http://localhost:3000/api/orders');
+                // SURGICAL FIX: Routed invoice lookups via global API_BASE to bypass local networks
+                const response = await fetch(`${API_BASE}/api/orders`);
                 if (response.ok) trackingLogs = await response.json();
             } catch (err) {
                 console.error(err);
@@ -597,7 +599,8 @@
             const headerRatingContainer = document.getElementById('focusedChatHeaderRatingDisplay');
             if (headerRatingContainer) {
                 headerRatingContainer.innerHTML = `<span class="text-neutral-300">...</span>`;
-                fetch('http://localhost:3000/api/ratings')
+                // SURGICAL FIX: Pointed star feedback aggregates cleanly to production cloud nodes
+                fetch(`${API_BASE}/api/ratings`)
                     .then(res => res.json())
                     .then(allRatings => {
                         const counterpartRatings = allRatings.filter(r => String(r.seller_id) === String(profile.counterpartId));
@@ -626,10 +629,6 @@
             } else {
                 avatarBox.innerHTML = fallbackHTML;
             }
-
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
 
             document.getElementById('focusedChatHeaderOrderTitle').textContent = matchOrder.product_title || 'Marketplace Item';
             document.getElementById('focusedChatHeaderOrderPrice').textContent = `₱${parseFloat(matchOrder.product_price || 0).toFixed(2)}`;
@@ -719,7 +718,8 @@
 
             let liveOrders = [];
             try {
-                const response = await fetch('http://localhost:3000/api/orders');
+                // SURGICAL FIX: Fixed localport mapping lock to use global route constant tracking parameters
+                const response = await fetch(`${API_BASE}/api/orders`);
                 if (response.ok) liveOrders = await response.json();
             } catch (err) {
                 console.error(err);
@@ -797,10 +797,6 @@
             setTimeout(() => modal.classList.remove('opacity-0'), 10);
 
             confirmBtn.onclick = async function() {
-                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3000' 
-                    : 'https://zellr-backend-engine.onrender.com';
-
                 closePurchaseConfirmationModal();
                 if (isFromChat) toggleChatProductModal(false);
                 
@@ -822,7 +818,8 @@
                 }
 
                 try {
-                    const response = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+                    // SURGICAL FIX: Replaced localhost loops with template literal parameters to update database state
+                    const response = await fetch(`${API_BASE}/api/orders/${orderId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ status: 'pending' })
@@ -830,7 +827,8 @@
 
                     if (!response.ok) throw new Error("Order creation failed");
 
-                    await fetch('http://localhost:3000/api/messages', {
+                    // SURGICAL FIX: Formats message routing cleanly through live cloud cluster architecture
+                    await fetch(`${API_BASE}/api/messages`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -861,10 +859,7 @@
             const feedBox = document.getElementById('chatFeedWindowBox');
             if (!feedBox) return;
 
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
+            // SURGICAL FIX: Eliminated redundant duplicate variable tracking matrix block
             let trackingLogs = [];
             try {
                 const response = await fetch(`${API_BASE}/api/orders`);
@@ -899,7 +894,8 @@
             const targetsPendingUpdate = activeMessages.some(m => parseInt(m.receiver_id) === parseInt(sessionUserId) && parseInt(m.is_read) === 0);
             if (targetsPendingUpdate) {
                 try {
-                    await fetch(`http://localhost:3000/api/messages/read/${orderId}`, {
+                    // SURGICAL FIX: Swapped hardcoded path for dynamic template string to clear unread states on cloud
+                    await fetch(`${API_BASE}/api/messages/read/${orderId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ user_id: sessionUserId })
@@ -1015,10 +1011,6 @@
                 message_text: messageText
             };
 
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             try {
                 let response = await fetch(`${API_BASE}/api/messages`, {
                     method: 'POST',
@@ -1036,10 +1028,6 @@
         });
 
         window.onload = async function() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             SampleActiveSessionUserDetection();
             
             // TRIGGER SHIMMER FEEDBACK PLACEHOLDERS INSTANTLY BEFORE NETWORK OPERATIONS

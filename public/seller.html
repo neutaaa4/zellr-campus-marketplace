@@ -255,6 +255,11 @@
     </div>
 
     <script>
+        // GLOBAL CONFIGURATION: Single, unified base URL routing configuration for cloud environments
+        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : 'https://zellr-backend-engine.onrender.com';
+
         let sellerProductsCache = [];
         let activeFocusProduct = null;
         let currentUserId = 3;
@@ -306,10 +311,6 @@
         }
 
         window.onload = async function() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             const cachedProfile = localStorage.getItem('zellr_user_profile');
             if (cachedProfile) {
                 try {
@@ -617,10 +618,6 @@
             closePurchaseConfirmationModal();
             if (!activeFocusProduct) return;
 
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             try {
                 const checkRes = await fetch(`${API_BASE}/api/orders`);
                 let liveOrders = [];
@@ -675,12 +672,14 @@
                 return;
             }
 
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
+            // SURGICAL FIX: Verifies if the merchant profile has items available to avoid foreign key database drops
+            if (sellerProductsCache.length === 0) {
+                launchCustomWarningModal("Chat Unavailable", "This seller currently has no active marketplace listings available to anchor a chat thread to.");
+                return;
+            }
 
             try {
-                const productAnchorId = sellerProductsCache.length > 0 ? sellerProductsCache[0].id : 0;
+                const productAnchorId = sellerProductsCache[0].id;
 
                 const orderResponse = await fetch(`${API_BASE}/api/orders`, {
                     method: 'POST',

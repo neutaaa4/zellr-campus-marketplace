@@ -634,7 +634,13 @@
             const ratingContainer = document.getElementById('modalSellerRatingDisplay');
             if (ratingContainer) {
                 ratingContainer.innerHTML = `<span class="text-neutral-300 font-medium">Loading...</span>`;
-                fetch('http://localhost:3000/api/ratings')
+                
+                // SURGICAL FIX: Injects dynamic environment checking to prevent cross-origin lookup dropouts
+                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+                    ? 'http://localhost:3000' 
+                    : 'https://zellr-backend-engine.onrender.com';
+
+                fetch(`${API_BASE}/api/ratings`)
                     .then(res => res.json())
                     .then(allRatings => {
                         const sellerRatings = allRatings.filter(r => String(r.seller_id) === String(item.seller_id));
@@ -796,7 +802,8 @@
 
             try {
                 let existingOrders = [];
-                const checkRes = await fetch('http://localhost:3000/api/orders'); 
+                // SURGICAL FIX: Replaced hardcoded ports to seamlessly map across active ecosystem environments
+                const checkRes = await fetch(`${API_BASE}/api/orders`); 
                 if (checkRes.ok) existingOrders = await checkRes.json(); 
 
                 const priorOrder = existingOrders.find(o => 
@@ -808,14 +815,14 @@
 
                 if (priorOrder) {
                     generatedOrderId = priorOrder.id; 
-                    const updateRes = await fetch(`http://localhost:3000/api/orders/${generatedOrderId}`, { 
+                    const updateRes = await fetch(`${API_BASE}/api/orders/${generatedOrderId}`, { 
                         method: 'PUT', 
                         headers: { 'Content-Type': 'application/json' }, 
                         body: JSON.stringify({ status: 'pending' }) 
                     });
                     if (!updateRes.ok) throw new Error("Failed to restore canceled order to pending.");
                 } else {
-                    const orderResponse = await fetch('http://localhost:3000/api/orders', {
+                    const orderResponse = await fetch(`${API_BASE}/api/orders`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -830,7 +837,7 @@
                     generatedOrderId = orderResult.order_id || orderResult.insertId || orderResult.id;
                 }
 
-                await fetch('http://localhost:3000/api/messages', {
+                await fetch(`${API_BASE}/api/messages`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -862,7 +869,8 @@
 
             try {
                 let existingOrders = [];
-                const checkRes = await fetch('http://localhost:3000/api/orders'); 
+                // SURGICAL FIX: Integrated API_BASE parameters across chat request blocks to eliminate loopback faults
+                const checkRes = await fetch(`${API_BASE}/api/orders`); 
                 if (checkRes.ok) existingOrders = await checkRes.json(); 
 
                 const priorOrder = existingOrders.find(o => 
@@ -876,7 +884,7 @@
                 if (priorOrder) {
                     generatedOrderId = priorOrder.id; 
                     if (priorOrder.status === 'canceled') {
-                        await fetch(`http://localhost:3000/api/orders/${generatedOrderId}`, { 
+                        await fetch(`${API_BASE}/api/orders/${generatedOrderId}`, { 
                             method: 'PUT', 
                             headers: { 'Content-Type': 'application/json' }, 
                             body: JSON.stringify({ status: 'inquiry' }) 
@@ -884,7 +892,7 @@
                         isNewContext = true;
                     }
                 } else {
-                    const orderResponse = await fetch('http://localhost:3000/api/orders', {
+                    const orderResponse = await fetch(`${API_BASE}/api/orders`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -905,7 +913,7 @@
                 }
 
                 if (isNewContext) {
-                    await fetch('http://localhost:3000/api/messages', {
+                    await fetch(`${API_BASE}/api/messages`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

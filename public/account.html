@@ -257,6 +257,11 @@
 
     <script src="js/layout.js"></script>
     <script>
+        // GLOBAL CONFIGURATION: Unified network environment fallback matrix for production scalability
+        const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : 'https://zellr-backend-engine.onrender.com';
+
         let loggedInUserId = (function() {
             try {
                 const cached = localStorage.getItem('zellr_user_profile');
@@ -373,10 +378,6 @@
             const cachedProfile = localStorage.getItem('zellr_user_profile');
             let sessionUserId = loggedInUserId;
 
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             try {
                 const ratingRes = await fetch(`${API_BASE}/api/ratings`, {
                     method: 'POST',
@@ -430,9 +431,6 @@
 
         // REFACTORED: Unified sub-page viewer transitions for completed historical tokens
         function openCompletedProductViewer(productId, orderId) {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
 
             let allProducts = [];
             fetch(`${API_BASE}/api/products`)
@@ -533,10 +531,6 @@
         async function fetchBuyerFulfillmentOrders() {
             const container = document.getElementById('buyerOrdersWrapper');
             if (!container) return;
-
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
 
             let liveOrders = [];
             let allProducts = [];
@@ -830,10 +824,6 @@
 
         document.getElementById('editProfileForm').addEventListener('submit', async function(event) {
             event.preventDefault();
-            
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
 
             const nameVal = document.getElementById('inputFormName').value.trim();
             const schoolVal = document.getElementById('inputFormSchool').value.trim();
@@ -882,11 +872,6 @@
         async function fetchAndDisplayUserRating(userId) {
             const ratingContainer = document.getElementById('profileRatingDisplay');
             if (!ratingContainer) return;
-
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
-
             try {
                 const ratingsRes = await fetch(`${API_BASE}/api/ratings`);
                 if (ratingsRes.ok) {
@@ -909,9 +894,6 @@
         }
 
         window.onload = async function() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
-                : 'https://zellr-backend-engine.onrender.com';
 
             let sessionUserId = 3; 
             const cached = localStorage.getItem('zellr_user_profile');
