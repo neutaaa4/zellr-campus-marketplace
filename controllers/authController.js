@@ -180,11 +180,16 @@ exports.registerUser = async (req, res) => {
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        // SURGICAL FIX: Flipped string wrappers to pass single-quoted string literals ('Active', 'User') to MySQL
-        await db.query(
-            "INSERT INTO users (first_name, last_name, email, password_hash, status, role) VALUES (?, ?, ?, ?, 'Active', 'User')",
+        // SURGICAL FIX: Captured 'result' array and matched lowercase 'user' string to comply with strict database ENUM schemas
+        const [result] = await db.query(
+            "INSERT INTO users (first_name, last_name, email, password_hash, status, role) VALUES (?, ?, ?, ?, 'Active', 'user')",
             [firstName, lastName, email, passwordHash]
         );
+
+        return res.status(201).json({ 
+            message: "User account registered successfully.",
+            userId: result.insertId 
+        });
 
         return res.status(201).json({ 
             message: "User account registered successfully.",
