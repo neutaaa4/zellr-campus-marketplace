@@ -180,9 +180,9 @@ exports.registerUser = async (req, res) => {
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        // FINAL REFACTOR: Capitalized 'User' to match your MySQL ENUM schema, and cleared duplicate return strings
+        // THE DEFINITIVE FIX: Swapped 'User' with 'student' to perfectly match your database ENUM constraints
         const [result] = await db.query(
-            "INSERT INTO users (first_name, last_name, email, password_hash, status, role) VALUES (?, ?, ?, ?, 'Active', 'User')",
+            "INSERT INTO users (first_name, last_name, email, password_hash, status, role) VALUES (?, ?, ?, ?, 'Active', 'student')",
             [firstName, lastName, email, passwordHash]
         );
 
