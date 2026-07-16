@@ -351,7 +351,8 @@
 
             let trackingLogs = [];
             try {
-                const response = await fetch(`${API_BASE}/api/orders`);
+                // SURGICAL FIX: Request isolated scoped transactional sets via server-side parameters
+                const response = await fetch(`${API_BASE}/api/orders?user_id=${sessionUserId}`);
                 if (response.ok) trackingLogs = await response.json();
             } catch (err) {
                 console.error("Failed to fetch live orders:", err);
@@ -564,8 +565,8 @@
         async function launchFocusedDialogueChannel(orderId) {
             let trackingLogs = [];
             try {
-                // SURGICAL FIX: Routed invoice lookups via global API_BASE to bypass local networks
-                const response = await fetch(`${API_BASE}/api/orders`);
+                // SURGICAL FIX: Added active session user constraints to minimize pipeline transaction sizes
+                const response = await fetch(`${API_BASE}/api/orders?user_id=${messengerActiveUserId}`);
                 if (response.ok) trackingLogs = await response.json();
             } catch (err) {
                 console.error(err);
@@ -854,10 +855,10 @@
             const feedBox = document.getElementById('chatFeedWindowBox');
             if (!feedBox) return;
 
-            // SURGICAL FIX: Eliminated redundant duplicate variable tracking matrix block
             let trackingLogs = [];
             try {
-                const response = await fetch(`${API_BASE}/api/orders`);
+                // SURGICAL FIX: Appended runtime identity arguments to secure the network thread response stream
+                const response = await fetch(`${API_BASE}/api/orders?user_id=${sessionUserId}`);
                 if (response.ok) trackingLogs = await response.json();
             } catch (e) {}
 

@@ -113,11 +113,12 @@ exports.getBuyerOrders = async (req, res) => {
     }
 };
 
-// 4. GET ALL MARKETPLACE ORDERS (Required by listings.html and account.html filters)
+// 4. GET ALL MARKETPLACE ORDERS (Optimized with server-side optional parameter filtering)
 exports.getAllOrders = async (req, res) => {
+    const { user_id } = req.query; // Intercept optional identity tracker variables
+
     try {
-        // CORRECTION: Concat applied to both buyer (b) and seller (s) aliases to align with name separation changes
-        const [rows] = await db.query(`
+        let query = `
             SELECT 
                 o.*, 
                 p.title AS product_title,
@@ -133,8 +134,18 @@ exports.getAllOrders = async (req, res) => {
             JOIN products p ON o.product_id = p.id
             JOIN users b ON o.buyer_id = b.id
             JOIN users s ON o.seller_id = s.id
-            ORDER BY o.created_at DESC
-        `);
+        `;
+        let params = [];
+
+        // SURGICAL FIX: Offload data containment bounds directly to MySQL instead of raw browser runtime processing
+        if (user_id) {
+            query += ` WHERE o.buyer_id = ? OR o.seller_id = ?`;
+            params = [user_id, user_id];
+        }
+
+        query += ` ORDER BY o.created_at DESC`;
+
+        const [rows] = await db.query(query, params);
         res.json(rows);
     } catch (error) {
         console.error("Error fetching database records via joined relations:", error);
