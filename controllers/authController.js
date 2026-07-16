@@ -180,16 +180,11 @@ exports.registerUser = async (req, res) => {
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        // SURGICAL FIX: Captured 'result' array and matched lowercase 'user' string to comply with strict database ENUM schemas
+        // FINAL REFACTOR: Capitalized 'User' to match your MySQL ENUM schema, and cleared duplicate return strings
         const [result] = await db.query(
-            "INSERT INTO users (first_name, last_name, email, password_hash, status, role) VALUES (?, ?, ?, ?, 'Active', 'user')",
+            "INSERT INTO users (first_name, last_name, email, password_hash, status, role) VALUES (?, ?, ?, ?, 'Active', 'User')",
             [firstName, lastName, email, passwordHash]
         );
-
-        return res.status(201).json({ 
-            message: "User account registered successfully.",
-            userId: result.insertId 
-        });
 
         return res.status(201).json({ 
             message: "User account registered successfully.",
