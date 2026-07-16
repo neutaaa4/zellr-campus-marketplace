@@ -375,7 +375,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const ratingRes = await fetch(`${API_BASE}/api/ratings`, {
@@ -432,7 +432,7 @@
         function openCompletedProductViewer(productId, orderId) {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             let allProducts = [];
             fetch(`${API_BASE}/api/products`)
@@ -536,7 +536,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             let liveOrders = [];
             let allProducts = [];
@@ -833,7 +833,7 @@
             
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             const nameVal = document.getElementById('inputFormName').value.trim();
             const schoolVal = document.getElementById('inputFormSchool').value.trim();
@@ -885,7 +885,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const ratingsRes = await fetch(`${API_BASE}/api/ratings`);
@@ -911,7 +911,7 @@
         window.onload = async function() {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             let sessionUserId = 3; 
             const cached = localStorage.getItem('zellr_user_profile');

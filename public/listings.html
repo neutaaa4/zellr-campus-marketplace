@@ -1240,7 +1240,7 @@
         async function synchroniseMerchantStorefront() {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const response = await fetch(`${API_BASE}/api/products`);
@@ -1482,7 +1482,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             let liveOrders = [];
             try {
@@ -1600,7 +1600,7 @@
             try {
                 const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                     ? 'http://localhost:3000' 
-                    : window.location.origin;
+                    : 'https://zellr-backend-engine.onrender.com';
 
                 let liveOrders = [];
                 const ordersRes = await fetch(`${API_BASE}/api/orders`);
@@ -1653,7 +1653,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const orderRes = await fetch(`${API_BASE}/api/orders/${orderId}`, {
@@ -1719,7 +1719,7 @@
         async function loadSalesAnalytics() {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             let liveOrders = [];
             try {
@@ -1793,7 +1793,7 @@
 
                     const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                         ? 'http://localhost:3000' 
-                        : window.location.origin;
+                        : 'https://zellr-backend-engine.onrender.com';
 
                     try {
                         const response = await fetch(`${API_BASE}/api/products`, {
@@ -1866,7 +1866,7 @@
 
                     const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                         ? 'http://localhost:3000' 
-                        : window.location.origin;
+                        : 'https://zellr-backend-engine.onrender.com';
 
                     try {
                         const response = await fetch(`${API_BASE}/api/products/${productId}`, {

@@ -351,7 +351,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             let trackingLogs = [];
             try {
@@ -629,7 +629,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             document.getElementById('focusedChatHeaderOrderTitle').textContent = matchOrder.product_title || 'Marketplace Item';
             document.getElementById('focusedChatHeaderOrderPrice').textContent = `₱${parseFloat(matchOrder.product_price || 0).toFixed(2)}`;
@@ -799,7 +799,7 @@
             confirmBtn.onclick = async function() {
                 const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                     ? 'http://localhost:3000' 
-                    : window.location.origin;
+                    : 'https://zellr-backend-engine.onrender.com';
 
                 closePurchaseConfirmationModal();
                 if (isFromChat) toggleChatProductModal(false);
@@ -863,7 +863,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             let trackingLogs = [];
             try {
@@ -1017,7 +1017,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 let response = await fetch(`${API_BASE}/api/messages`, {
@@ -1038,7 +1038,7 @@
         window.onload = async function() {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             SampleActiveSessionUserDetection();
             

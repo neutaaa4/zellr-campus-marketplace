@@ -29,7 +29,7 @@
 <body class="bg-[#F9F9FB] sm:bg-neutral-950 flex justify-center items-center min-h-screen p-0 sm:p-4 font-sans-premium">
 
     <div class="w-full sm:w-[360px] h-screen sm:h-[800px] bg-[#F9F9FB] rounded-none sm:rounded-[48px] shadow-none sm:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col relative select-none border-none sm:border sm:border-neutral-200/40">
-             
+
         <div id="admin-header" class="z-30"></div>
 
         <div class="flex-1 overflow-y-auto no-scrollbar pb-24 relative z-20 space-y-5 pt-24 px-4">
@@ -173,7 +173,7 @@
         }
 
         async function computeUserRankingsEngine() {
-            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
+            const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://zellr-backend-engine.onrender.com';
             let products = [], orders = [], ratings = [], usersList = [];
 
             try {

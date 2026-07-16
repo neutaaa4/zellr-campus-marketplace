@@ -328,7 +328,7 @@
         async function synchronizeCartAndWishlistsEngine() {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const ordersResponse = await fetch(`${API_BASE}/api/orders`);
@@ -529,7 +529,7 @@
                 
                 const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                     ? 'http://localhost:3000' 
-                    : window.location.origin;
+                    : 'https://zellr-backend-engine.onrender.com';
                 
                 try {
                     const response = await fetch(`${API_BASE}/api/orders`);
@@ -646,7 +646,7 @@
                 ratingContainer.innerHTML = `<span class="text-neutral-300 font-medium">Loading...</span>`;
                 const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                     ? 'http://localhost:3000' 
-                    : window.location.origin;
+                    : 'https://zellr-backend-engine.onrender.com';
 
                 fetch(`${API_BASE}/api/ratings`)
                     .then(res => res.json())
@@ -770,7 +770,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const orderResponse = await fetch(`${API_BASE}/api/orders`, {

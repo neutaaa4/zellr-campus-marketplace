@@ -308,7 +308,7 @@
         window.onload = async function() {
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             const cachedProfile = localStorage.getItem('zellr_user_profile');
             if (cachedProfile) {
@@ -619,7 +619,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const checkRes = await fetch(`${API_BASE}/api/orders`);
@@ -677,7 +677,7 @@
 
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
                 ? 'http://localhost:3000' 
-                : window.location.origin;
+                : 'https://zellr-backend-engine.onrender.com';
 
             try {
                 const productAnchorId = sellerProductsCache.length > 0 ? sellerProductsCache[0].id : 0;
