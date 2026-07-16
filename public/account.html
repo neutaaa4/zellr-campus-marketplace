@@ -83,16 +83,7 @@
                 </div>
                 
                 <div id="buyerOrdersWrapper" class="space-y-3">
-                    <div class="w-full bg-white border border-neutral-200/30 rounded-[28px] py-14 px-4 flex flex-col items-center justify-center text-center space-y-3.5 shadow-sm">
-                        <div class="w-12 h-12 rounded-2xl bg-[#F2F2F7] flex items-center justify-center text-neutral-400">
-                            <i class="ri-receipt-line text-xl"></i>
-                        </div>
-                        <div class="space-y-1">
-                            <h4 class="text-neutral-900 text-sm font-bold tracking-tight">No Transactions Yet</h4>
-                            <p class="text-neutral-400 text-xs font-medium max-w-[210px] mx-auto">Your active purchase orders and tracking records will appear here.</p>
-                        </div>
                     </div>
-                </div>
             </div>
         </div> 
         
@@ -129,7 +120,7 @@
                     </div>
 
                     <div class="pt-2">
-                        <button type="submit" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-bold py-3.5 rounded-xl text-xs tracking-wider shadow-md transition-colors">SAVE PROFILE CHANGES</button>
+                        <button type="submit" id="saveProfileBtn" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-bold py-3.5 rounded-xl text-xs tracking-wider shadow-md transition-colors flex items-center justify-center gap-2">SAVE PROFILE CHANGES</button>
                     </div>
                 </form>
             </div>
@@ -193,7 +184,7 @@
                 </div>
 
                 <div class="pt-2 pb-4 shrink-0">
-                    <button type="button" onclick="submitSellerRating()" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-bold py-3.5 rounded-xl text-xs tracking-wider shadow-md transition-colors outline-none">SUBMIT RATING</button>
+                    <button type="button" id="submitRatingBtn" onclick="submitSellerRating()" class="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-bold py-3.5 rounded-xl text-xs tracking-wider shadow-md transition-colors outline-none flex items-center justify-center gap-2">SUBMIT RATING</button>
                 </div>
             </div>
         </div>
@@ -303,6 +294,30 @@
             }, 2200);
         }
 
+        // UPGRADE: Dynamic automated shimmer pulse grids mimic real cards while fetching
+        function displayPurchasesSkeletonLoader() {
+            const container = document.getElementById('buyerOrdersWrapper');
+            if (!container) return;
+            container.innerHTML = `
+                <div class="space-y-3 w-full">
+                    ${Array(2).fill(`
+                        <div class="animate-pulse bg-white border border-neutral-200/40 rounded-2xl p-4 flex flex-col gap-3 shadow-[0_2px_6px_rgba(0,0,0,0.01)]">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-14 h-14 bg-neutral-200/70 rounded-xl shrink-0"></div>
+                                <div class="flex-1 space-y-2 min-w-0">
+                                    <div class="h-3 bg-neutral-200/80 rounded-full w-2/3"></div>
+                                    <div class="h-2.5 bg-neutral-200/50 rounded-full w-1/2"></div>
+                                    <div class="flex gap-2 pt-1">
+                                        <div class="h-4 bg-neutral-200/40 rounded w-12"></div>
+                                        <div class="h-4 bg-neutral-200/60 rounded w-16"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+        }
+
         function setRating(val) {
             currentRatingValue = val;
             updateStarUI(val);
@@ -364,10 +379,26 @@
             }
         }
 
+        // SURGICAL FIX: Declared a global semaphore flag to block duplicate api request queues
+        let isRatingSubmitting = false;
+
         async function submitSellerRating() {
             if (currentRatingValue === 0) {
                 showToastNotification("Please select a star rating first.");
                 return;
+            }
+
+            // Early return if a request is already running
+            if (isRatingSubmitting) return;
+
+            const submitBtn = document.getElementById('submitRatingBtn');
+            
+            // Set loading indicators and disable interactions instantly
+            isRatingSubmitting = true;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="ri-loader-4-line animate-spin text-sm mr-2"></i> SUBMITTING...`;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
             }
 
             const comment = document.getElementById('ratingComment').value.trim();
@@ -422,6 +453,14 @@
             } catch (err) {
                 console.error("Fulfillment pipeline error:", err);
                 showToastNotification("Failed to finalize transaction.");
+            } finally {
+                // Reset interaction parameters and flags
+                isRatingSubmitting = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = "SUBMIT RATING";
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
             }
         }
 
@@ -521,6 +560,9 @@
             document.getElementById('purchasesTabReceiveBtn').className = tabMode === 'to receive' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
             document.getElementById('purchasesTabCompletedBtn').className = tabMode === 'completed' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
             document.getElementById('purchasesTabCanceledBtn').className = tabMode === 'canceled' ? 'px-3 py-1 rounded-lg bg-white text-neutral-950 shadow-sm transition-all outline-none' : 'px-3 py-1 rounded-lg text-neutral-400 hover:text-neutral-600 transition-all outline-none';
+            
+            // UPGRADE: Render layout skeleton shimmer block instantly during filters context transitions
+            displayPurchasesSkeletonLoader();
             fetchBuyerFulfillmentOrders();
         }
 
@@ -818,12 +860,21 @@
             closeCropperModalWorkflow();
         }
 
+        // UPGRADE: Full Form Submission Loading State implementation inside Form Submit Listener
         document.getElementById('editProfileForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
             const nameVal = document.getElementById('inputFormName').value.trim();
             const schoolVal = document.getElementById('inputFormSchool').value.trim();
             if (!nameVal || !schoolVal) return;
+
+            const submitBtn = document.getElementById('saveProfileBtn');
+            const originalBtnHtml = submitBtn.innerHTML;
+
+            // Trigger submit loader and lock forms instantly
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="ri-loader-4-line animate-spin text-xs"></i> <span>SAVING CHANGES...</span>`;
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
 
             let userObj = JSON.parse(localStorage.getItem('zellr_user_profile') || '{}');
             userObj.id = userObj.id || 3;
@@ -844,9 +895,6 @@
                 document.getElementById('profileAvatarIconFallback').classList.add('hidden');
             }
 
-            toggleEditProfileModal(false);
-            showToastNotification("Profile changes saved successfully!");
-
             try {
                 const payload = {
                     name: nameVal,
@@ -861,8 +909,18 @@
                 });
 
                 if (!response.ok) throw new Error("Profile database write failed");
-                
-            } catch (err) { console.warn("Background sync offline fallback mode active.", err); }
+                showToastNotification("Profile changes saved successfully!");
+                toggleEditProfileModal(false);
+            } catch (err) { 
+                console.warn("Background sync offline fallback mode active.", err); 
+                showToastNotification("Profile updated locally.");
+                toggleEditProfileModal(false);
+            } finally {
+                // Reset submit state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
         });
 
         async function fetchAndDisplayUserRating(userId) {
@@ -890,6 +948,9 @@
         }
 
         window.onload = async function() {
+
+            // UPGRADE: Show shimmer placeholders immediately before initiating network lookups
+            displayPurchasesSkeletonLoader();
 
             let sessionUserId = 3; 
             const cached = localStorage.getItem('zellr_user_profile');
