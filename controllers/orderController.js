@@ -83,8 +83,9 @@ exports.completeOrder = async (req, res) => {
         const productId = orders[0].product_id;
 
         // Transaction block: Mark order as completed AND mark product as sold
-        await db.query('UPDATE orders SET status = "completed" WHERE id = ?', [order_id]);
-        await db.query('UPDATE products SET status = "sold" WHERE id = ?', [productId]);
+        // SURGICAL FIX: Flipped string wrappers so MySQL receives single-quoted text literals
+        await db.query("UPDATE orders SET status = 'completed' WHERE id = ?", [order_id]);
+        await db.query("UPDATE products SET status = 'sold' WHERE id = ?", [productId]);
 
         res.json({ message: "Purchase finalized! Item marked as sold." });
     } catch (error) {
@@ -163,8 +164,9 @@ exports.updateOrderStatus = async (req, res) => {
         await db.query('UPDATE orders SET status = ? WHERE id = ?', [status, id]);
 
         // Production sync logic: If the order is moved to completed, ensure the product status changes to sold automatically
+        // SURGICAL FIX: Aligned lifecycle status sync query with strict MySQL quote standards
         if (status === 'completed') {
-            await db.query('UPDATE products SET status = "sold" WHERE id = ?', [productId]);
+            await db.query("UPDATE products SET status = 'sold' WHERE id = ?", [productId]);
         }
 
         res.json({ message: "Order record modified successfully." });
