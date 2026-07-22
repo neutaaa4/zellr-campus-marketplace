@@ -11,8 +11,8 @@ const server = http.createServer(app);
 
 // CORS Policy Matrix whitelisting explicit platform interaction blocks
 const trustedPlatformOrigins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000",
     "https://zellr-campus-marketplace.vercel.app"
 ];
 
@@ -150,7 +150,7 @@ io.on('connection', (socket) => {
 // ==========================================
 // 4. DATABASE HANDSHAKE & SERVER BOOT
 // ==========================================
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 db.query('SELECT 1')
     .then(() => {

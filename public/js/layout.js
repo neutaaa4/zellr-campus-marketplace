@@ -2,7 +2,7 @@
 
 // GLOBAL CONFIGURATION: Centralized routing matrix ensures shared layout headers talk directly to Render
 const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000' 
+    ? 'http://localhost:5000' 
     : 'https://zellr-backend-engine.onrender.com';
 
 // UPGRADE: Added a dynamic absolute badge marker over the top navigation button link

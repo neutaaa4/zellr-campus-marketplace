@@ -195,7 +195,7 @@
         async function handleGoogleAuthCallback(response) {
             // SURGICAL FIX: Production fallback address mapped to Render cloud engine to process database operations cleanly
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-                ? 'http://localhost:3000' 
+                ? 'http://localhost:5000' 
                 : 'https://zellr-backend-engine.onrender.com';
 
             try {
@@ -277,7 +277,7 @@
 
             // NEW: Dynamic API Base Routing
             const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
-            ? 'http://localhost:3000' 
+            ? 'http://localhost:5000' 
             : 'https://zellr-backend-engine.onrender.com';
 
             submitBtn.innerHTML = '<i class="p-1 border-2 border-t-transparent border-white rounded-full animate-spin"></i> Creating...';
